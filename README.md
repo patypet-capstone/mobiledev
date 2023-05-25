@@ -1,5 +1,6 @@
-
 # Patypet
+
+> Protect And Treat Your Pet
 
 A pet-related app that offers several features such as breed classification, obesity classification, animal feed purchase, pet daycare and nearby veterinarian, and adoption. Image processing is used to recommend animal feed purchase based on the type and weight of each animal. The adoption feature allows the public to upload animals for adoption, giving them an opportunity to help find adopters for abandoned animals. Adopters will be vetted by the team, ensuring a safe transfer of adoption rights.
 
