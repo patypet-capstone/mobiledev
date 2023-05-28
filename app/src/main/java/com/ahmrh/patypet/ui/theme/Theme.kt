@@ -22,9 +22,19 @@ private val DarkColorScheme = darkColorScheme(
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
+//    primary = Purple40,
+//    secondary = PurpleGrey40,
+//    tertiary = Pink40
+
+    primary = Orange35,
+    onPrimary = Orange10,
+
+    primaryContainer = Orange80,
+    onPrimaryContainer = Orange5,
+
+    surface = Orange90,
+    onSurface = Orange5,
+
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
@@ -69,7 +79,7 @@ fun PatypetTheme(
     }
 
     MaterialTheme(
-        colorScheme = colorScheme,
+        colorScheme = LightColorScheme,
         typography = Typography,
         content = content
     )
