@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.ahmrh.patypet.ui.components.AnimationHeader
 import com.ahmrh.patypet.ui.components.LongButton
 import com.ahmrh.patypet.ui.components.LongInputField
+import com.ahmrh.patypet.ui.components.StaticHeader
 import com.ahmrh.patypet.ui.theme.PatypetTheme
 
 @Composable
@@ -28,7 +29,11 @@ fun SignInScreen() {
         verticalArrangement = Arrangement.spacedBy(8.dp),
 
         ) {
-        AnimationHeader()
+        StaticHeader(
+            modifier = Modifier
+                .height(235.dp),
+            type = "Dog"
+        )
         SignInForm()
     }
 
@@ -38,7 +43,7 @@ fun SignInScreen() {
 fun SignInForm() {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(vertical = 56.dp)
+        modifier = Modifier.padding(vertical = 24.dp)
     ) {
         Text(
             "Welcome Back",

@@ -10,7 +10,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.ahmrh.patypet.ui.screen.auth.LandingScreen
 import com.ahmrh.patypet.ui.theme.PatypetTheme
 
 class MainActivity : ComponentActivity() {

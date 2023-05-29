@@ -1,4 +1,4 @@
-package com.ahmrh.patypet.ui.screen.auth
+package com.ahmrh.patypet.ui.screen.launch
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

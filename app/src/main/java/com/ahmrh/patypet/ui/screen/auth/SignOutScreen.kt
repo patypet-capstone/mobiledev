@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -17,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.ahmrh.patypet.ui.components.AnimationHeader
 import com.ahmrh.patypet.ui.components.LongButton
 import com.ahmrh.patypet.ui.components.LongInputField
+import com.ahmrh.patypet.ui.components.StaticHeader
 import com.ahmrh.patypet.ui.theme.PatypetTheme
 
 @Composable
@@ -27,7 +29,7 @@ fun SignOutScreen() {
         horizontalAlignment = Alignment.CenterHorizontally,
 
         ) {
-        AnimationHeader()
+        StaticHeader(type = "Cat")
         SignOutForm()
     }
 
@@ -38,7 +40,7 @@ fun SignOutForm() {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = Modifier.padding(vertical = 56.dp)
+        modifier = Modifier.padding(vertical = 24.dp)
     ) {
         Text(
             "Register",
