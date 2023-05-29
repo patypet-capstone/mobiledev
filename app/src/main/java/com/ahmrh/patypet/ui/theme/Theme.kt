@@ -27,13 +27,18 @@ private val LightColorScheme = lightColorScheme(
 //    tertiary = Pink40
 
     primary = Orange35,
-    onPrimary = Orange10,
+    onPrimary = Orange5,
 
     primaryContainer = Orange80,
     onPrimaryContainer = Orange5,
 
+    secondary = Orange10,
+    onSecondary = Orange90,
+
     surface = Orange90,
     onSurface = Orange5,
+
+    outline = Orange5,
 
 
     /* Other default colors to override
@@ -51,7 +56,7 @@ private val LightColorScheme = lightColorScheme(
 fun PatypetTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
@@ -79,7 +84,7 @@ fun PatypetTheme(
     }
 
     MaterialTheme(
-        colorScheme = LightColorScheme,
+        colorScheme = colorScheme,
         typography = Typography,
         content = content
     )

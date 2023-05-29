@@ -5,9 +5,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,36 +21,46 @@ import androidx.compose.ui.unit.dp
 import com.ahmrh.patypet.ui.theme.PatypetTheme
 
 @Composable
-fun Button(
-    text: String,
-    color: Color = MaterialTheme.colorScheme.primary,
+fun CustomButton(
     modifier: Modifier = Modifier,
+    text: String,
+    onClick: () -> Unit = {},
+    color: Color = MaterialTheme.colorScheme.primary,
+    textColor: Color = MaterialTheme.colorScheme.onPrimary
 ) {
-    Box(
+    Button(
+        onClick = onClick,
         modifier = modifier
             .clip(RoundedCornerShape(16.dp))
-            .background(MaterialTheme.colorScheme.primary),
-        contentAlignment = Alignment.Center
+            .background(color),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = color,
+            contentColor = textColor
+        )
+
     ) {
         Text(
             text = text,
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier
-                .padding(
-                    vertical = 16.dp,
-                    horizontal = 24.dp
-                ),
-            )
+            color = textColor
+        )
     }
+
 }
 
 @Composable
 fun LongButton(
-    text: String
-){
-    Button(
+    modifier: Modifier = Modifier,
+    text: String,
+    onClick: () -> Unit = {},
+    color: Color = MaterialTheme.colorScheme.primary,
+    textColor: Color = MaterialTheme.colorScheme.onPrimary
+) {
+    CustomButton(
         text = text,
-        modifier = Modifier
+        color = color,
+        onClick = onClick,
+        textColor = textColor,
+        modifier = modifier
             .width(312.dp)
             .height(56.dp)
     )
@@ -64,8 +75,8 @@ fun ButtonPreview() {
                 .fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            Button(
-                "haloo",
+            CustomButton(
+                text = "haloo",
                 modifier = Modifier
             )
         }
