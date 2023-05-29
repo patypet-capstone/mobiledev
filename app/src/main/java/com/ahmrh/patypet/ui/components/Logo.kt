@@ -24,6 +24,7 @@ import com.ahmrh.patypet.R
 import com.ahmrh.patypet.ui.theme.Orange10
 import com.ahmrh.patypet.ui.theme.Orange35
 import com.ahmrh.patypet.ui.theme.Orange5
+import com.ahmrh.patypet.ui.theme.PatypetTheme
 
 @Composable
 fun Logo(
@@ -45,7 +46,7 @@ fun Logo(
             text = "PATYPET",
             color = MaterialTheme.colorScheme.primary,
             fontFamily = FontFamily.SansSerif,
-            fontSize = 56.sp,
+            fontSize = 48.sp,
             fontWeight = FontWeight.W900
         )
 
@@ -57,12 +58,14 @@ fun Logo(
 fun LogoPreview(
     modifier: Modifier = Modifier
 ){
-    Column(
-        modifier = modifier
-            .fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ){
-        Logo()
+    PatypetTheme() {
+        Column(
+            modifier = modifier
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ){
+            Logo()
+        }
     }
 }

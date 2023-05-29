@@ -20,61 +20,49 @@ import com.ahmrh.patypet.ui.components.LongInputField
 import com.ahmrh.patypet.ui.theme.PatypetTheme
 
 @Composable
-fun SignInScreen() {
+fun SignOutScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
 
         ) {
         AnimationHeader()
-        SignInForm()
+        SignOutForm()
     }
 
 }
 
 @Composable
-fun SignInForm() {
+fun SignOutForm() {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier.padding(vertical = 56.dp)
     ) {
         Text(
-            "Welcome Back",
+            "Register",
             style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Bold
         )
         Text(
-            "Sign In with your Account",
+            "Sign Out with your Account",
             style = MaterialTheme.typography.bodyMedium,
 
-        )
+            )
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier
                 .padding(vertical = 48.dp)
         ) {
 
+            LongInputField(label = "Name")
             LongInputField(label = "Email")
-            Column(
-                horizontalAlignment = Alignment.End,
-            ){
-                LongInputField(label = "Password", isPassword = true)
-                TextButton(onClick = {},
-                           modifier = Modifier
-                               .height(36.dp)
-                ) {
-                    Text(
-                        "Forgot password?",
-                        color = MaterialTheme.colorScheme.onSurface,
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                }
-            }
+
+            LongInputField(label = "Password", isPassword = true)
             LongButton(
-                text = "Sign In",
-                modifier = Modifier.padding(vertical = 8.dp),
+                text = "Sign Up",
+                modifier = Modifier.padding(vertical = 16.dp),
                 color = MaterialTheme.colorScheme.secondary,
                 textColor = MaterialTheme.colorScheme.onSecondary
             )
@@ -86,8 +74,8 @@ fun SignInForm() {
 
 @Preview(showBackground = true)
 @Composable
-fun SignInScreenPreview() {
+fun SignOutScreenPreview() {
     PatypetTheme {
-        SignInScreen()
+        SignOutScreen()
     }
 }
