@@ -56,6 +56,7 @@ fun PatypetApp(
             startDestination = Screen.Home.route,
             modifier = Modifier.padding(it)
         ){
+            val viewModel =
             composable(Screen.Home.route){
                 HomeScreen()
             }

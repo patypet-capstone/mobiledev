@@ -1,4 +1,4 @@
-package com.ahmrh.patypet.ui.util
+package com.ahmrh.patypet.utils
 
 sealed class UiState<out T: Any?> {
     object Loading: UiState<Nothing>()

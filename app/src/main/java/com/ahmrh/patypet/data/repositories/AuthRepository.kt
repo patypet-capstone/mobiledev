@@ -7,9 +7,8 @@ import com.ahmrh.patypet.data.local.AppPreferences
 import com.ahmrh.patypet.data.remote.responses.LoginResponse
 import com.ahmrh.patypet.data.remote.responses.RegisterResponse
 import com.ahmrh.patypet.data.remote.retrofit.ApiService
-import com.ahmrh.patypet.data.model.Login
+import com.ahmrh.patypet.data.model.UserLogin
 import com.ahmrh.patypet.data.model.RemoteResponse
-import com.ahmrh.patypet.ui.screen.auth.AuthViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import retrofit2.Call
@@ -48,7 +47,7 @@ class AuthRepository(
                         response.body()?.token.toString()
                     viewModelScope.launch{
                         pref.saveLogin(
-                            Login(name, token)
+                            UserLogin(name, token)
                         )
                     }
                 }

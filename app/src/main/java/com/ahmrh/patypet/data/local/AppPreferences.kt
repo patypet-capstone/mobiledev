@@ -5,8 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.ahmrh.patypet.data.remote.responses.LoginResponse
-import com.ahmrh.patypet.data.model.Login
+import com.ahmrh.patypet.data.model.UserLogin
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -30,7 +29,7 @@ class AppPreferences(private val dataStore: DataStore<Preferences>) {
         }
     }
 
-    suspend fun saveLogin(login: Login){
+    suspend fun saveLogin(login: UserLogin){
         dataStore.edit {preferences ->
             preferences[TOKEN_KEY] = login.token
             preferences[NAME_KEY] = login.name

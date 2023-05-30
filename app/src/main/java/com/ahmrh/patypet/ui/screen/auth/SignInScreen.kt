@@ -11,17 +11,26 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.ahmrh.patypet.ui.components.AnimationHeader
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ahmrh.patypet.ui.components.LongButton
 import com.ahmrh.patypet.ui.components.LongInputField
 import com.ahmrh.patypet.ui.components.StaticHeader
 import com.ahmrh.patypet.ui.theme.PatypetTheme
+import com.ahmrh.patypet.utils.ViewModelFactory
 
 @Composable
-fun SignInScreen() {
+fun SignInScreen(
+    viewModel: AuthViewModel = viewModel(
+        factory = ViewModelFactory(
+            LocalContext.current
+        )
+    )
+
+) {
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -36,8 +45,8 @@ fun SignInScreen() {
         )
         SignInForm()
     }
-
 }
+
 
 @Composable
 fun SignInForm() {
@@ -93,6 +102,10 @@ fun SignInForm() {
 @Composable
 fun SignInScreenPreview() {
     PatypetTheme {
-        SignInScreen()
+        SignInScreen(
+
+
+
+        )
     }
 }
