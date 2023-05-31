@@ -5,7 +5,8 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.ahmrh.patypet.data.model.UserLogin
+import com.ahmrh.patypet.data.model.User
+import com.ahmrh.patypet.ui.screen.auth.AuthViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -15,7 +16,6 @@ class AppPreferences(private val dataStore: DataStore<Preferences>) {
     companion object {
         const val TAG = "AppPreferences"
         private val TOKEN_KEY = stringPreferencesKey("token")
-        private val NAME_KEY = stringPreferencesKey("name")
 
         @Volatile
         private var INSTANCE: AppPreferences? = null
@@ -29,18 +29,17 @@ class AppPreferences(private val dataStore: DataStore<Preferences>) {
         }
     }
 
-    suspend fun saveLogin(login: UserLogin){
-        dataStore.edit {preferences ->
-            preferences[TOKEN_KEY] = login.token
-            preferences[NAME_KEY] = login.name
-            Log.d(TAG, "SaveLogin: ${preferences[NAME_KEY]} ${preferences[TOKEN_KEY]} ")
-        }
+     suspend fun saveLogin(token: String){
+         dataStore.edit {preferences ->
+             preferences[TOKEN_KEY] = token
+             Log.d(TAG, "SaveLogin:  ${preferences[TOKEN_KEY]} ")
+         }
     }
 
     suspend fun deleteLogin(){
+        Log.d(AuthViewModel.TAG, "delete login")
         dataStore.edit { preferences ->
             preferences[TOKEN_KEY] = ""
-            preferences[NAME_KEY] = ""
         }
     }
 
@@ -54,7 +53,4 @@ class AppPreferences(private val dataStore: DataStore<Preferences>) {
         dataStore.data.first()[TOKEN_KEY]
     }
 
-    fun getName() = runBlocking {
-        dataStore.data.first()[NAME_KEY]
-    }
 }

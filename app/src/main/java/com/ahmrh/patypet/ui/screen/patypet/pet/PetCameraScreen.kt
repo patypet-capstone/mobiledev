@@ -1,4 +1,4 @@
-package com.ahmrh.patypet.ui.screen.pet
+package com.ahmrh.patypet.ui.screen.patypet.pet
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview

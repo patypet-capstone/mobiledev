@@ -1,4 +1,4 @@
-package com.ahmrh.patypet.ui.screen.launch
+package com.ahmrh.patypet.ui.screen.auth
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -19,7 +19,8 @@ import com.ahmrh.patypet.ui.theme.PatypetTheme
 
 @Composable
 fun LandingScreen(
-
+    navigateToSignIn: () -> Unit = {},
+    navigateToSignOut: () -> Unit = {}
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -37,7 +38,8 @@ fun LandingScreen(
             LongButton(
                 text = "Sign In",
                 color = MaterialTheme.colorScheme.secondary,
-                textColor = MaterialTheme.colorScheme.onSecondary
+                textColor = MaterialTheme.colorScheme.onSecondary,
+                onClick = navigateToSignIn
             )
             LongButton(
                 text = "Sign Up",
@@ -47,7 +49,8 @@ fun LandingScreen(
                         MaterialTheme.colorScheme.outline,
                         RoundedCornerShape(16.dp)
                     ),
-                color = MaterialTheme.colorScheme.surface
+                color = MaterialTheme.colorScheme.surface,
+                onClick = navigateToSignOut
             )
         }
     }

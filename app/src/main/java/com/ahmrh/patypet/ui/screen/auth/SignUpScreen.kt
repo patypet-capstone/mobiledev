@@ -4,11 +4,9 @@ import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -32,32 +30,18 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
-fun SignInScreen(
+fun SignUpScreen(
     uiState: StateFlow<UiState<RemoteResponse>>,
-    onSignIn : (
+    onSignUp : (
+        name: String,
         email: String,
         password: String
     ) -> Unit,
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-
-        ) {
-        StaticHeader(
-            modifier = Modifier,
-            type = "Dog"
-        )
-        SignInForm(
-            onSignIn
-        )
-    }
-
     uiState.collectAsState(initial = UiState.Idle).value.let { state ->
         when(state){
             is UiState.Idle -> {
+                SignUpContent(onSignUp)
             }
             is UiState.Loading -> {
                 LoadingBar()
@@ -73,71 +57,80 @@ fun SignInScreen(
             }
         }
     }
+
 }
 
+@Composable
+fun SignUpContent(
+    onSignUp: (name: String, email: String, password: String) -> Unit,
+){
 
+    Column(
+        modifier = Modifier
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+
+        ) {
+        StaticHeader(type = "Cat")
+        SignUpForm(
+            onSignUp
+        )
+    }
+}
 
 @Composable
-fun SignInForm(
-    onSignIn: (email: String, password: String) -> Unit,
+fun SignUpForm(
+    onSignUp: (name: String, email: String, password: String) -> Unit,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier.padding(vertical = 24.dp)
     ) {
-
         Text(
-            "Welcome Back",
+            "Register",
             style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Bold
         )
         Text(
-            "Sign In with your Account",
+            "Sign Up with your Account",
             style = MaterialTheme.typography.bodyMedium,
 
             )
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier
-                .padding(vertical = 48.dp)
+                .padding(vertical = 24.dp)
         ) {
 
+            var name by remember { mutableStateOf("") }
             var email by remember { mutableStateOf("") }
             var password by remember { mutableStateOf("") }
+
+            LongInputField(
+                label = "Name",
+                inputText = name,
+                onTextChange = { name = it }
+            )
             LongInputField(
                 label = "Email",
                 inputText = email,
-                onTextChange = {email = it}
+                onTextChange = { email = it }
             )
-            Column(
-                horizontalAlignment = Alignment.End,
-            ) {
 
-                LongInputField(
-                    label = "Password",
-                    inputText = password,
-                    isPassword = true,
-                    onTextChange = { password = it }
-                )
-                TextButton(
-                    onClick = {},
-                    modifier = Modifier
-                        .height(36.dp)
-                ) {
-                    Text(
-                        "Forgot password?",
-                        color = MaterialTheme.colorScheme.onSurface,
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                }
-            }
+            LongInputField(
+                label = "Password",
+                inputText = password,
+                isPassword = true,
+                onTextChange = { password = it }
+            )
             LongButton(
-                text = "Sign In",
-                modifier = Modifier.padding(vertical = 8.dp),
+                text = "Sign Up",
+                modifier = Modifier.padding(vertical = 16.dp),
                 color = MaterialTheme.colorScheme.secondary,
                 textColor = MaterialTheme.colorScheme.onSecondary,
                 onClick = {
-                    onSignIn(email, password)
+                    onSignUp(name, email, password)
                 }
             )
         }
@@ -146,11 +139,17 @@ fun SignInForm(
 
 }
 
+data class SignUpState(
+    val name: String,
+    val email: String,
+    val password: String,
+)
+
 @Preview(showBackground = true)
 @Composable
-fun SignInScreenPreview() {
+fun SignUpScreenPreview() {
     PatypetTheme {
-        SignInScreen(
+        SignUpScreen(
             uiState = MutableStateFlow(
                 UiState.Success(
                     RemoteResponse(
@@ -158,13 +157,11 @@ fun SignInScreenPreview() {
                         message = ""
                     )
                 )
-            ),
-            onSignIn = { email, password ->
+            ), onSignUp = { name, email, password ->
                 Log.d(
                     "Testing Input",
-                    "$email $password"
+                    "$name $email $password"
                 )
-
             }
         )
     }

@@ -6,6 +6,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.ahmrh.patypet.data.local.AppPreferences
 import com.ahmrh.patypet.data.remote.retrofit.ApiConfig
 import com.ahmrh.patypet.data.repositories.AuthRepository
+import com.ahmrh.patypet.data.repositories.PetRepository
 
 object Injection {
     private var application: Application? = null
@@ -22,7 +23,13 @@ object Injection {
     fun provideAuthRepository(context: Context): AuthRepository {
         val pref = AppPreferences.getInstance(
             requireApplication.dataStore)
-        return AuthRepository(ApiConfig(pref).getApiService(), pref)
+        return AuthRepository(ApiConfig(pref).getAuthApiService(), pref)
+    }
+
+    fun providePetRepository(context: Context): PetRepository {
+        val pref = AppPreferences.getInstance(
+            requireApplication.dataStore)
+        return PetRepository(ApiConfig(pref).getPetApiService(), pref)
     }
 
 }

@@ -19,7 +19,8 @@ android {
             useSupportLibrary true
         }
 
-        buildConfigField("String", "API_URL", '"https://story-api.dicoding.dev/v1/"')
+        buildConfigField("String", "APP_URL", '"https://34.172.26.95/"')
+        buildConfigField("String", "AUTH_URL", '"https://34.133.110.24/"')
     }
 
     buildTypes {

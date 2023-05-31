@@ -6,9 +6,9 @@ sealed class Screen(val route: String) {
     // Authentication
     object Landing: Screen("landing")
 
-    object Login: Screen("login")
+    object SignIn: Screen("sign_in")
 
-    object Register: Screen("register")
+    object SignUp: Screen("sign_up")
 
 
     // Main App

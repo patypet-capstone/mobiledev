@@ -1,16 +1,16 @@
 package com.ahmrh.patypet.data.repositories
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.ahmrh.patypet.data.local.AppPreferences
+import com.ahmrh.patypet.data.remote.responses.RemoteResponse
+import com.ahmrh.patypet.data.model.User
 import com.ahmrh.patypet.data.remote.responses.LoginResponse
 import com.ahmrh.patypet.data.remote.responses.RegisterResponse
+import com.ahmrh.patypet.data.remote.responses.UserResponse
 import com.ahmrh.patypet.data.remote.retrofit.ApiService
-import com.ahmrh.patypet.data.model.UserLogin
-import com.ahmrh.patypet.data.model.RemoteResponse
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flowOf
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -19,14 +19,64 @@ class AuthRepository(
     private val apiService: ApiService,
     private val pref: AppPreferences
 ) {
+    private var authResponse = MutableStateFlow(
+        RemoteResponse(
+            success = false,
+            message = "Not Initialized"
+        )
+    )
 
-    fun login(
+    fun isLogin(): Flow<Boolean> = pref.isLogin()
+    fun getToken(): String? = pref.getToken()
+
+    suspend fun endSession() = pref.deleteLogin()
+
+    fun getUser(
+        token: String
+    ): Flow<User> {
+
+        val user = MutableStateFlow(User())
+        
+        val client = apiService.getUser(token)
+        client.enqueue(object : Callback<UserResponse> {
+            override fun onResponse(
+                call: Call<UserResponse>,
+                response: Response<UserResponse>
+            ) {
+                if (response.isSuccessful) {
+                    user.value  = User(
+                        response.body()?.id ?: -1,
+                        response.body()?.name ?: "Unnamed Person",
+                        response.body()?.email ?: "Null",
+                    )
+
+                } else {
+                    Log.e(TAG, "onFailureResponse: ${response.message()}")
+                }
+
+            }
+
+            override fun onFailure(
+                call: Call<UserResponse>,
+                t: Throwable
+            ) {
+                Log.e(
+                    TAG,
+                    "onFailureThrowable: ${t.message}"
+                )
+                throw(t)
+            }
+        })
+
+        return user
+    }
+
+
+    suspend fun login(
         email: String,
         password: String,
-        viewModelScope: CoroutineScope
-    ): LiveData<RemoteResponse> {
-        val loginResponseLiveData =
-            MutableLiveData<RemoteResponse>()
+    ): Flow<RemoteResponse> {
+        var token = ""
 
         val client = apiService.login(email, password)
         client.enqueue(object : Callback<LoginResponse> {
@@ -34,28 +84,20 @@ class AuthRepository(
                 call: Call<LoginResponse>,
                 response: Response<LoginResponse>
             ) {
-                if(response.isSuccessful) {
-                    loginResponseLiveData.value =
+                if (response.isSuccessful) {
+                    token =
+                        response.body()?.token.toString()
+                    authResponse.value =
                         RemoteResponse(
                             success = true,
-                            message = response.message()
+                            message = response.message(),
                         )
 
-                    val name =
-                        response.body()?.name.toString()
-                    val token =
-                        response.body()?.token.toString()
-                    viewModelScope.launch{
-                        pref.saveLogin(
-                            UserLogin(name, token)
-                        )
-                    }
-                }
-                else {
-                    loginResponseLiveData.value =
+                } else {
+                    authResponse.value =
                         RemoteResponse(
                             success = false,
-                            message = response.message()
+                            message = response.message(),
                         )
                     Log.e(TAG, "onFailureResponse ")
                 }
@@ -66,27 +108,24 @@ class AuthRepository(
                 call: Call<LoginResponse>,
                 t: Throwable
             ) {
-                loginResponseLiveData.value =
-                    RemoteResponse(
-                        success = false,
-                        message = t.message ?: "Unidentified Failure"
-                    )
-                Log.e(TAG, "onFailureThrowable: ${t.message}"
+                Log.e(
+                    TAG,
+                    "onFailureThrowable: ${t.message}"
                 )
+                throw(t)
             }
         })
 
-        return loginResponseLiveData
+        pref.saveLogin(token)
 
+        return authResponse
     }
 
-    fun register(
+     fun register(
         name: String,
         email: String,
         password: String
-    ): LiveData<RemoteResponse> {
-        val registerResponseLiveData =
-            MutableLiveData<RemoteResponse>()
+    ): Flow<RemoteResponse> {
         val client =
             apiService.register(name, email, password)
         client.enqueue(object : Callback<RegisterResponse> {
@@ -99,18 +138,18 @@ class AuthRepository(
                     response.body().toString()
                 )
                 if (response.isSuccessful) {
-                    registerResponseLiveData.value =
+                    authResponse.value =
                         RemoteResponse(
                             success = true,
-                            message = response.message()
+                            message = response.message(),
                         )
 
                 } else {
-                    registerResponseLiveData.value =
-                    RemoteResponse(
-                        success = false,
-                        message = response.message()
-                    )
+                    authResponse.value =
+                        RemoteResponse(
+                            success = false,
+                            message = response.message(),
+                        )
                     Log.e(
                         TAG,
                         "onFailureResponse: ${response.message()}"
@@ -122,19 +161,15 @@ class AuthRepository(
                 call: Call<RegisterResponse>,
                 t: Throwable
             ) {
-                registerResponseLiveData.value =
-                RemoteResponse(
-                    success = false,
-                    message = t.message ?: "Unidentified Failure"
-                )
                 Log.e(
                     TAG,
                     "onFailureThrowable: ${t.message}"
                 )
+                throw(t)
             }
         })
 
-        return registerResponseLiveData
+        return authResponse
     }
 
     companion object {

@@ -31,17 +31,17 @@ fun CustomInputField(
     modifier: Modifier = Modifier,
     inputText: String = "",
     label: String = "Label",
-    isPassword: Boolean = false
+    isPassword: Boolean = false,
+    onTextChange: (String) -> Unit = {},
 ) {
-    var text by remember { mutableStateOf(inputText) }
 
     if (isPassword) {
         var visible by remember { mutableStateOf(false) }
 
         OutlinedTextField(
             modifier = modifier,
-            value = text,
-            onValueChange = { text = it },
+            value = inputText,
+            onValueChange = { onTextChange(it) },
             label = { Text(label) },
             visualTransformation = if (visible) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
@@ -73,8 +73,8 @@ fun CustomInputField(
     } else {
         OutlinedTextField(
             modifier = modifier,
-            value = text,
-            onValueChange = { text = it },
+            value = inputText,
+            onValueChange = { onTextChange(it) },
             label = { Text(label) },
 
             shape = RoundedCornerShape(16.dp),
@@ -96,15 +96,19 @@ fun LongInputField(
     inputText: String = "",
     label: String = "Label",
     isPassword: Boolean = false,
+    onTextChange: (String) -> Unit = {},
 ) {
     CustomInputField(
         inputText = inputText,
         label = label,
         modifier = modifier.width(312.dp),
-        isPassword = isPassword
+        isPassword = isPassword,
+        onTextChange = onTextChange
 
     )
 }
+
+
 
 @Preview(showBackground = true)
 @Composable
