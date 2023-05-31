@@ -1,5 +1,7 @@
 package com.ahmrh.patypet
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
@@ -32,9 +34,11 @@ import com.ahmrh.patypet.ui.navigation.Screen
 import com.ahmrh.patypet.ui.screen.auth.AuthViewModel
 import com.ahmrh.patypet.ui.screen.patypet.home.HomeScreen
 import com.ahmrh.patypet.ui.screen.patypet.home.MainViewModel
+import com.ahmrh.patypet.ui.screen.patypet.pet.PetCameraScreen
 import com.ahmrh.patypet.ui.screen.patypet.pet.PetViewModel
 import com.ahmrh.patypet.ui.theme.PatypetTheme
 import com.ahmrh.patypet.utils.ViewModelFactory
+import android.Manifest
 
 @Composable
 fun PatypetApp(
@@ -56,9 +60,29 @@ fun PatypetApp(
 
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
+
+    val dialogQueue = mainViewModel.visiblePermissionDialogQueue
+
+    val cameraPermissionResultLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted ->
+                mainViewModel.onPermissionResult(
+                    permission = Manifest.permission.CAMERA,
+                    isGranted = isGranted
+                )
+
+        }
+    )
+
+    val bottomBarRoute = listOf(
+        Screen.Home.route,
+        Screen.Profile.route,
+
+    )
+
     Scaffold(
         bottomBar = {
-            if (currentRoute != Screen.Detail.route) {
+            if (currentRoute in bottomBarRoute) {
                 BottomBar(navController)
             }
         }
@@ -78,9 +102,9 @@ fun PatypetApp(
             }
             composable(Screen.Pet.route){
 
-            }
-            composable(Screen.PetCamera.route){
-
+                cameraPermissionResultLauncher.launch(
+                    Manifest.permission.CAMERA
+                )
             }
         }
     }
@@ -124,14 +148,14 @@ private fun BottomBar(
             label = {Text("Home")},
             selected = currentRoute == Screen.Home.route,
             onClick = {
-
+                navController.navigate(Screen.Home.route)
             }
         )
         FloatingActionButton(
             modifier = Modifier
                 .padding(12.dp),
             onClick = {
-
+                navController.navigate(Screen.Pet.route)
             }
         ) {
             Icon(
@@ -151,7 +175,7 @@ private fun BottomBar(
             label = {Text("Profile")},
             selected = currentRoute == Screen.Profile.route,
             onClick = {
-
+                navController.navigate(Screen.Profile.route)
             },
 
         )

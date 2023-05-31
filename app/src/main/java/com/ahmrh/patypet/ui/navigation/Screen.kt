@@ -16,8 +16,6 @@ sealed class Screen(val route: String) {
 
     object Pet: Screen("pet")
 
-    object PetCamera: Screen("pet_camera")
-
     object Profile: Screen("profile")
 
     object Detail : Screen("pet/{petId}"){

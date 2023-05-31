@@ -1,5 +1,6 @@
 package com.ahmrh.patypet.ui.screen.patypet.home
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -28,6 +29,24 @@ class MainViewModel(
         MutableStateFlow(getAuthState())
     val authState: StateFlow<AuthState>
         get() = _authState
+
+
+    private val _visiblePermissionDialogQueue = mutableStateListOf<String>()
+    val visiblePermissionDialogQueue
+        get() = _visiblePermissionDialogQueue
+
+    fun dismissDialog(){
+        visiblePermissionDialogQueue.removeLast()
+    }
+
+    fun onPermissionResult(
+        permission: String,
+        isGranted: Boolean
+    ){
+        if(!isGranted){
+            visiblePermissionDialogQueue.add(0, permission)
+        }
+    }
 
 
     private fun getAuthState(): AuthState {

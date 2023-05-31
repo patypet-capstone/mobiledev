@@ -3,10 +3,15 @@ package com.ahmrh.patypet.ui.screen.auth
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -38,7 +43,8 @@ fun SignInScreen(
         email: String,
         password: String
     ) -> Unit,
-) {
+) {val openDialog = remember { mutableStateOf(true) }
+
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -70,6 +76,36 @@ fun SignInScreen(
             is UiState.Error -> {
                 Text("Error")
 
+            }
+        }
+    }
+}
+
+@Composable
+fun AlertDialogContent(
+    openDialog : MutableStateFlow<Boolean>
+){
+
+    Surface(
+        modifier = Modifier
+            .wrapContentWidth()
+            .wrapContentHeight(),
+        shape = MaterialTheme.shapes.large,
+        tonalElevation = AlertDialogDefaults.TonalElevation
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = "This area typically contains the supportive text " +
+                        "which presents the details regarding the Dialog's purpose.",
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+            TextButton(
+                onClick = {
+                    openDialog.value = false
+                },
+                modifier = Modifier.align(Alignment.End)
+            ) {
+                Text("Confirm")
             }
         }
     }
