@@ -9,9 +9,7 @@ A pet-related app that offers several features such as breed classification, obe
 
 **Client:** Kotlin
 
-**Server:** Google Cloud
-
-**Model:** TBD
+**Server:** Google Cloud Platform
 
 
 ## Patypet Team | C23-PR484
