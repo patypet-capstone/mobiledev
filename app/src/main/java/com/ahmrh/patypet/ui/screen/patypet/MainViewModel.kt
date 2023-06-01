@@ -1,4 +1,4 @@
-package com.ahmrh.patypet.ui.screen.patypet.home
+package com.ahmrh.patypet.ui.screen.patypet
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf

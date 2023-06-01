@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.ahmrh.patypet.di.Injection
 import com.ahmrh.patypet.ui.screen.auth.AuthViewModel
-import com.ahmrh.patypet.ui.screen.patypet.home.MainViewModel
+import com.ahmrh.patypet.ui.screen.patypet.MainViewModel
 import com.ahmrh.patypet.ui.screen.patypet.pet.PetViewModel
 
 class ViewModelFactory(private val context: Context) :

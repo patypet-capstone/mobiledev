@@ -34,7 +34,7 @@ class AuthViewModel(private val repository: AuthRepository) :
             repository.isLogin()
                 .collect {
                     Log.d(TAG, it.toString())
-                    if(it) _authState.value = AuthState.Authenticated(repository.getToken()!!)
+                    if(it) _authState.value = AuthState.Authenticated(repository.getToken() ?: "")
                     else _authState.value = AuthState.Unknown
                 }
 

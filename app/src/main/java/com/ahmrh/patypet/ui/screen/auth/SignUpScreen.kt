@@ -38,10 +38,23 @@ fun SignUpScreen(
         password: String
     ) -> Unit,
 ) {
+    val openDialog = remember { mutableStateOf(true) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+
+        ) {
+        StaticHeader(type = "Cat")
+        SignUpForm(
+            onSignUp
+        )
+    }
+
     uiState.collectAsState(initial = UiState.Idle).value.let { state ->
         when(state){
             is UiState.Idle -> {
-                SignUpContent(onSignUp)
             }
             is UiState.Loading -> {
                 LoadingBar()
@@ -60,23 +73,6 @@ fun SignUpScreen(
 
 }
 
-@Composable
-fun SignUpContent(
-    onSignUp: (name: String, email: String, password: String) -> Unit,
-){
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-
-        ) {
-        StaticHeader(type = "Cat")
-        SignUpForm(
-            onSignUp
-        )
-    }
-}
 
 @Composable
 fun SignUpForm(

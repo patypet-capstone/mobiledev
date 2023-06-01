@@ -43,7 +43,8 @@ fun SignInScreen(
         email: String,
         password: String
     ) -> Unit,
-) {val openDialog = remember { mutableStateOf(true) }
+) {
+    val openDialog = remember { mutableStateOf(true) }
 
     Column(
         modifier = Modifier

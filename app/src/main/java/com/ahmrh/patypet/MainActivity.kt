@@ -1,7 +1,10 @@
 package com.ahmrh.patypet
 
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
-import android.widget.Toast
+import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -9,19 +12,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ahmrh.patypet.ui.screen.auth.AuthViewModel
-import com.ahmrh.patypet.ui.screen.patypet.home.MainViewModel
-import com.ahmrh.patypet.ui.screen.patypet.pet.PetViewModel
 import com.ahmrh.patypet.ui.theme.PatypetTheme
 import com.ahmrh.patypet.utils.AuthState
 import com.ahmrh.patypet.utils.ViewModelFactory
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.flowOf
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,7 +46,9 @@ class MainActivity : ComponentActivity() {
                             }
 
                             is AuthState.Authenticated -> {
-                                PatypetApp()
+                                PatypetApp(
+                                    onOpenAppSettings = ::openAppSettings
+                                )
                             }
 
                         }
@@ -60,15 +59,13 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private val requestPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if(isGranted){
 
-        }
-        if(!isGranted){
-
-        }
-
-    }
 }
+
+fun Activity.openAppSettings(){
+    Intent(
+        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+        Uri.fromParts("com.ahmrh.patypet", packageName, null)
+    ).also(::startActivity)
+}
+

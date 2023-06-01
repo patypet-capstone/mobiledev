@@ -33,12 +33,17 @@ import com.ahmrh.patypet.ui.navigation.NavigationItem
 import com.ahmrh.patypet.ui.navigation.Screen
 import com.ahmrh.patypet.ui.screen.auth.AuthViewModel
 import com.ahmrh.patypet.ui.screen.patypet.home.HomeScreen
-import com.ahmrh.patypet.ui.screen.patypet.home.MainViewModel
-import com.ahmrh.patypet.ui.screen.patypet.pet.PetCameraScreen
+import com.ahmrh.patypet.ui.screen.patypet.MainViewModel
 import com.ahmrh.patypet.ui.screen.patypet.pet.PetViewModel
 import com.ahmrh.patypet.ui.theme.PatypetTheme
 import com.ahmrh.patypet.utils.ViewModelFactory
 import android.Manifest
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
+import com.ahmrh.patypet.ui.components.CameraPermissionTextProvider
+import com.ahmrh.patypet.ui.components.PermissionDialog
 
 @Composable
 fun PatypetApp(
@@ -51,7 +56,8 @@ fun PatypetApp(
     ),
     petViewModel: PetViewModel = viewModel(
         factory = ViewModelFactory(LocalContext.current)
-    )
+    ),
+    onOpenAppSettings: () -> Unit = {}
 
 ) {
 
@@ -61,18 +67,55 @@ fun PatypetApp(
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    val dialogQueue = mainViewModel.visiblePermissionDialogQueue
-
     val cameraPermissionResultLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = { isGranted ->
-                mainViewModel.onPermissionResult(
-                    permission = Manifest.permission.CAMERA,
-                    isGranted = isGranted
-                )
+            mainViewModel.onPermissionResult(
+                permission = Manifest.permission.CAMERA,
+                isGranted = isGranted
+            )
 
         }
     )
+
+    val multiplePermissionResultLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions(),
+        onResult = { perms ->
+            perms.keys.forEach{ permission ->
+                mainViewModel.onPermissionResult(
+                    permission = permission,
+                    isGranted =  perms[permission] == true
+                )
+
+            }
+
+        }
+    )
+
+    val dialogQueue = mainViewModel.visiblePermissionDialogQueue
+
+    dialogQueue
+        .reversed()
+        .forEach{ permission ->
+            PermissionDialog(
+                permissionTextProvider = when(permission){
+                    Manifest.permission.CAMERA -> {
+                        CameraPermissionTextProvider()
+                    }
+                    else -> return@forEach
+                },
+                isPermanentlyDeclined = false,
+                onDismiss = {},
+                onOkClick = {
+                    mainViewModel.dismissDialog()
+                    multiplePermissionResultLauncher.launch(
+                        arrayOf(permission)
+                    )
+                },
+                onGoToAppSettingsClick= onOpenAppSettings
+            )
+        }
+
 
     val bottomBarRoute = listOf(
         Screen.Home.route,
@@ -101,6 +144,11 @@ fun PatypetApp(
 
             }
             composable(Screen.Pet.route){
+                multiplePermissionResultLauncher.launch(
+                    arrayOf(
+                        Manifest.permission.CAMERA,
+                    )
+                )
 
                 cameraPermissionResultLauncher.launch(
                     Manifest.permission.CAMERA

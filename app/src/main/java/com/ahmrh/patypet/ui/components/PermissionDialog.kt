@@ -16,7 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PermissionDialog(
-    permission: String,
+    permissionTextProvider: PermissionTextProvider,
     isPermanentlyDeclined: Boolean,
     onDismiss: () -> Unit,
     onOkClick: () -> Unit,
@@ -30,14 +30,18 @@ fun PermissionDialog(
             onDismissRequest = {
                 openDialog.value = false
             },
-            icon = { Icon(Icons.Filled.Favorite, contentDescription = null) },
+            icon = {
+                Icon(
+                    Icons.Filled.Favorite,
+                    contentDescription = null
+                )
+            },
             title = {
-                Text(text = "Title")
+                Text(text = "Permission Required")
             },
             text = {
                 Text(
-                    "This area typically contains the supportive text " +
-                            "which presents the details regarding the Dialog's purpose."
+                    text = permissionTextProvider.getDescription(isPermanentlyDeclined)
                 )
             },
             confirmButton = {
@@ -62,10 +66,34 @@ fun PermissionDialog(
     }
 }
 
+interface PermissionTextProvider {
+    fun getDescription(isPermanentlyDeclined: Boolean): String
+}
+
+class CameraPermissionTextProvider :
+    PermissionTextProvider {
+    override fun getDescription(isPermanentlyDeclined: Boolean): String {
+        return if (isPermanentlyDeclined) {
+            "It seems you permanently declined camera permission. You can go to the app settings to grant it."
+        } else {
+            "This app needs access to your camera so you can use pet prediction feature"
+        }
+    }
+}
+class FilePermissionTextProvider :
+    PermissionTextProvider {
+    override fun getDescription(isPermanentlyDeclined: Boolean): String {
+        return if (isPermanentlyDeclined) {
+            "It seems you permanently declined file permission. You can go to the app settings to grant it."
+        } else {
+            "This app needs access to your file so you can save file in your phone"
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PermissionDialogContent() {
-
 
 }
