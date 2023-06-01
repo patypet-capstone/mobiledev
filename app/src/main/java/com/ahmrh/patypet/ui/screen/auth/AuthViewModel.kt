@@ -65,6 +65,7 @@ class AuthViewModel(private val repository: AuthRepository) :
                     getAuthState()
                 }
 
+
             _uiState.value = UiState.Idle
         }
     }
@@ -75,8 +76,8 @@ class AuthViewModel(private val repository: AuthRepository) :
         password: String
     ) {
 
+        _uiState.value = UiState.Loading
         viewModelScope.launch {
-            _uiState.value = UiState.Loading
 
             repository.register(name, email, password)
                 .catch {
@@ -85,12 +86,16 @@ class AuthViewModel(private val repository: AuthRepository) :
                 }
                 .collect { response ->
                     _uiState.value =
-                        UiState.Success(response)
+                        UiState.Success(data = response)
                 }
 
             _uiState.value = UiState.Idle
         }
 
+    }
+
+    fun forceLogin(){
+        repository.forceLogin(viewModelScope)
     }
 
     companion object {

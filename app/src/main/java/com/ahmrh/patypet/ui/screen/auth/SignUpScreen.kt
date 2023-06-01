@@ -5,8 +5,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -60,9 +62,9 @@ fun SignUpScreen(
                 LoadingBar()
             }
             is UiState.Success -> {
-                val test = uiState.value
+                val response = state.data
 
-                Text(" haha ${test.toString()}")
+                RegisterDialog(message = response.message, success = response.success)
             }
             is UiState.Error -> {
                 Text("Error")
@@ -73,6 +75,43 @@ fun SignUpScreen(
 
 }
 
+@Composable
+fun RegisterDialog(
+    message: String,
+    success: Boolean,
+) {
+    var isOpenState by remember { mutableStateOf(true) }
+
+    if (isOpenState) {
+        AlertDialog(
+            onDismissRequest = {
+                isOpenState = false
+            },
+            title = {
+                Text(
+                    text = if(success)  "User Registered" else "Server is Down"
+                )
+            },
+            text = {
+                Text(
+                    text = if (success) message
+                    else "it seems the server is down, try contacting the server owner"
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        isOpenState = false
+                    }
+                ) {
+                    Text("Okay")
+                }
+            },
+
+
+            )
+    }
+}
 
 @Composable
 fun SignUpForm(

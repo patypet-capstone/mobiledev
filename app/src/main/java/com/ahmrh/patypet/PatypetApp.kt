@@ -39,12 +39,26 @@ import com.ahmrh.patypet.ui.theme.PatypetTheme
 import com.ahmrh.patypet.utils.ViewModelFactory
 import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.provider.Settings
+import android.util.Log
+import androidx.annotation.RequiresApi
+import androidx.camera.core.ImageCaptureException
+import androidx.compose.foundation.background
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.LaunchedEffect
+import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
+import com.ahmrh.patypet.di.Injection.findActivity
 import com.ahmrh.patypet.ui.components.CameraPermissionTextProvider
 import com.ahmrh.patypet.ui.components.PermissionDialog
+import com.ahmrh.patypet.ui.screen.patypet.pet.PetCameraScreen
+import java.io.File
+import java.util.concurrent.Executor
 
+@RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun PatypetApp(
     navController: NavHostController = rememberNavController(),
@@ -57,7 +71,11 @@ fun PatypetApp(
     petViewModel: PetViewModel = viewModel(
         factory = ViewModelFactory(LocalContext.current)
     ),
-    onOpenAppSettings: () -> Unit = {}
+    onOpenAppSettings: () -> Unit = {},
+    outputDirectory: File,
+    executor: Executor,
+    onImageCaptured: (Uri) -> Unit,
+    onError: (ImageCaptureException) -> Unit
 
 ) {
 
@@ -104,8 +122,14 @@ fun PatypetApp(
                     }
                     else -> return@forEach
                 },
-                isPermanentlyDeclined = false,
-                onDismiss = {},
+                isPermanentlyDeclined = !shouldShowRequestPermissionRationale(
+                    LocalContext.current.findActivity()
+                    , permission
+                ),
+                onDeny = {
+                    navController.navigateUp()
+                },
+                onDismiss = mainViewModel::dismissDialog,
                 onOkClick = {
                     mainViewModel.dismissDialog()
                     multiplePermissionResultLauncher.launch(
@@ -144,19 +168,25 @@ fun PatypetApp(
 
             }
             composable(Screen.Pet.route){
-                multiplePermissionResultLauncher.launch(
-                    arrayOf(
-                        Manifest.permission.CAMERA,
+                LaunchedEffect(snackbarHostState){
+                    multiplePermissionResultLauncher.launch(
+                        arrayOf(
+                            Manifest.permission.CAMERA
+                        )
                     )
-                )
-
-                cameraPermissionResultLauncher.launch(
-                    Manifest.permission.CAMERA
+                }
+                PetCameraScreen(
+                    outputDirectory = outputDirectory,
+                    executor = executor,
+                    onImageCaptured = onImageCaptured,
+                    onError = onError
                 )
             }
+
         }
     }
 }
+
 
 @Composable
 private fun BottomBar(
@@ -202,13 +232,16 @@ private fun BottomBar(
         FloatingActionButton(
             modifier = Modifier
                 .padding(12.dp),
+            containerColor = MaterialTheme.colorScheme.secondary,
             onClick = {
                 navController.navigate(Screen.Pet.route)
             }
         ) {
             Icon(
                 imageVector = navigationItems[1].icon,
-                contentDescription = navigationItems[1].title
+                contentDescription = navigationItems[1].title,
+                modifier = Modifier
+                    .padding(8.dp)
             )
 
         }
@@ -237,6 +270,5 @@ private fun BottomBar(
 @Composable
 fun PatypetAppPreview() {
     PatypetTheme {
-        PatypetApp()
     }
 }

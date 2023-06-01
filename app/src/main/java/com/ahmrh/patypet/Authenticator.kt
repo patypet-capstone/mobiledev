@@ -55,7 +55,8 @@ fun Authenticator(
             composable(Screen.SignIn.route){
                 SignInScreen(
                     viewModel.uiState,
-                    viewModel::login
+                    viewModel::login,
+                    viewModel::forceLogin
                 )
             }
             composable(Screen.SignUp.route){

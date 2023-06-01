@@ -36,6 +36,15 @@ class AuthRepository(
 
     suspend fun endSession() = pref.deleteLogin()
 
+    fun forceLogin(
+        scope: CoroutineScope
+    ){
+        scope.launch{
+            pref.saveLogin("temporary token")
+        }
+
+    }
+
     fun getUser(
         token: String
     ): Flow<User> {
@@ -69,7 +78,7 @@ class AuthRepository(
                     TAG,
                     "onFailureThrowable: ${t.message}"
                 )
-                throw(t)
+
             }
         })
 
@@ -125,7 +134,7 @@ class AuthRepository(
                     TAG,
                     "onFailureThrowable: ${t.message}"
                 )
-                throw(t)
+
             }
         })
 
@@ -183,7 +192,6 @@ class AuthRepository(
                     TAG,
                     "onFailureThrowable: ${t.message}"
                 )
-                throw(t)
             }
         })
 

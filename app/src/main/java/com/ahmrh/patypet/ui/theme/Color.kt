@@ -18,6 +18,9 @@ val Orange90 = Color(0xFFFFF8F6)
 val Orange100 = Color(0xFFFFFFFF)
 
 
+val Container = Color(0xFFFFDBC9)
+
+
 val SurfaceVariant = Color(0xFFFFF8F6)
 val PrimaryContainer = Color(0xFFFFEAD4)
 val SecondaryVariant = Color(0xFFFF914D)
