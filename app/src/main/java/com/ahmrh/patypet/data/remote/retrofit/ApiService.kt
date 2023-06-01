@@ -4,26 +4,28 @@ import com.ahmrh.patypet.data.remote.responses.LoginResponse
 import com.ahmrh.patypet.data.remote.responses.PredictionResponse
 import com.ahmrh.patypet.data.remote.responses.RegisterResponse
 import com.ahmrh.patypet.data.remote.responses.UserResponse
+import com.google.gson.JsonObject
+import okhttp3.RequestBody
+import org.json.JSONObject
 import retrofit2.Call
+import retrofit2.http.Body
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.Header
+import retrofit2.http.Headers
 import retrofit2.http.POST
 
 interface ApiService {
-    @FormUrlEncoded
+    @Headers("Content-Type: application/json")
     @POST("register")
     fun register(
-        @Field("name") name:String,
-        @Field("email") email:String,
-        @Field("password") password:String
+        @Body rawJsonObject: JsonObject,
     ): Call<RegisterResponse>
 
-    @FormUrlEncoded
+    @Headers("Content-Type: application/json")
     @POST("login")
     fun login(
-        @Field("email") email:String,
-        @Field("password") password: String
+        @Body rawJsonObject: JsonObject,
     ): Call<LoginResponse>
 
     @FormUrlEncoded

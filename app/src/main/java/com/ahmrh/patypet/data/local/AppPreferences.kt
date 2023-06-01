@@ -32,7 +32,7 @@ class AppPreferences(private val dataStore: DataStore<Preferences>) {
      suspend fun saveLogin(token: String){
          dataStore.edit {preferences ->
              preferences[TOKEN_KEY] = token
-             Log.d(TAG, "SaveLogin:  ${preferences[TOKEN_KEY]} ")
+             Log.d(TAG, "SaveLogin:  $token ")
          }
     }
 

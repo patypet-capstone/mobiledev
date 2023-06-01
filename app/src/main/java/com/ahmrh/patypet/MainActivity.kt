@@ -37,10 +37,10 @@ class MainActivity : ComponentActivity() {
                     val authViewModel: AuthViewModel = viewModel(
                         factory = ViewModelFactory(LocalContext.current)
                     )
+                    authViewModel.getAuthState()
+                    val authState = authViewModel.authState
 
-
-//                    val authState = authViewModel.authState
-                    val authState: MutableStateFlow<AuthState> = MutableStateFlow(AuthState.Authenticated(""))
+//                    val authState: MutableStateFlow<AuthState> = MutableStateFlow(AuthState.Authenticated(""))
 
                     authState.collectAsState(initial = AuthState.Unknown).value.let { state ->
                         when (state) {

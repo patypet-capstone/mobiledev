@@ -2,18 +2,23 @@ package com.ahmrh.patypet.data.repositories
 
 import android.util.Log
 import com.ahmrh.patypet.data.local.AppPreferences
-import com.ahmrh.patypet.data.remote.responses.RemoteResponse
 import com.ahmrh.patypet.data.model.User
 import com.ahmrh.patypet.data.remote.responses.LoginResponse
 import com.ahmrh.patypet.data.remote.responses.RegisterResponse
+import com.ahmrh.patypet.data.remote.responses.RemoteResponse
 import com.ahmrh.patypet.data.remote.responses.UserResponse
 import com.ahmrh.patypet.data.remote.retrofit.ApiService
+import com.google.gson.JsonObject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flowOf
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+
+
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 class AuthRepository(
     private val apiService: ApiService,
@@ -75,10 +80,16 @@ class AuthRepository(
     suspend fun login(
         email: String,
         password: String,
+        scope: CoroutineScope,
     ): Flow<RemoteResponse> {
         var token = ""
 
-        val client = apiService.login(email, password)
+        val rawJsonObject = JsonObject()
+        rawJsonObject.addProperty("email", email)
+        rawJsonObject.addProperty("password", password)
+        Log.d(TAG, rawJsonObject.toString())
+
+        val client = apiService.login(rawJsonObject)
         client.enqueue(object : Callback<LoginResponse> {
             override fun onResponse(
                 call: Call<LoginResponse>,
@@ -92,7 +103,9 @@ class AuthRepository(
                             success = true,
                             message = response.message(),
                         )
-
+                    scope.launch {
+                        pref.saveLogin(token)
+                    }
                 } else {
                     authResponse.value =
                         RemoteResponse(
@@ -116,8 +129,6 @@ class AuthRepository(
             }
         })
 
-        pref.saveLogin(token)
-
         return authResponse
     }
 
@@ -126,8 +137,15 @@ class AuthRepository(
         email: String,
         password: String
     ): Flow<RemoteResponse> {
+
+         val rawJsonObject = JsonObject()
+         rawJsonObject.addProperty("name", name)
+         rawJsonObject.addProperty("email", email)
+         rawJsonObject.addProperty("password", password)
+         Log.d(TAG, rawJsonObject.toString())
+
         val client =
-            apiService.register(name, email, password)
+            apiService.register(rawJsonObject)
         client.enqueue(object : Callback<RegisterResponse> {
             override fun onResponse(
                 call: Call<RegisterResponse>,
