@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -30,6 +31,8 @@ import androidx.navigation.compose.rememberNavController
 import com.ahmrh.patypet.ui.navigation.Screen
 import com.ahmrh.patypet.ui.screen.auth.AuthViewModel
 import com.ahmrh.patypet.ui.screen.auth.LandingScreen
+import com.ahmrh.patypet.ui.screen.auth.login.SignInScreen
+import com.ahmrh.patypet.ui.screen.auth.logout.SignUpScreen
 import com.ahmrh.patypet.ui.theme.PatypetTheme
 import com.ahmrh.patypet.utils.AuthState
 import com.ahmrh.patypet.utils.ViewModelFactory
@@ -69,10 +72,25 @@ class MainActivity : ComponentActivity() {
                                 LandingScreen()
                             }
                             composable(Screen.SignIn.route){
+                                val viewModel = it.sharedViewModel<AuthViewModel>(
+                                    navController = navController
+                                )
+                                SignInScreen(
+                                    viewModel.uiState,
+                                    viewModel::login,
+                                    viewModel::forceLogin
+                                )
 
                             }
                             composable(Screen.SignUp.route){
 
+                                val viewModel = it.sharedViewModel<AuthViewModel>(
+                                    navController = navController
+                                )
+                                SignUpScreen(
+                                    viewModel.uiState,
+                                    viewModel::register,
+                                )
                             }
                         }
 
@@ -94,26 +112,26 @@ class MainActivity : ComponentActivity() {
                         }
                     }
 
-                    val authViewModel: AuthViewModel = viewModel(
-                        factory = ViewModelFactory(LocalContext.current)
-                    )
-                    authViewModel.getAuthState()
-                    val authState = authViewModel.authState
-
-//                    val authState: MutableStateFlow<AuthState> = MutableStateFlow(AuthState.Authenticated(""))
-
-                    authState.collectAsState(initial = AuthState.Unknown).value.let { state ->
-                        when (state) {
-                            is AuthState.Unknown -> {
-                                Authenticator()
-                            }
-
-                            is AuthState.Authenticated -> {
-                                PatypetApp()
-                            }
-
-                        }
-                    }
+//                    val authViewModel: AuthViewModel = viewModel(
+//                        factory = ViewModelFactory(LocalContext.current)
+//                    )
+//                    authViewModel.getAuthState()
+//                    val authState = authViewModel.authState
+//
+////                    val authState: MutableStateFlow<AuthState> = MutableStateFlow(AuthState.Authenticated(""))
+//
+//                    authState.collectAsState(initial = AuthState.Unknown).value.let { state ->
+//                        when (state) {
+//                            is AuthState.Unknown -> {
+//                                Authenticator()
+//                            }
+//
+//                            is AuthState.Authenticated -> {
+//                                PatypetApp()
+//                            }
+//
+//                        }
+//                    }
 
 
                 }
@@ -149,7 +167,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun NavBackStackEntry.sharedViewModel(navController: NavController) : ViewModel {
+inline fun <reified T: ViewModel>NavBackStackEntry.sharedViewModel(navController: NavController) : T {
     val navGraphRoute = destination.parent?.route ?: return viewModel()
     val parentEntry = remember(this) {
         navController.getBackStackEntry(navGraphRoute)

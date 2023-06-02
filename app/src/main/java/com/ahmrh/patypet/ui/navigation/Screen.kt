@@ -5,7 +5,6 @@ sealed class Screen(val route: String) {
     object Launch: Screen("launch")
 
 
-
     // Authentication
     object Landing: Screen("landing")
 
