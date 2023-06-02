@@ -17,8 +17,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.ahmrh.patypet.ui.navigation.Screen
 import com.ahmrh.patypet.ui.screen.auth.AuthViewModel
-import com.ahmrh.patypet.ui.screen.auth.SignInScreen
-import com.ahmrh.patypet.ui.screen.auth.SignUpScreen
+import com.ahmrh.patypet.ui.screen.auth.login.SignInScreen
+import com.ahmrh.patypet.ui.screen.auth.logout.SignUpScreen
 import com.ahmrh.patypet.ui.screen.auth.LandingScreen
 import com.ahmrh.patypet.utils.ViewModelFactory
 

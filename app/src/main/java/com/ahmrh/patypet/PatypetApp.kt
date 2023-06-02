@@ -1,5 +1,7 @@
 package com.ahmrh.patypet
 
+import android.Manifest
+import android.content.Context
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.padding
@@ -8,12 +10,14 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -23,42 +27,26 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.ahmrh.patypet.ui.navigation.NavigationItem
-import com.ahmrh.patypet.ui.navigation.Screen
-import com.ahmrh.patypet.ui.screen.auth.AuthViewModel
-import com.ahmrh.patypet.ui.screen.patypet.home.HomeScreen
-import com.ahmrh.patypet.ui.screen.patypet.MainViewModel
-import com.ahmrh.patypet.ui.screen.patypet.pet.PetViewModel
-import com.ahmrh.patypet.ui.theme.PatypetTheme
-import com.ahmrh.patypet.utils.ViewModelFactory
-import android.Manifest
-import android.app.Activity
-import android.content.Context
-import android.content.Intent
-import android.net.Uri
-import android.os.Build
-import android.provider.Settings
-import android.util.Log
-import androidx.annotation.RequiresApi
-import androidx.camera.core.ImageCaptureException
-import androidx.compose.foundation.background
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.LaunchedEffect
-import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import com.ahmrh.patypet.di.Injection.findActivity
 import com.ahmrh.patypet.ui.components.CameraPermissionTextProvider
 import com.ahmrh.patypet.ui.components.PermissionDialog
+import com.ahmrh.patypet.ui.navigation.NavigationItem
+import com.ahmrh.patypet.ui.navigation.Screen
+import com.ahmrh.patypet.ui.screen.auth.AuthViewModel
+import com.ahmrh.patypet.ui.screen.patypet.MainViewModel
+import com.ahmrh.patypet.ui.screen.patypet.home.HomeScreen
 import com.ahmrh.patypet.ui.screen.patypet.pet.PetCameraScreen
-import java.io.File
-import java.util.concurrent.Executor
+import com.ahmrh.patypet.ui.screen.patypet.pet.PetViewModel
+import com.ahmrh.patypet.ui.theme.PatypetTheme
+import com.ahmrh.patypet.utils.ViewModelFactory
 
-@RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun PatypetApp(
     navController: NavHostController = rememberNavController(),
@@ -71,11 +59,7 @@ fun PatypetApp(
     petViewModel: PetViewModel = viewModel(
         factory = ViewModelFactory(LocalContext.current)
     ),
-    onOpenAppSettings: () -> Unit = {},
-    outputDirectory: File,
-    executor: Executor,
-    onImageCaptured: (Uri) -> Unit,
-    onError: (ImageCaptureException) -> Unit
+    context : Context = LocalContext.current
 
 ) {
 
@@ -136,7 +120,9 @@ fun PatypetApp(
                         arrayOf(permission)
                     )
                 },
-                onGoToAppSettingsClick= onOpenAppSettings
+                onGoToAppSettingsClick = {
+                    context.findActivity().openAppSettings()
+                }
             )
         }
 
@@ -176,10 +162,6 @@ fun PatypetApp(
                     )
                 }
                 PetCameraScreen(
-                    outputDirectory = outputDirectory,
-                    executor = executor,
-                    onImageCaptured = onImageCaptured,
-                    onError = onError
                 )
             }
 

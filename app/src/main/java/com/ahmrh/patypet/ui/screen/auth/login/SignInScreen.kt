@@ -1,9 +1,10 @@
-package com.ahmrh.patypet.ui.screen.auth
+package com.ahmrh.patypet.ui.screen.auth.login
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
@@ -21,7 +22,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ahmrh.patypet.data.remote.responses.RemoteResponse
-import com.ahmrh.patypet.data.model.User
 import com.ahmrh.patypet.ui.components.LoadingBar
 import com.ahmrh.patypet.ui.components.LongButton
 import com.ahmrh.patypet.ui.components.LongInputField
@@ -32,53 +32,64 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
-fun SignUpScreen(
+fun SignInScreen(
     uiState: StateFlow<UiState<RemoteResponse>>,
-    onSignUp : (
-        name: String,
+    onSignIn: (
         email: String,
         password: String
     ) -> Unit,
+    forceLogin: () -> Unit,
 ) {
-    val openDialog = remember { mutableStateOf(true) }
 
     Column(
         modifier = Modifier
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
 
         ) {
-        StaticHeader(type = "Cat")
-        SignUpForm(
-            onSignUp
+        StaticHeader(
+            modifier = Modifier,
+            type = "Dog"
+        )
+        SignInForm(
+            onSignIn
         )
     }
 
     uiState.collectAsState(initial = UiState.Idle).value.let { state ->
-        when(state){
+        when (state) {
             is UiState.Idle -> {
             }
+
             is UiState.Loading -> {
                 LoadingBar()
             }
-            is UiState.Success -> {
-                val response = state.data
 
-                RegisterDialog(message = response.message, success = response.success)
+            is UiState.Success -> {
+                val test = state.data
+
+                AuthDialog(
+                    success = test.success,
+                    message = test.message,
+                    forceLogin = forceLogin
+                )
+
             }
+
             is UiState.Error -> {
                 Text("Error")
 
             }
         }
     }
-
 }
 
 @Composable
-fun RegisterDialog(
+fun AuthDialog(
     message: String,
     success: Boolean,
+    forceLogin: () -> Unit
 ) {
     var isOpenState by remember { mutableStateOf(true) }
 
@@ -89,22 +100,33 @@ fun RegisterDialog(
             },
             title = {
                 Text(
-                    text = if(success)  "User Registered" else "Server is Down"
+                    text = if(!success) "Server is Down" else "Authorized User"
                 )
             },
             text = {
                 Text(
-                    text = if (success) message
-                    else "it seems the server is down, try contacting the server owner"
+                    text = if (success) "Your login detail is authorized"
+                    else "it seems the server is down, are you the developer team?"
                 )
             },
-            confirmButton = {
+            dismissButton = {
+
                 TextButton(
                     onClick = {
                         isOpenState = false
                     }
                 ) {
-                    Text("Okay")
+                    Text("No")
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        isOpenState = false
+                        forceLogin()
+                    }
+                ) {
+                    Text("Yes")
                 }
             },
 
@@ -113,59 +135,68 @@ fun RegisterDialog(
     }
 }
 
+
 @Composable
-fun SignUpForm(
-    onSignUp: (name: String, email: String, password: String) -> Unit,
+fun SignInForm(
+    onSignIn: (email: String, password: String) -> Unit,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier.padding(vertical = 24.dp)
     ) {
+
         Text(
-            "Register",
+            "Welcome Back",
             style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Bold
         )
         Text(
-            "Sign Up with your Account",
+            "Sign In with your Account",
             style = MaterialTheme.typography.bodyMedium,
 
             )
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier
-                .padding(vertical = 24.dp)
+                .padding(vertical = 48.dp)
         ) {
 
-            var name by remember { mutableStateOf("") }
             var email by remember { mutableStateOf("") }
             var password by remember { mutableStateOf("") }
-
-            LongInputField(
-                label = "Name",
-                inputText = name,
-                onTextChange = { name = it }
-            )
             LongInputField(
                 label = "Email",
                 inputText = email,
                 onTextChange = { email = it }
             )
+            Column(
+                horizontalAlignment = Alignment.End,
+            ) {
 
-            LongInputField(
-                label = "Password",
-                inputText = password,
-                isPassword = true,
-                onTextChange = { password = it }
-            )
+                LongInputField(
+                    label = "Password",
+                    inputText = password,
+                    isPassword = true,
+                    onTextChange = { password = it }
+                )
+                TextButton(
+                    onClick = {},
+                    modifier = Modifier
+                        .height(36.dp)
+                ) {
+                    Text(
+                        "Forgot password?",
+                        color = MaterialTheme.colorScheme.onSurface,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
+            }
             LongButton(
-                text = "Sign Up",
-                modifier = Modifier.padding(vertical = 16.dp),
+                text = "Sign In",
+                modifier = Modifier.padding(vertical = 8.dp),
                 color = MaterialTheme.colorScheme.secondary,
                 textColor = MaterialTheme.colorScheme.onSecondary,
                 onClick = {
-                    onSignUp(name, email, password)
+                    onSignIn(email, password)
                 }
             )
         }
@@ -174,17 +205,11 @@ fun SignUpForm(
 
 }
 
-data class SignUpState(
-    val name: String,
-    val email: String,
-    val password: String,
-)
-
 @Preview(showBackground = true)
 @Composable
-fun SignUpScreenPreview() {
+fun SignInScreenPreview() {
     PatypetTheme {
-        SignUpScreen(
+        SignInScreen(
             uiState = MutableStateFlow(
                 UiState.Success(
                     RemoteResponse(
@@ -192,12 +217,15 @@ fun SignUpScreenPreview() {
                         message = ""
                     )
                 )
-            ), onSignUp = { name, email, password ->
+            ),
+            onSignIn = { email, password ->
                 Log.d(
                     "Testing Input",
-                    "$name $email $password"
+                    "$email $password"
                 )
-            }
+
+            },
+            {}
         )
     }
 }

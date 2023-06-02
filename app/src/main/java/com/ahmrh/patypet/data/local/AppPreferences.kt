@@ -5,7 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.ahmrh.patypet.data.model.User
+import com.ahmrh.patypet.domain.model.User
 import com.ahmrh.patypet.ui.screen.auth.AuthViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first

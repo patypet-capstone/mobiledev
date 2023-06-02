@@ -1,51 +1,98 @@
 package com.ahmrh.patypet
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
+import androidx.navigation.compose.rememberNavController
+import com.ahmrh.patypet.ui.navigation.Screen
 import com.ahmrh.patypet.ui.screen.auth.AuthViewModel
+import com.ahmrh.patypet.ui.screen.auth.LandingScreen
 import com.ahmrh.patypet.ui.theme.PatypetTheme
 import com.ahmrh.patypet.utils.AuthState
 import com.ahmrh.patypet.utils.ViewModelFactory
+import com.ahmrh.patypet.utils.rotateFile
 import java.io.File
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 
 class MainActivity : ComponentActivity() {
-    private lateinit var outputDirectory: File
-    private lateinit var cameraExecutor: ExecutorService
+    private var getFile: File? = null
+    companion object {
+        const val CAMERA_X_RESULT = 200
 
-    private var shouldShowCamera: MutableState<Boolean> = mutableStateOf(false)
-    @RequiresApi(Build.VERSION_CODES.P)
+        private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
+        private const val REQUEST_CODE_PERMISSIONS = 10
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        outputDirectory = getOutputDirectory()
-        cameraExecutor = Executors.newSingleThreadExecutor()
-
+        installSplashScreen()
         setContent {
             PatypetTheme {
+                val navController = rememberNavController()
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    NavHost(
+                        navController = navController,
+                        startDestination = "auth",
+                    ){
+                        composable(Screen.Launch.route){
+
+                        }
+                        navigation(
+                            startDestination = Screen.Landing.route,
+                            route = "auth"
+                        ){
+                            composable(Screen.Landing.route){
+                                LandingScreen()
+                            }
+                            composable(Screen.SignIn.route){
+
+                            }
+                            composable(Screen.SignUp.route){
+
+                            }
+                        }
+
+                        navigation(
+                            startDestination = Screen.Home.route,
+                            route = "patypet"
+                        ){
+                            composable(Screen.Home.route){
+
+                            }
+
+                            composable(Screen.Home.route){
+
+                            }
+
+                            composable(Screen.SignUp.route){
+
+                            }
+                        }
+                    }
 
                     val authViewModel: AuthViewModel = viewModel(
                         factory = ViewModelFactory(LocalContext.current)
@@ -62,40 +109,52 @@ class MainActivity : ComponentActivity() {
                             }
 
                             is AuthState.Authenticated -> {
-                                PatypetApp(
-                                    onOpenAppSettings = ::openAppSettings,
-                                    outputDirectory = outputDirectory,
-                                    executor = cameraExecutor,
-                                    onImageCaptured = ::handleImageCapture,
-                                    onError = { Log.e("kilo", "View error:", it) }
-                                )
+                                PatypetApp()
                             }
 
                         }
                     }
-                }
 
+
+                }
             }
         }
     }
-    private fun handleImageCapture(uri: Uri) {
-        Log.i("kilo", "Image captured: $uri")
-        shouldShowCamera.value = false
-    }
 
-    private fun getOutputDirectory(): File {
-        val mediaDir = externalMediaDirs.firstOrNull()?.let {
-            File(it, resources.getString(R.string.app_name)).apply { mkdirs() }
+    private val launcherIntentCameraX = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        if (it.resultCode == CAMERA_X_RESULT) {
+            val myFile = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                it.data?.getSerializableExtra("picture", File::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                it.data?.getSerializableExtra("picture")
+            } as? File
+
+            val isBackCamera = it.data?.getBooleanExtra("isBackCamera", true) as Boolean
+
+            myFile?.let { file ->
+                rotateFile(file, isBackCamera)
+                getFile = file
+            }
         }
-
-        return if (mediaDir != null && mediaDir.exists()) mediaDir else filesDir
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        cameraExecutor.shutdown()
+    private fun startCameraX() {
+        val intent = Intent(this, CameraActivity::class.java)
+        launcherIntentCameraX.launch(intent)
     }
 
+}
+
+@Composable
+fun NavBackStackEntry.sharedViewModel(navController: NavController) : ViewModel {
+    val navGraphRoute = destination.parent?.route ?: return viewModel()
+    val parentEntry = remember(this) {
+        navController.getBackStackEntry(navGraphRoute)
+    }
+    return viewModel(parentEntry)
 }
 
 fun Activity.openAppSettings(){

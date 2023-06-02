@@ -1,4 +1,4 @@
-package com.ahmrh.patypet.data.model
+package com.ahmrh.patypet.domain.model
 
 data class User(
     val id: Int = -1,

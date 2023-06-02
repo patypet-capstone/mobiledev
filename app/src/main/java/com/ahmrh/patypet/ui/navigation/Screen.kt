@@ -1,6 +1,9 @@
 package com.ahmrh.patypet.ui.navigation
 
 sealed class Screen(val route: String) {
+    // Launch
+    object Launch: Screen("launch")
+
 
 
     // Authentication
@@ -11,7 +14,7 @@ sealed class Screen(val route: String) {
     object SignUp: Screen("sign_up")
 
 
-    // Main App
+    // Patypet
     object Home: Screen("home")
 
     object Pet: Screen("pet")
@@ -21,4 +24,6 @@ sealed class Screen(val route: String) {
     object Detail : Screen("pet/{petId}"){
         fun createRoute(petId: Int) = "pet/$petId"
     }
+
+
 }

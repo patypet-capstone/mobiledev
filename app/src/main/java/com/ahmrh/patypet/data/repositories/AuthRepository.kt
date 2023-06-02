@@ -2,7 +2,7 @@ package com.ahmrh.patypet.data.repositories
 
 import android.util.Log
 import com.ahmrh.patypet.data.local.AppPreferences
-import com.ahmrh.patypet.data.model.User
+import com.ahmrh.patypet.domain.model.User
 import com.ahmrh.patypet.data.remote.responses.LoginResponse
 import com.ahmrh.patypet.data.remote.responses.RegisterResponse
 import com.ahmrh.patypet.data.remote.responses.RemoteResponse
