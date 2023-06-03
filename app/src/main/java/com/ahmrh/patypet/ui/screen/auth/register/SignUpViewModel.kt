@@ -11,6 +11,7 @@ import com.ahmrh.patypet.domain.use_case.auth.AuthUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -18,7 +19,7 @@ class SignUpViewModel @Inject constructor(
     private val authUseCases: AuthUseCases
 ) : ViewModel() {
 
-    private val _uiState = mutableStateOf<UiState<String>>(UiState.Loading)
+    private val _uiState = mutableStateOf<UiState<String>>(UiState.Idle)
     val uiState: State<UiState<String>> = _uiState
 
      fun signUp(

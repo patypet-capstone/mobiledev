@@ -21,7 +21,7 @@ import com.ahmrh.patypet.ui.theme.PatypetTheme
 fun LandingScreen(
     navigateToSignIn: () -> Unit = {},
     navigateToSignUp: () -> Unit = {},
-    authorize: () -> Unit = {}
+    authenticate: () -> Unit = {}
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,

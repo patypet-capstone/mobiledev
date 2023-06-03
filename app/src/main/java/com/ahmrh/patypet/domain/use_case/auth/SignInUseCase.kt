@@ -22,7 +22,9 @@ class SignInUseCase @Inject constructor(
         try {
             emit(Resource.Loading())
             repository.login(email, password, scope)
-            emit(Resource.Success("Authorized USer"))
+                .collect{
+                    emit(Resource.Success("Authorized User"))
+                }
         } catch (e: HttpException) {
             emit(
                 Resource.Error(

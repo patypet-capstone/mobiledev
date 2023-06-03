@@ -1,24 +1,23 @@
 package com.ahmrh.patypet.data.repositories
 
+
 import android.util.Log
 import com.ahmrh.patypet.data.local.AppPreferences
-import com.ahmrh.patypet.domain.model.User
 import com.ahmrh.patypet.data.remote.responses.LoginResponse
 import com.ahmrh.patypet.data.remote.responses.RegisterResponse
 import com.ahmrh.patypet.data.remote.responses.RemoteResponse
-import com.ahmrh.patypet.data.remote.responses.UserResponse
 import com.ahmrh.patypet.data.remote.retrofit.AuthApiService
 import com.google.gson.JsonObject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-
-
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import java.io.IOException
 
 class AuthRepository(
     private val apiService: AuthApiService,
@@ -48,52 +47,11 @@ class AuthRepository(
 
     }
 
-    fun getUser(
-        token: String
-    ): Flow<User> {
-
-        val user = MutableStateFlow(User())
-        
-        val client = apiService.getUser(token)
-        client.enqueue(object : Callback<UserResponse> {
-            override fun onResponse(
-                call: Call<UserResponse>,
-                response: Response<UserResponse>
-            ) {
-                if (response.isSuccessful) {
-                    user.value  = User(
-                        response.body()?.id ?: -1,
-                        response.body()?.name ?: "Unnamed Person",
-                        response.body()?.email ?: "Null",
-                    )
-
-                } else {
-                    Log.e(TAG, "onFailureResponse: ${response.message()}")
-                }
-
-            }
-
-            override fun onFailure(
-                call: Call<UserResponse>,
-                t: Throwable
-            ) {
-                Log.e(
-                    TAG,
-                    "onFailureThrowable: ${t.message}"
-                )
-
-            }
-        })
-
-        return user
-    }
-
-
-    suspend fun login(
+     fun login(
         email: String,
         password: String,
         scope: CoroutineScope,
-    ): Flow<RemoteResponse> {
+    ): Flow<Nothing> = flow {
         var token = ""
 
         val rawJsonObject = JsonObject()
@@ -110,21 +68,12 @@ class AuthRepository(
                 if (response.isSuccessful) {
                     token =
                         response.body()?.token.toString()
-                    authResponse.value =
-                        RemoteResponse(
-                            success = true,
-                            message = response.message(),
-                        )
                     scope.launch {
                         pref.saveLogin(token)
                     }
                 } else {
-                    authResponse.value =
-                        RemoteResponse(
-                            success = false,
-                            message = response.message(),
-                        )
-                    Log.e(TAG, "onFailureResponse ")
+                    Log.e(TAG, "onFailureResponse : ${response.message()}")
+                    throw Exception(response.message())
                 }
 
             }
@@ -137,18 +86,18 @@ class AuthRepository(
                     TAG,
                     "onFailureThrowable: ${t.message}"
                 )
+                throw Exception(t.message)
 
             }
         })
 
-        return authResponse
     }
 
      fun register(
         name: String,
         email: String,
         password: String
-    ) {
+    ) : Flow<Nothing> = flow {
          Log.d(TAG, "register user")
 
          val rawJsonObject = JsonObject()
@@ -157,8 +106,7 @@ class AuthRepository(
          rawJsonObject.addProperty("password", password)
          Log.d(TAG, rawJsonObject.toString())
 
-        val client =
-            apiService.register(rawJsonObject)
+        val client = apiService.register(rawJsonObject)
         client.enqueue(object : Callback<RegisterResponse> {
             override fun onResponse(
                 call: Call<RegisterResponse>,
@@ -168,23 +116,9 @@ class AuthRepository(
                     TAG,
                     response.body().toString()
                 )
-                if (response.isSuccessful) {
-                    authResponse.value =
-                        RemoteResponse(
-                            success = true,
-                            message = response.message(),
-                        )
-
-                } else {
-                    authResponse.value =
-                        RemoteResponse(
-                            success = false,
-                            message = response.message(),
-                        )
-                    Log.e(
-                        TAG,
-                        "onFailureResponse: ${response.message()}"
-                    )
+                if (!response.isSuccessful) {
+                    Log.e(TAG, "onFailureResponse : ${response.message()}")
+                    throw Exception(response.message())
                 }
             }
 
@@ -192,15 +126,13 @@ class AuthRepository(
                 call: Call<RegisterResponse>,
                 t: Throwable
             ) {
-                Log.e(
-                    TAG,
-                    "onFailureThrowable: ${t.message}"
-                )
-                throw(t)
+                Log.e(TAG, "onFailure : ${t.message}")
+                throw Exception(t.message)
             }
         })
 
     }
+
 
     companion object {
         const val TAG = "AuthRepository"

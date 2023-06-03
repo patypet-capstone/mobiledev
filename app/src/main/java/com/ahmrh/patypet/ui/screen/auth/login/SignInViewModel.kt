@@ -18,7 +18,7 @@ class SignInViewModel @Inject constructor(
     private val authUseCases: AuthUseCases
 ) : ViewModel() {
 
-    private val _uiState = mutableStateOf<UiState<String>>(UiState.Loading)
+    private val _uiState = mutableStateOf<UiState<String>>(UiState.Idle)
     val uiState: State<UiState<String>> = _uiState
 
     fun signIn(

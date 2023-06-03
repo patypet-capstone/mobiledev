@@ -7,11 +7,15 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -26,7 +30,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.ahmrh.patypet.ui.navigation.Screen
-import com.ahmrh.patypet.ui.screen.auth.AuthViewModel
 import com.ahmrh.patypet.ui.screen.auth.LandingScreen
 import com.ahmrh.patypet.ui.screen.auth.login.SignInScreen
 import com.ahmrh.patypet.ui.screen.auth.register.SignUpScreen
@@ -78,13 +81,6 @@ class MainActivity : ComponentActivity() {
                                     navigateToSignUp = {
                                         navController.navigate(Screen.Auth.SignUp.route)
                                     },
-                                    authorize = {
-                                        navController.navigate(Screen.Patypet.route){
-                                            popUpTo(Screen.Auth.route){
-                                                inclusive = true
-                                            }
-                                        }
-                                    }
                                 )
                             }
                             composable(Screen.Auth.SignIn.route){
@@ -94,7 +90,7 @@ class MainActivity : ComponentActivity() {
                                 SignInScreen(
                                     viewModel.uiState,
                                     viewModel::signIn,
-                                    authorize = {
+                                    authenticate = {
                                         navController.navigate(Screen.Patypet.route){
                                             popUpTo(Screen.Auth.route){
                                                 inclusive = true
@@ -111,13 +107,6 @@ class MainActivity : ComponentActivity() {
                                 SignUpScreen(
                                     viewModel.uiState,
                                     viewModel::signUp,
-                                    authorize = {
-                                        navController.navigate(Screen.Patypet.route){
-                                            popUpTo(Screen.Auth.route){
-                                                inclusive = true
-                                            }
-                                        }
-                                    }
                                 )
                             }
                         }
@@ -127,7 +116,15 @@ class MainActivity : ComponentActivity() {
                             route = Screen.Patypet.route
                         ){
                             composable(Screen.Patypet.Home.route){
-                                HomeScreen()
+                                HomeScreen(
+                                    deauthenticate = {
+                                        navController.navigate(Screen.Auth.route){
+                                            popUpTo(Screen.Patypet.route){
+                                                inclusive=true
+                                            }
+                                        }
+                                    }
+                                )
                             }
 
                             composable(Screen.Patypet.Pet.route){
@@ -167,6 +164,7 @@ class MainActivity : ComponentActivity() {
         val intent = Intent(this, CameraActivity::class.java)
         launcherIntentCameraX.launch(intent)
     }
+
 
 }
 

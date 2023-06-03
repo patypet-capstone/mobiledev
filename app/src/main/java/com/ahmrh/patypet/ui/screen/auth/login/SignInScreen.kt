@@ -1,18 +1,16 @@
 package com.ahmrh.patypet.ui.screen.auth.login
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -22,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.ahmrh.patypet.data.remote.responses.RemoteResponse
 import com.ahmrh.patypet.ui.components.LoadingBar
 import com.ahmrh.patypet.ui.components.LongButton
 import com.ahmrh.patypet.ui.components.LongInputField
@@ -30,9 +27,6 @@ import com.ahmrh.patypet.ui.components.StaticHeader
 import com.ahmrh.patypet.ui.theme.PatypetTheme
 import com.ahmrh.patypet.domain.state.UiState
 import com.ahmrh.patypet.ui.components.dialog.AuthDialog
-import com.ahmrh.patypet.ui.screen.auth.register.SignUpForm
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun SignInScreen(
@@ -41,7 +35,7 @@ fun SignInScreen(
         email: String,
         password: String
     ) -> Unit,
-    authorize: () -> Unit
+    authenticate: () -> Unit
 ) {
 
     Column(
@@ -51,6 +45,11 @@ fun SignInScreen(
         verticalArrangement = Arrangement.spacedBy(8.dp),
 
         ) {
+        Button(
+            onClick = authenticate
+        ){
+            Text("Debug")
+        }
         StaticHeader(
             modifier = Modifier,
             type = "Dog"
@@ -61,6 +60,9 @@ fun SignInScreen(
     }
 
     when(uiState.value){
+        is UiState.Idle -> {
+            // Nothing happened
+        }
         is UiState.Loading -> {
             LoadingBar()
             Text("Loading")
@@ -68,7 +70,7 @@ fun SignInScreen(
         is UiState.Success -> {
             val message = (uiState.value as UiState.Success<String>).data
             AuthDialog(title = "Authorized User", body = message)
-            authorize()
+            authenticate()
         }
 
         is UiState.Error -> {

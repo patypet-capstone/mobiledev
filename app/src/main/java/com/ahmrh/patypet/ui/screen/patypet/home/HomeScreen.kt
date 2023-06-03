@@ -12,14 +12,14 @@ import com.ahmrh.patypet.ui.theme.PatypetTheme
 
 @Composable
 fun HomeScreen(
-    onLogout : () -> Unit = {}
+    deauthenticate: () -> Unit = {}
 ){
     Box(
         modifier = Modifier.fillMaxSize()
     ){
 
         Button(
-            onClick = onLogout,
+            onClick = deauthenticate,
             modifier = Modifier
                 .align(Alignment.Center)
         ){
