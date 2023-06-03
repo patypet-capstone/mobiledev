@@ -1,4 +1,4 @@
-package com.ahmrh.patypet.ui.components
+package com.ahmrh.patypet.ui.components.dialog
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api

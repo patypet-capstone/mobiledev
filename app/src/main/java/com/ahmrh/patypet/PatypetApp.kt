@@ -35,8 +35,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.ahmrh.patypet.di.Injection.findActivity
-import com.ahmrh.patypet.ui.components.CameraPermissionTextProvider
-import com.ahmrh.patypet.ui.components.PermissionDialog
+import com.ahmrh.patypet.ui.components.dialog.CameraPermissionTextProvider
+import com.ahmrh.patypet.ui.components.dialog.PermissionDialog
 import com.ahmrh.patypet.ui.navigation.NavigationItem
 import com.ahmrh.patypet.ui.navigation.Screen
 import com.ahmrh.patypet.ui.screen.auth.AuthViewModel
@@ -127,125 +127,48 @@ fun PatypetApp(
         }
 
 
-    val bottomBarRoute = listOf(
-        Screen.Home.route,
-        Screen.Profile.route,
-
-    )
-
-    Scaffold(
-        bottomBar = {
-            if (currentRoute in bottomBarRoute) {
-                BottomBar(navController)
-            }
-        }
-    ) {
-        NavHost(
-            navController = navController,
-            startDestination = Screen.Home.route,
-            modifier = Modifier.padding(it)
-        ){
-            composable(Screen.Home.route){
-                HomeScreen(
-                    onLogout = authViewModel::logout
-                )
-            }
-            composable(Screen.Profile.route){
-
-            }
-            composable(Screen.Pet.route){
-                LaunchedEffect(snackbarHostState){
-                    multiplePermissionResultLauncher.launch(
-                        arrayOf(
-                            Manifest.permission.CAMERA
-                        )
-                    )
-                }
-                PetCameraScreen(
-                )
-            }
-
-        }
-    }
+//    val bottomBarRoute = listOf(
+//        Screen.Home.route,
+//        Screen.Profile.route,
+//    )
+//
+//    Scaffold(
+//        bottomBar = {
+//            if (currentRoute in bottomBarRoute) {
+//                BottomBar(navController)
+//            }
+//        }
+//    ) {
+//        NavHost(
+//            navController = navController,
+//            startDestination = Screen.Home.route,
+//            modifier = Modifier.padding(it)
+//        ){
+//            composable(Screen.Home.route){
+//                HomeScreen(
+//                    onLogout = authViewModel::logout
+//                )
+//            }
+//            composable(Screen.Profile.route){
+//
+//            }
+//            composable(Screen.Pet.route){
+//                LaunchedEffect(snackbarHostState){
+//                    multiplePermissionResultLauncher.launch(
+//                        arrayOf(
+//                            Manifest.permission.CAMERA
+//                        )
+//                    )
+//                }
+//                PetCameraScreen(
+//                )
+//            }
+//
+//        }
+//    }
 }
 
 
-@Composable
-private fun BottomBar(
-    navController: NavHostController,
-    modifier: Modifier = Modifier
-) {
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
-
-    val navigationItems = listOf(
-        NavigationItem(
-            title = "Home",
-            icon = Icons.Default.Home,
-            screen = Screen.Home
-        ),
-        NavigationItem(
-            title = "Pet",
-            icon = ImageVector.vectorResource(id = R.drawable.patypet_logo),
-            screen = Screen.Home
-        ),
-        NavigationItem(
-            title = "Profile",
-            icon = Icons.Default.Person,
-            screen = Screen.Profile
-        )
-    )
-    NavigationBar(
-        modifier = modifier
-    ) {
-        NavigationBarItem(
-            icon = {
-               Icon(
-                   imageVector = Icons.Default.Home,
-                   contentDescription = "Home"
-               )
-            },
-            label = {Text("Home")},
-            selected = currentRoute == Screen.Home.route,
-            onClick = {
-                navController.navigate(Screen.Home.route)
-            }
-        )
-        FloatingActionButton(
-            modifier = Modifier
-                .padding(12.dp),
-            containerColor = MaterialTheme.colorScheme.secondary,
-            onClick = {
-                navController.navigate(Screen.Pet.route)
-            }
-        ) {
-            Icon(
-                imageVector = navigationItems[1].icon,
-                contentDescription = navigationItems[1].title,
-                modifier = Modifier
-                    .padding(8.dp)
-            )
-
-        }
-
-        NavigationBarItem(
-            icon = {
-                Icon(
-                    imageVector = Icons.Default.Person,
-                    contentDescription = "Profile",
-                )
-            },
-            label = {Text("Profile")},
-            selected = currentRoute == Screen.Profile.route,
-            onClick = {
-                navController.navigate(Screen.Profile.route)
-            },
-
-        )
-
-    }
-
-}
 
 
 @Preview(showBackground = true)

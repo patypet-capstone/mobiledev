@@ -21,7 +21,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
@@ -33,7 +32,10 @@ import com.ahmrh.patypet.ui.screen.auth.login.SignInScreen
 import com.ahmrh.patypet.ui.screen.auth.register.SignUpScreen
 import com.ahmrh.patypet.ui.theme.PatypetTheme
 import com.ahmrh.patypet.domain.utils.rotateFile
+import com.ahmrh.patypet.ui.screen.auth.register.SignInViewModel
 import com.ahmrh.patypet.ui.screen.auth.register.SignUpViewModel
+import com.ahmrh.patypet.ui.screen.patypet.home.HomeScreen
+import com.ahmrh.patypet.ui.screen.patypet.pet.PetScreen
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 
@@ -65,78 +67,75 @@ class MainActivity : ComponentActivity() {
 
                         }
                         navigation(
-                            startDestination = Screen.Landing.route,
+                            startDestination = Screen.Auth.Landing.route,
                             route = Screen.Auth.route
                         ){
-                            composable(Screen.Landing.route){
+                            composable(Screen.Auth.Landing.route){
                                 LandingScreen(
                                     navigateToSignIn = {
+                                        navController.navigate(Screen.Auth.SignIn.route)
                                     },
                                     navigateToSignUp = {
-                                        navController.navigate(Screen.SignUp.route)
+                                        navController.navigate(Screen.Auth.SignUp.route)
+                                    },
+                                    authorize = {
+                                        navController.navigate(Screen.Patypet.route){
+                                            popUpTo(Screen.Auth.route){
+                                                inclusive = true
+                                            }
+                                        }
                                     }
                                 )
                             }
-                            composable(Screen.SignIn.route){
-                                val viewModel = it.sharedViewModel<AuthViewModel>(
+                            composable(Screen.Auth.SignIn.route){
+                                val viewModel = it.sharedViewModel<SignInViewModel>(
                                     navController = navController
                                 )
                                 SignInScreen(
                                     viewModel.uiState,
-                                    viewModel::login,
-                                    viewModel::forceLogin
+                                    viewModel::signIn,
+                                    authorize = {
+                                        navController.navigate(Screen.Patypet.route){
+                                            popUpTo(Screen.Auth.route){
+                                                inclusive = true
+                                            }
+                                        }
+                                    }
                                 )
 
                             }
-                            composable(Screen.SignUp.route){
+                            composable(Screen.Auth.SignUp.route){
                                 val viewModel = it.sharedViewModel<SignUpViewModel>(
                                     navController = navController
                                 )
                                 SignUpScreen(
-                                    viewModel.state,
+                                    viewModel.uiState,
                                     viewModel::signUp,
+                                    authorize = {
+                                        navController.navigate(Screen.Patypet.route){
+                                            popUpTo(Screen.Auth.route){
+                                                inclusive = true
+                                            }
+                                        }
+                                    }
                                 )
                             }
                         }
 
                         navigation(
-                            startDestination = Screen.Home.route,
-                            route = "patypet"
+                            startDestination = Screen.Patypet.Home.route,
+                            route = Screen.Patypet.route
                         ){
-                            composable(Screen.Home.route){
-
+                            composable(Screen.Patypet.Home.route){
+                                HomeScreen()
                             }
 
-                            composable(Screen.Home.route){
-
+                            composable(Screen.Patypet.Pet.route){
+                                PetScreen()
                             }
 
-                            composable(Screen.SignUp.route){
-
-                            }
                         }
                     }
-
-//                    val authViewModel: AuthViewModel = viewModel(
-//                        factory = ViewModelFactory(LocalContext.current)
-//                    )
-//                    authViewModel.getAuthState()
-//                    val authState = authViewModel.authState
-//
-//                    val authState: MutableStateFlow<AuthState> = MutableStateFlow(AuthState.Authenticated(""))
-//
-//                    authState.collectAsState(initial = AuthState.Unknown).value.let { state ->
-//                        when (state) {
-//                            is AuthState.Unknown -> {
-//                                Authenticator()
-//                            }
-//
-//                            is AuthState.Authenticated -> {
-//                                PatypetApp()
-//                            }
-//
-//                        }
-//                    }
 
 
                 }

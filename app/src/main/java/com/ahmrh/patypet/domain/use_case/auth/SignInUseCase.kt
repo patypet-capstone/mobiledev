@@ -3,26 +3,26 @@ package com.ahmrh.patypet.domain.use_case.auth
 import android.util.Log
 import com.ahmrh.patypet.common.Resource
 import com.ahmrh.patypet.data.repositories.AuthRepository
-import com.ahmrh.patypet.domain.model.User
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
-class SignUpUseCase @Inject constructor(
+class SignInUseCase @Inject constructor(
     private val repository: AuthRepository
 ) {
     operator fun invoke(
-        name: String,
         email: String,
-        password: String
+        password: String,
+        scope: CoroutineScope
     ): Flow<Resource<String>> = flow {
-        Log.d("RegisterUseCase", "Sign Up")
+        Log.d("SignInUseCase", "Sign In Invoked")
         try {
             emit(Resource.Loading())
-            repository.register(name, email, password)
-            emit(Resource.Success("User registered"))
+            repository.login(email, password, scope)
+            emit(Resource.Success("Authorized USer"))
         } catch (e: HttpException) {
             emit(
                 Resource.Error(

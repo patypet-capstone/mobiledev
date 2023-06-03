@@ -13,23 +13,26 @@ sealed class Screen(val route: String) {
 
         object SignUp: Screen("sign_up")
     }
-    object Landing: Screen("landing")
-
-    object SignIn: Screen("sign_in")
-
-    object SignUp: Screen("sign_up")
+//    object Landing: Screen("landing")
+//
+//    object SignIn: Screen("sign_in")
+//
+//    object SignUp: Screen("sign_up")
 
 
     // Patypet
-    object Home: Screen("home")
+    object Patypet: Screen("patypet") {
 
-    object Pet: Screen("pet")
+        object Home: Screen("home")
+        object Pet: Screen("pet")
+        object Profile: Screen("profile")
 
-    object Profile: Screen("profile")
-
-    object Detail : Screen("pet/{petId}"){
-        fun createRoute(petId: Int) = "pet/$petId"
+        object Detail : Screen("pet/{petId}"){
+            fun createRoute(petId: Int) = "pet/$petId"
+        }
     }
+
+
 
 
 }

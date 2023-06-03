@@ -18,6 +18,7 @@ import retrofit2.Response
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import java.io.IOException
 
 class AuthRepository(
     private val apiService: AuthApiService,
@@ -148,6 +149,7 @@ class AuthRepository(
         email: String,
         password: String
     ) {
+         Log.d(TAG, "register user")
 
          val rawJsonObject = JsonObject()
          rawJsonObject.addProperty("name", name)
@@ -194,6 +196,7 @@ class AuthRepository(
                     TAG,
                     "onFailureThrowable: ${t.message}"
                 )
+                throw(t)
             }
         })
 

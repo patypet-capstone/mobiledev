@@ -20,7 +20,8 @@ import com.ahmrh.patypet.ui.theme.PatypetTheme
 @Composable
 fun LandingScreen(
     navigateToSignIn: () -> Unit = {},
-    navigateToSignUp: () -> Unit = {}
+    navigateToSignUp: () -> Unit = {},
+    authorize: () -> Unit = {}
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,

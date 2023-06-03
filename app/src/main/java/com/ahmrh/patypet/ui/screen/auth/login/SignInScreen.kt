@@ -11,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,17 +29,19 @@ import com.ahmrh.patypet.ui.components.LongInputField
 import com.ahmrh.patypet.ui.components.StaticHeader
 import com.ahmrh.patypet.ui.theme.PatypetTheme
 import com.ahmrh.patypet.domain.state.UiState
+import com.ahmrh.patypet.ui.components.dialog.AuthDialog
+import com.ahmrh.patypet.ui.screen.auth.register.SignUpForm
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun SignInScreen(
-    uiState: StateFlow<UiState<RemoteResponse>>,
+    uiState: State<UiState<String>>,
     onSignIn: (
         email: String,
         password: String
     ) -> Unit,
-    forceLogin: () -> Unit,
+    authorize: () -> Unit
 ) {
 
     Column(
@@ -57,83 +60,25 @@ fun SignInScreen(
         )
     }
 
-    uiState.collectAsState(initial = UiState.Idle).value.let { state ->
-        when (state) {
-            is UiState.Idle -> {
-            }
+    when(uiState.value){
+        is UiState.Loading -> {
+            LoadingBar()
+            Text("Loading")
+        }
+        is UiState.Success -> {
+            val message = (uiState.value as UiState.Success<String>).data
+            AuthDialog(title = "Authorized User", body = message)
+            authorize()
+        }
 
-            is UiState.Loading -> {
-                LoadingBar()
-            }
+        is UiState.Error -> {
+            val message = (uiState.value as UiState.Error).errorMessage
+            AuthDialog(title = "Error Occured", body = message)
 
-            is UiState.Success -> {
-                val test = state.data
-
-                AuthDialog(
-                    success = test.success,
-                    message = test.message,
-                    forceLogin = forceLogin
-                )
-
-            }
-
-            is UiState.Error -> {
-                Text("Error")
-
-            }
         }
     }
 }
 
-@Composable
-fun AuthDialog(
-    message: String,
-    success: Boolean,
-    forceLogin: () -> Unit
-) {
-    var isOpenState by remember { mutableStateOf(true) }
-
-    if (isOpenState) {
-        AlertDialog(
-            onDismissRequest = {
-                isOpenState = false
-            },
-            title = {
-                Text(
-                    text = if(!success) "Server is Down" else "Authorized User"
-                )
-            },
-            text = {
-                Text(
-                    text = if (success) "Your login detail is authorized"
-                    else "it seems the server is down, are you the developer team?"
-                )
-            },
-            dismissButton = {
-
-                TextButton(
-                    onClick = {
-                        isOpenState = false
-                    }
-                ) {
-                    Text("No")
-                }
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        isOpenState = false
-                        forceLogin()
-                    }
-                ) {
-                    Text("Yes")
-                }
-            },
-
-
-            )
-    }
-}
 
 
 @Composable
@@ -209,23 +154,6 @@ fun SignInForm(
 @Composable
 fun SignInScreenPreview() {
     PatypetTheme {
-        SignInScreen(
-            uiState = MutableStateFlow(
-                UiState.Success(
-                    RemoteResponse(
-                        success = false,
-                        message = ""
-                    )
-                )
-            ),
-            onSignIn = { email, password ->
-                Log.d(
-                    "Testing Input",
-                    "$email $password"
-                )
 
-            },
-            {}
-        )
     }
 }

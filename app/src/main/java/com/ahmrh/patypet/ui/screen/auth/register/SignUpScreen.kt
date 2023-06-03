@@ -1,5 +1,6 @@
 package com.ahmrh.patypet.ui.screen.auth.register
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,6 +26,7 @@ import com.ahmrh.patypet.ui.components.LongInputField
 import com.ahmrh.patypet.ui.components.StaticHeader
 import com.ahmrh.patypet.ui.theme.PatypetTheme
 import com.ahmrh.patypet.domain.state.UiState
+import com.ahmrh.patypet.ui.components.dialog.AuthDialog
 
 @Composable
 fun SignUpScreen(
@@ -34,35 +36,34 @@ fun SignUpScreen(
         email: String,
         password: String
     ) -> Unit,
+    authorize: () -> Unit
 ) {
-    val openDialog = remember { mutableStateOf(true) }
 
+    Column(
+        modifier = Modifier
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+
+        ) {
+        StaticHeader(type = "Cat")
+        SignUpForm(
+            onSignUp
+        )
+    }
     when(uiState.value){
-        is UiState.Idle -> {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-
-                ) {
-                StaticHeader(type = "Cat")
-                SignUpForm(
-                    onSignUp
-                )
-            }
-        }
         is UiState.Loading -> {
             LoadingBar()
+            Text("Loading")
         }
         is UiState.Success -> {
             val message = (uiState.value as UiState.Success<String>).data
-            RegisterDialog(title = "User Registered", body = message)
+            AuthDialog(title = "User Registered", body = message)
 
         }
 
         is UiState.Error -> {
             val message = (uiState.value as UiState.Error).errorMessage
-            RegisterDialog(title = "Error Occured", body = message)
+            AuthDialog(title = "Error Occured", body = message)
 
         }
     }
@@ -70,42 +71,6 @@ fun SignUpScreen(
 
 }
 
-@Composable
-fun RegisterDialog(
-    title: String,
-    body: String,
-) {
-    var isOpenState by remember { mutableStateOf(true) }
-
-    if (isOpenState) {
-        AlertDialog(
-            onDismissRequest = {
-                isOpenState = false
-            },
-            title = {
-                Text(
-                    text = title
-                )
-            },
-            text = {
-                Text(
-                    text =  body
-                )
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        isOpenState = false
-                    }
-                ) {
-                    Text("Okay")
-                }
-            },
-
-
-            )
-    }
-}
 
 @Composable
 fun SignUpForm(
@@ -159,6 +124,7 @@ fun SignUpForm(
                 color = MaterialTheme.colorScheme.secondary,
                 textColor = MaterialTheme.colorScheme.onSecondary,
                 onClick = {
+                    Log.d("SignUpScreen", "Sign Up Clicked" )
                     onSignUp(name, email, password)
                 }
             )
@@ -167,12 +133,6 @@ fun SignUpForm(
     }
 
 }
-
-data class SignUpState(
-    val name: String,
-    val email: String,
-    val password: String,
-)
 
 @Preview(showBackground = true)
 @Composable

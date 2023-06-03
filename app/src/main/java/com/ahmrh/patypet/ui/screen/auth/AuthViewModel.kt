@@ -18,66 +18,66 @@ import javax.inject.Inject
 class AuthViewModel @Inject constructor(
     private val repository: AuthRepository
 ) : ViewModel() {
-    private val _uiState: MutableStateFlow<UiState<RemoteResponse>> =
-        MutableStateFlow(
-            UiState.Idle
-        )
-    val uiState: StateFlow<UiState<RemoteResponse>>
-        get() = _uiState
-
-    private val _authState: MutableStateFlow<AuthState> =
-        MutableStateFlow(AuthState.Unknown)
-    val authState: StateFlow<AuthState>
-        get() = _authState
-
-    fun getAuthState() {
-        viewModelScope.launch {
-            repository.isLogin()
-                .collect {
-                    Log.d(TAG, it.toString())
-                    if (it) _authState.value =
-                        AuthState.Authenticated(
-                            repository.getToken() ?: ""
-                        )
-                    else _authState.value =
-                        AuthState.Unknown
-                }
-
-        }
-
-    }
-
-    fun logout() {
-        viewModelScope.launch {
-            Log.d(TAG, "logout")
-            repository.endSession()
-        }
-    }
-
-
-    fun login(email: String, password: String) {
-
-        viewModelScope.launch {
-            _uiState.value = UiState.Loading
-            repository.login(
-                email,
-                password,
-                viewModelScope
-            )
-                .catch {
-                    _uiState.value =
-                        UiState.Error(it.message.toString())
-                }
-                .collect { response ->
-                    _uiState.value =
-                        UiState.Success(response)
-                    getAuthState()
-                }
-
-
-            _uiState.value = UiState.Idle
-        }
-    }
+//    private val _uiState: MutableStateFlow<UiState<RemoteResponse>> =
+//        MutableStateFlow(
+//            UiState.Idle
+//        )
+//    val uiState: StateFlow<UiState<RemoteResponse>>
+//        get() = _uiState
+//
+//    private val _authState: MutableStateFlow<AuthState> =
+//        MutableStateFlow(AuthState.Unknown)
+//    val authState: StateFlow<AuthState>
+//        get() = _authState
+//
+//    fun getAuthState() {
+//        viewModelScope.launch {
+//            repository.isLogin()
+//                .collect {
+//                    Log.d(TAG, it.toString())
+//                    if (it) _authState.value =
+//                        AuthState.Authenticated(
+//                            repository.getToken() ?: ""
+//                        )
+//                    else _authState.value =
+//                        AuthState.Unknown
+//                }
+//
+//        }
+//
+//    }
+//
+//    fun logout() {
+//        viewModelScope.launch {
+//            Log.d(TAG, "logout")
+//            repository.endSession()
+//        }
+//    }
+//
+//
+//    fun login(email: String, password: String) {
+//
+//        viewModelScope.launch {
+//            _uiState.value = UiState.Loading
+//            repository.login(
+//                email,
+//                password,
+//                viewModelScope
+//            )
+//                .catch {
+//                    _uiState.value =
+//                        UiState.Error(it.message.toString())
+//                }
+//                .collect { response ->
+//                    _uiState.value =
+//                        UiState.Success(response)
+//                    getAuthState()
+//                }
+//
+//
+//            _uiState.value = UiState.Idle
+//        }
+//    }
 
 //    fun register(
 //        name: String,

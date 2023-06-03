@@ -23,7 +23,7 @@ class MainViewModel @Inject constructor(
 
     private val _uiState: MutableStateFlow<UiState<RemoteResponse>> =
         MutableStateFlow(
-            UiState.Idle
+            UiState.Loading
         )
     val uiState: StateFlow<UiState<RemoteResponse>>
         get() = _uiState
