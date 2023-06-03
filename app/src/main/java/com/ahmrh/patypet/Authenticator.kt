@@ -18,9 +18,8 @@ import androidx.navigation.compose.rememberNavController
 import com.ahmrh.patypet.ui.navigation.Screen
 import com.ahmrh.patypet.ui.screen.auth.AuthViewModel
 import com.ahmrh.patypet.ui.screen.auth.login.SignInScreen
-import com.ahmrh.patypet.ui.screen.auth.logout.SignUpScreen
 import com.ahmrh.patypet.ui.screen.auth.LandingScreen
-import com.ahmrh.patypet.utils.ViewModelFactory
+import com.ahmrh.patypet.domain.utils.ViewModelFactory
 
 @Composable
 fun Authenticator(
@@ -46,7 +45,7 @@ fun Authenticator(
                     navigateToSignIn = {
                        navController.navigate(Screen.SignIn.route)
                     },
-                    navigateToSignOut = {
+                    navigateToSignUp = {
                         navController.navigate(Screen.SignUp.route)
                     }
                 )
@@ -60,10 +59,6 @@ fun Authenticator(
                 )
             }
             composable(Screen.SignUp.route){
-                SignUpScreen(
-                    viewModel.uiState,
-                    viewModel::register
-                )
             }
         }
     }

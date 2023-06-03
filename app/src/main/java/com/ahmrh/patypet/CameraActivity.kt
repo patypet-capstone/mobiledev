@@ -14,7 +14,7 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import com.ahmrh.patypet.databinding.ActivityCameraBinding
-import com.ahmrh.patypet.utils.createFile
+import com.ahmrh.patypet.domain.utils.createFile
 
 class CameraActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCameraBinding

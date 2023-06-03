@@ -1,4 +1,4 @@
-package com.ahmrh.patypet.utils
+package com.ahmrh.patypet.domain.utils
 
 import android.content.Context
 import androidx.lifecycle.ViewModel

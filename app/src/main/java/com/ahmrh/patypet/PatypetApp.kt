@@ -45,7 +45,7 @@ import com.ahmrh.patypet.ui.screen.patypet.home.HomeScreen
 import com.ahmrh.patypet.ui.screen.patypet.pet.PetCameraScreen
 import com.ahmrh.patypet.ui.screen.patypet.pet.PetViewModel
 import com.ahmrh.patypet.ui.theme.PatypetTheme
-import com.ahmrh.patypet.utils.ViewModelFactory
+import com.ahmrh.patypet.domain.utils.ViewModelFactory
 
 @Composable
 fun PatypetApp(

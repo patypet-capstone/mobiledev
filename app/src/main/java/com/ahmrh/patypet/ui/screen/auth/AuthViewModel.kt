@@ -1,23 +1,23 @@
 package com.ahmrh.patypet.ui.screen.auth
 
 import android.util.Log
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ahmrh.patypet.data.remote.responses.RemoteResponse
 import com.ahmrh.patypet.data.repositories.AuthRepository
-import com.ahmrh.patypet.utils.AuthState
-import com.ahmrh.patypet.utils.UiState
-import kotlinx.coroutines.channels.Channel
+import com.ahmrh.patypet.domain.state.AuthState
+import com.ahmrh.patypet.domain.state.UiState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class AuthViewModel(private val repository: AuthRepository) :
-    ViewModel() {
+@HiltViewModel
+class AuthViewModel @Inject constructor(
+    private val repository: AuthRepository
+) : ViewModel() {
     private val _uiState: MutableStateFlow<UiState<RemoteResponse>> =
         MutableStateFlow(
             UiState.Idle
@@ -25,7 +25,8 @@ class AuthViewModel(private val repository: AuthRepository) :
     val uiState: StateFlow<UiState<RemoteResponse>>
         get() = _uiState
 
-    private val _authState: MutableStateFlow<AuthState> = MutableStateFlow(AuthState.Unknown)
+    private val _authState: MutableStateFlow<AuthState> =
+        MutableStateFlow(AuthState.Unknown)
     val authState: StateFlow<AuthState>
         get() = _authState
 
@@ -34,16 +35,20 @@ class AuthViewModel(private val repository: AuthRepository) :
             repository.isLogin()
                 .collect {
                     Log.d(TAG, it.toString())
-                    if(it) _authState.value = AuthState.Authenticated(repository.getToken() ?: "")
-                    else _authState.value = AuthState.Unknown
+                    if (it) _authState.value =
+                        AuthState.Authenticated(
+                            repository.getToken() ?: ""
+                        )
+                    else _authState.value =
+                        AuthState.Unknown
                 }
 
         }
 
     }
 
-    fun logout(){
-        viewModelScope.launch{
+    fun logout() {
+        viewModelScope.launch {
             Log.d(TAG, "logout")
             repository.endSession()
         }
@@ -54,7 +59,11 @@ class AuthViewModel(private val repository: AuthRepository) :
 
         viewModelScope.launch {
             _uiState.value = UiState.Loading
-            repository.login(email, password, viewModelScope)
+            repository.login(
+                email,
+                password,
+                viewModelScope
+            )
                 .catch {
                     _uiState.value =
                         UiState.Error(it.message.toString())
@@ -70,31 +79,31 @@ class AuthViewModel(private val repository: AuthRepository) :
         }
     }
 
-    fun register(
-        name: String,
-        email: String,
-        password: String
-    ) {
+//    fun register(
+//        name: String,
+//        email: String,
+//        password: String
+//    ) {
+//
+//        _uiState.value = UiState.Loading
+//        viewModelScope.launch {
+//
+//            repository.register(name, email, password)
+//                .catch {
+//                    _uiState.value =
+//                        UiState.Error(it.message.toString())
+//                }
+//                .collect { response ->
+//                    _uiState.value =
+//                        UiState.Success(data = response)
+//                }
+//
+//            _uiState.value = UiState.Idle
+//        }
+//
+//    }
 
-        _uiState.value = UiState.Loading
-        viewModelScope.launch {
-
-            repository.register(name, email, password)
-                .catch {
-                    _uiState.value =
-                        UiState.Error(it.message.toString())
-                }
-                .collect { response ->
-                    _uiState.value =
-                        UiState.Success(data = response)
-                }
-
-            _uiState.value = UiState.Idle
-        }
-
-    }
-
-    fun forceLogin(){
+    fun forceLogin() {
         repository.forceLogin(viewModelScope)
     }
 

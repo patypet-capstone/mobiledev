@@ -6,6 +6,13 @@ sealed class Screen(val route: String) {
 
 
     // Authentication
+    object Auth: Screen("auth"){
+        object Landing: Screen("landing")
+
+        object SignIn: Screen("sign_in")
+
+        object SignUp: Screen("sign_up")
+    }
     object Landing: Screen("landing")
 
     object SignIn: Screen("sign_in")

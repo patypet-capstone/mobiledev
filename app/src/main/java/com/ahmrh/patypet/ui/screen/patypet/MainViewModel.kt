@@ -7,13 +7,16 @@ import androidx.lifecycle.viewModelScope
 import com.ahmrh.patypet.data.remote.responses.RemoteResponse
 import com.ahmrh.patypet.data.repositories.AuthRepository
 import com.ahmrh.patypet.data.repositories.PetRepository
-import com.ahmrh.patypet.utils.AuthState
-import com.ahmrh.patypet.utils.UiState
+import com.ahmrh.patypet.domain.state.AuthState
+import com.ahmrh.patypet.domain.state.UiState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MainViewModel(
+@HiltViewModel
+class MainViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val petRepository: PetRepository
 ): ViewModel() {

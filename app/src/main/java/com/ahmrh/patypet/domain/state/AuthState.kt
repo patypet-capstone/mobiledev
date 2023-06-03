@@ -1,4 +1,4 @@
-package com.ahmrh.patypet.utils
+package com.ahmrh.patypet.domain.state
 
 sealed class AuthState{
     object Unknown: AuthState()

@@ -1,6 +1,5 @@
-package com.ahmrh.patypet.ui.screen.auth.logout
+package com.ahmrh.patypet.ui.screen.auth.register
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,7 +9,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -20,19 +19,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.ahmrh.patypet.data.remote.responses.RemoteResponse
 import com.ahmrh.patypet.ui.components.LoadingBar
 import com.ahmrh.patypet.ui.components.LongButton
 import com.ahmrh.patypet.ui.components.LongInputField
 import com.ahmrh.patypet.ui.components.StaticHeader
 import com.ahmrh.patypet.ui.theme.PatypetTheme
-import com.ahmrh.patypet.utils.UiState
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import com.ahmrh.patypet.domain.state.UiState
 
 @Composable
 fun SignUpScreen(
-    uiState: StateFlow<UiState<RemoteResponse>>,
+    uiState: State<UiState<String>>,
     onSignUp : (
         name: String,
         email: String,
@@ -41,43 +37,43 @@ fun SignUpScreen(
 ) {
     val openDialog = remember { mutableStateOf(true) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
+    when(uiState.value){
+        is UiState.Idle -> {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
 
-        ) {
-        StaticHeader(type = "Cat")
-        SignUpForm(
-            onSignUp
-        )
-    }
-
-    uiState.collectAsState(initial = UiState.Idle).value.let { state ->
-        when(state){
-            is UiState.Idle -> {
-            }
-            is UiState.Loading -> {
-                LoadingBar()
-            }
-            is UiState.Success -> {
-                val response = state.data
-
-                RegisterDialog(message = response.message, success = response.success)
-            }
-            is UiState.Error -> {
-                Text("Error")
-
+                ) {
+                StaticHeader(type = "Cat")
+                SignUpForm(
+                    onSignUp
+                )
             }
         }
+        is UiState.Loading -> {
+            LoadingBar()
+        }
+        is UiState.Success -> {
+            val message = (uiState.value as UiState.Success<String>).data
+            RegisterDialog(title = "User Registered", body = message)
+
+        }
+
+        is UiState.Error -> {
+            val message = (uiState.value as UiState.Error).errorMessage
+            RegisterDialog(title = "Error Occured", body = message)
+
+        }
     }
+
 
 }
 
 @Composable
 fun RegisterDialog(
-    message: String,
-    success: Boolean,
+    title: String,
+    body: String,
 ) {
     var isOpenState by remember { mutableStateOf(true) }
 
@@ -88,13 +84,12 @@ fun RegisterDialog(
             },
             title = {
                 Text(
-                    text = if(success)  "User Registered" else "Server is Down"
+                    text = title
                 )
             },
             text = {
                 Text(
-                    text = if (success) message
-                    else "it seems the server is down, try contacting the server owner"
+                    text =  body
                 )
             },
             confirmButton = {
@@ -183,20 +178,5 @@ data class SignUpState(
 @Composable
 fun SignUpScreenPreview() {
     PatypetTheme {
-        SignUpScreen(
-            uiState = MutableStateFlow(
-                UiState.Success(
-                    RemoteResponse(
-                        success = false,
-                        message = ""
-                    )
-                )
-            ), onSignUp = { name, email, password ->
-                Log.d(
-                    "Testing Input",
-                    "$name $email $password"
-                )
-            }
-        )
     }
 }

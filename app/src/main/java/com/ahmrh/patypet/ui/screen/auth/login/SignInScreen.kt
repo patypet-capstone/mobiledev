@@ -27,7 +27,7 @@ import com.ahmrh.patypet.ui.components.LongButton
 import com.ahmrh.patypet.ui.components.LongInputField
 import com.ahmrh.patypet.ui.components.StaticHeader
 import com.ahmrh.patypet.ui.theme.PatypetTheme
-import com.ahmrh.patypet.utils.UiState
+import com.ahmrh.patypet.domain.state.UiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 

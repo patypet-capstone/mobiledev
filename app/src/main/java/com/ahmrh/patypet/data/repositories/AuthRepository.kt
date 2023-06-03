@@ -7,7 +7,7 @@ import com.ahmrh.patypet.data.remote.responses.LoginResponse
 import com.ahmrh.patypet.data.remote.responses.RegisterResponse
 import com.ahmrh.patypet.data.remote.responses.RemoteResponse
 import com.ahmrh.patypet.data.remote.responses.UserResponse
-import com.ahmrh.patypet.data.remote.retrofit.ApiService
+import com.ahmrh.patypet.data.remote.retrofit.AuthApiService
 import com.google.gson.JsonObject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,14 +16,16 @@ import retrofit2.Callback
 import retrofit2.Response
 
 
-import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 class AuthRepository(
-    private val apiService: ApiService,
+    private val apiService: AuthApiService,
     private val pref: AppPreferences
-) {
+){
+    init{
+        println("AuthRepository created")
+    }
     private var authResponse = MutableStateFlow(
         RemoteResponse(
             success = false,
@@ -145,7 +147,7 @@ class AuthRepository(
         name: String,
         email: String,
         password: String
-    ): Flow<RemoteResponse> {
+    ) {
 
          val rawJsonObject = JsonObject()
          rawJsonObject.addProperty("name", name)
@@ -195,7 +197,6 @@ class AuthRepository(
             }
         })
 
-        return authResponse
     }
 
     companion object {

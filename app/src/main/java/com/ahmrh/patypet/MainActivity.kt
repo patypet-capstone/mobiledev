@@ -7,7 +7,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -15,15 +14,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
@@ -32,13 +30,14 @@ import com.ahmrh.patypet.ui.navigation.Screen
 import com.ahmrh.patypet.ui.screen.auth.AuthViewModel
 import com.ahmrh.patypet.ui.screen.auth.LandingScreen
 import com.ahmrh.patypet.ui.screen.auth.login.SignInScreen
-import com.ahmrh.patypet.ui.screen.auth.logout.SignUpScreen
+import com.ahmrh.patypet.ui.screen.auth.register.SignUpScreen
 import com.ahmrh.patypet.ui.theme.PatypetTheme
-import com.ahmrh.patypet.utils.AuthState
-import com.ahmrh.patypet.utils.ViewModelFactory
-import com.ahmrh.patypet.utils.rotateFile
+import com.ahmrh.patypet.domain.utils.rotateFile
+import com.ahmrh.patypet.ui.screen.auth.register.SignUpViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private var getFile: File? = null
     companion object {
@@ -47,29 +46,36 @@ class MainActivity : ComponentActivity() {
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
         private const val REQUEST_CODE_PERMISSIONS = 10
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
         setContent {
             PatypetTheme {
-                val navController = rememberNavController()
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    val navController = rememberNavController()
                     NavHost(
                         navController = navController,
-                        startDestination = "auth",
+                        startDestination = Screen.Auth.route,
                     ){
                         composable(Screen.Launch.route){
 
                         }
                         navigation(
                             startDestination = Screen.Landing.route,
-                            route = "auth"
+                            route = Screen.Auth.route
                         ){
                             composable(Screen.Landing.route){
-                                LandingScreen()
+                                LandingScreen(
+                                    navigateToSignIn = {
+                                    },
+                                    navigateToSignUp = {
+                                        navController.navigate(Screen.SignUp.route)
+                                    }
+                                )
                             }
                             composable(Screen.SignIn.route){
                                 val viewModel = it.sharedViewModel<AuthViewModel>(
@@ -83,13 +89,12 @@ class MainActivity : ComponentActivity() {
 
                             }
                             composable(Screen.SignUp.route){
-
-                                val viewModel = it.sharedViewModel<AuthViewModel>(
+                                val viewModel = it.sharedViewModel<SignUpViewModel>(
                                     navController = navController
                                 )
                                 SignUpScreen(
-                                    viewModel.uiState,
-                                    viewModel::register,
+                                    viewModel.state,
+                                    viewModel::signUp,
                                 )
                             }
                         }
@@ -118,7 +123,7 @@ class MainActivity : ComponentActivity() {
 //                    authViewModel.getAuthState()
 //                    val authState = authViewModel.authState
 //
-////                    val authState: MutableStateFlow<AuthState> = MutableStateFlow(AuthState.Authenticated(""))
+//                    val authState: MutableStateFlow<AuthState> = MutableStateFlow(AuthState.Authenticated(""))
 //
 //                    authState.collectAsState(initial = AuthState.Unknown).value.let { state ->
 //                        when (state) {
@@ -168,11 +173,11 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 inline fun <reified T: ViewModel>NavBackStackEntry.sharedViewModel(navController: NavController) : T {
-    val navGraphRoute = destination.parent?.route ?: return viewModel()
+    val navGraphRoute = destination.parent?.route ?: return hiltViewModel()
     val parentEntry = remember(this) {
         navController.getBackStackEntry(navGraphRoute)
     }
-    return viewModel(parentEntry)
+    return hiltViewModel(parentEntry)
 }
 
 fun Activity.openAppSettings(){

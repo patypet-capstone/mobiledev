@@ -20,7 +20,7 @@ import com.ahmrh.patypet.ui.theme.PatypetTheme
 @Composable
 fun LandingScreen(
     navigateToSignIn: () -> Unit = {},
-    navigateToSignOut: () -> Unit = {}
+    navigateToSignUp: () -> Unit = {}
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -50,7 +50,7 @@ fun LandingScreen(
                         RoundedCornerShape(16.dp)
                     ),
                 color = MaterialTheme.colorScheme.surface,
-                onClick = navigateToSignOut
+                onClick = navigateToSignUp
             )
         }
     }
