@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetScaffold
@@ -109,11 +110,13 @@ fun PredictionSheet(
 
     BottomSheetScaffold(
         scaffoldState = scaffoldState,
-        sheetPeekHeight = 128.dp,
+        sheetPeekHeight = 200.dp,
         sheetContent = {
             Column(
                 modifier = Modifier
                     .padding(horizontal=12.dp)
+                    .heightIn(200.dp, max = 300.dp)
+                    .fillMaxSize()
             ){
 
                 Row(
@@ -139,16 +142,16 @@ fun PredictionSheet(
                     Modifier
                         .fillMaxWidth(),
                 ) {
-                    Spacer(Modifier.height(5.dp))
+                    Spacer(Modifier.height(16.dp))
                     Text("We classify this entity as ${prediction.predictedLabel} with ${String.format("%.${2}f", prediction.confidence)}% Accuracy")
                     Spacer(Modifier.height(20.dp))
-                    Button(
-                        onClick = {
-                            scope.launch { scaffoldState.bottomSheetState.partialExpand() }
-                        }
-                    ) {
-                        Text("Click to collapse sheet")
-                    }
+//                    Button(
+//                        onClick = {
+//                            scope.launch { scaffoldState.bottomSheetState.partialExpand() }
+//                        }
+//                    ) {
+//                        Text("Click to collapse sheet")
+//                    }
                 }
             }
         }) { innerPadding ->
