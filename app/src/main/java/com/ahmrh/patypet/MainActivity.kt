@@ -3,10 +3,11 @@ package com.ahmrh.patypet
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -17,9 +18,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
@@ -30,24 +36,33 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import com.ahmrh.patypet.ui.components.BottomBar
 import com.ahmrh.patypet.ui.navigation.Screen
 import com.ahmrh.patypet.ui.screen.auth.LandingScreen
 import com.ahmrh.patypet.ui.screen.auth.login.SignInScreen
-import com.ahmrh.patypet.ui.screen.auth.register.SignUpScreen
-import com.ahmrh.patypet.ui.theme.PatypetTheme
-import com.ahmrh.patypet.domain.utils.rotateFile
-import com.ahmrh.patypet.ui.components.BottomBar
 import com.ahmrh.patypet.ui.screen.auth.register.SignInViewModel
+import com.ahmrh.patypet.ui.screen.auth.register.SignUpScreen
 import com.ahmrh.patypet.ui.screen.auth.register.SignUpViewModel
 import com.ahmrh.patypet.ui.screen.patypet.home.HomeScreen
-import com.ahmrh.patypet.ui.screen.patypet.pet.PetScreen
+import com.ahmrh.patypet.ui.screen.patypet.pet.PetPredictionScreen
+import com.ahmrh.patypet.ui.screen.patypet.pet.PetCameraScreen
 import com.ahmrh.patypet.ui.screen.patypet.pet.PetViewModel
+import com.ahmrh.patypet.ui.theme.PatypetTheme
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private var getFile: File? = null
+
+    private var shouldShowCamera: MutableState<Boolean> = mutableStateOf(false)
+    private lateinit var photoUri: Uri
+    private var shouldShowPhoto: MutableState<Boolean> = mutableStateOf(false)
+    private lateinit var cameraExecutor: ExecutorService
+    private lateinit var outputDirectory: File
+
     companion object {
         const val CAMERA_X_RESULT = 200
 
@@ -58,6 +73,11 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
+
+        val outputDirectory = getOutputDirectory()
+        val cameraExecutor = Executors.newSingleThreadExecutor()
+
+        requestCameraPermission()
         setContent {
             PatypetTheme {
                 Surface(
@@ -146,14 +166,23 @@ class MainActivity : ComponentActivity() {
                                         val viewModel = it.sharedViewModel<PetViewModel>(
                                             navController = navController
                                         )
-                                        PetScreen(
-                                            launcherIntentCameraX,
-                                            viewModel,
-                                            navigateUp = {
-                                                navController.navigateUp()
-                                            },
-                                            getFile,
-                                        )
+                                        LaunchedEffect(key1= true){
+                                            shouldShowCamera.value = true
+                                        }
+
+                                        if (shouldShowCamera.value) {
+                                            PetCameraScreen(
+                                                outputDirectory = outputDirectory,
+                                                executor = cameraExecutor,
+                                                onImageCaptured = ::handleImageCapture,
+                                                onError = { Log.e("kilo", "View error:", it) }
+                                            )
+                                        }
+                                        if(shouldShowPhoto.value){
+                                            PetPredictionScreen(
+                                                photoUri = photoUri
+                                            )
+                                        }
 
                                     }
 
@@ -176,31 +205,53 @@ class MainActivity : ComponentActivity() {
         return route in authRoute
     }
 
-    private val launcherIntentCameraX = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) {
-        if (it.resultCode == CAMERA_X_RESULT) {
-            val myFile = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                it.data?.getSerializableExtra("picture", File::class.java)
-            } else {
-                @Suppress("DEPRECATION")
-                it.data?.getSerializableExtra("picture")
-            } as? File
+    private fun handleImageCapture(uri: Uri) {
+        Log.i("kilo", "Image captured: $uri")
+        shouldShowCamera.value = false
+        photoUri = uri
+        shouldShowPhoto.value = true
+    }
 
-            val isBackCamera = it.data?.getBooleanExtra("isBackCamera", true) as Boolean
+    private fun getOutputDirectory(): File {
+        val mediaDir = externalMediaDirs.firstOrNull()?.let {
+            File(it, resources.getString(R.string.app_name)).apply { mkdirs() }
+        }
 
-            myFile?.let { file ->
-                rotateFile(file, isBackCamera)
-                getFile = file
+        return if (mediaDir != null && mediaDir.exists()) mediaDir else filesDir
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        cameraExecutor.shutdown()
+    }
+    private fun requestCameraPermission() {
+        when {
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                Log.i("kilo", "Permission previously granted")
+                shouldShowCamera.value = true // 👈🏽
             }
+
+            ActivityCompat.shouldShowRequestPermissionRationale(
+                this,
+                Manifest.permission.CAMERA
+            ) -> Log.i("kilo", "Show camera permissions dialog")
+
+            else -> requestPermissionLauncher.launch(Manifest.permission.CAMERA)
         }
     }
-
-    private fun startCameraX() {
-        val intent = Intent(this, CameraActivity::class.java)
-        launcherIntentCameraX.launch(intent)
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            Log.i("kilo", "Permission granted")
+            shouldShowCamera.value = true // 👈🏽
+        } else {
+            Log.i("kilo", "Permission denied")
+        }
     }
-
 
 }
 

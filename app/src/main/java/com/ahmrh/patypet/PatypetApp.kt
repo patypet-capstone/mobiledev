@@ -42,7 +42,6 @@ import com.ahmrh.patypet.ui.navigation.Screen
 import com.ahmrh.patypet.ui.screen.auth.AuthViewModel
 import com.ahmrh.patypet.ui.screen.patypet.MainViewModel
 import com.ahmrh.patypet.ui.screen.patypet.home.HomeScreen
-import com.ahmrh.patypet.ui.screen.patypet.pet.PetCameraScreen
 import com.ahmrh.patypet.ui.screen.patypet.pet.PetViewModel
 import com.ahmrh.patypet.ui.theme.PatypetTheme
 import com.ahmrh.patypet.domain.utils.ViewModelFactory

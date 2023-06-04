@@ -1,5 +1,6 @@
 package com.ahmrh.patypet
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -12,6 +13,7 @@ import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
 import com.ahmrh.patypet.databinding.ActivityCameraBinding
 import com.ahmrh.patypet.domain.utils.createFile
