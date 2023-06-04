@@ -1,15 +1,12 @@
 package com.ahmrh.patypet.data.repositories
 
 import android.util.Log
-import androidx.compose.runtime.mutableStateOf
 import com.ahmrh.patypet.data.remote.responses.PredictionResponse
 import com.ahmrh.patypet.data.remote.retrofit.PetApiService
 import com.ahmrh.patypet.domain.utils.reduceFileImage
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.callbackFlow
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -21,14 +18,16 @@ import java.io.File
 class PetRepository(
     private val apiService: PetApiService,
 ) {
+    companion object{
+        const val TAG = "Pet Repository"
+    }
     init {
         println("PetRepository created")
     }
 
     fun predict(
         imgFile: File
-    ): Flow<PredictionResponse> = flow{
-        var predictionResponse: PredictionResponse = PredictionResponse()
+    ): Flow<PredictionResponse> = callbackFlow {
         val file = reduceFileImage(imgFile)
 
         val requestImageFile =
@@ -42,43 +41,41 @@ class PetRepository(
             )
 
         val uploadImageRequest = apiService.predict(imageMultipart)
-        try{
+        uploadImageRequest.enqueue(object : Callback<PredictionResponse> {
+            override fun onResponse(
+                call: Call<PredictionResponse>,
+                response: Response<PredictionResponse>,
+            ) {
+                if (response.isSuccessful) {
+                    val predictionResponse = response.body()!!
+                    Log.d(TAG, predictionResponse.toString())
+                    trySend(predictionResponse) // Emit the response value
+                    close() // Close the flow after emitting the value
+                } else {
 
-            uploadImageRequest.enqueue(object : Callback<PredictionResponse> {
-                override fun onResponse(
-                    call: Call<PredictionResponse>,
-                    response: Response<PredictionResponse>,
-                ) {
-                    if (response.isSuccessful) {
-                        predictionResponse = response.body()!!
-                    } else {
-
-                        Log.e(
-                            AuthRepository.TAG,
-                            "onFailureResponse : ${response.message()}"
-                        )
-                        throw Exception(response.message())
-
-                    }
-                }
-
-                override fun onFailure(
-                    call: Call<PredictionResponse>,
-                    t: Throwable
-                ) {
                     Log.e(
-                        AuthRepository.TAG,
-                        "onFailureThrowable: ${t.message}"
+                        TAG,
+                        "onFailureResponse : ${response.message()}"
                     )
-                    throw Exception(t.message)
+                    close(
+                        Exception(response.message())
+                    ) // Close the flow with an exception
+
                 }
-            })
+            }
 
-        } finally{
-            emit(predictionResponse)
-        }
+            override fun onFailure(
+                call: Call<PredictionResponse>,
+                t: Throwable
+            ) {
+                Log.e(
+                    TAG,
+                    "onFailureThrowable: ${t.message}"
+                )
+                close(Exception(t.message)) // Close the flow with an exception
+            }
+        })
 
-
-
+        awaitClose { uploadImageRequest.cancel() }
     }
 }
