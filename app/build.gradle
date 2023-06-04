@@ -23,7 +23,9 @@ android {
 
         buildConfigField("String", "APP_URL", '"https://34.172.26.95/"')
         buildConfigField("String", "AUTH_URL", '"https://34.133.110.24/"')
+
         buildConfigField("String", "HTTP_AUTH_URL", '"http://34.31.34.250/"')
+        buildConfigField("String", "HTTP_APP_URL", '"http://35.238.21.93/"')
     }
 
     buildTypes {

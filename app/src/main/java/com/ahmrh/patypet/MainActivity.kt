@@ -180,7 +180,9 @@ class MainActivity : ComponentActivity() {
                                         }
                                         if(shouldShowPhoto.value){
                                             PetPredictionScreen(
-                                                photoUri = photoUri
+                                                uiState = viewModel.uiState,
+                                                photoUri = photoUri,
+                                                onPredict = viewModel::predict
                                             )
                                         }
 

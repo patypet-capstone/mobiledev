@@ -42,7 +42,7 @@ object AppModule {
     @Provides
     @Singleton
     fun providePetRepository(apiService: PetApiService, pref: AppPreferences): PetRepository{
-        return PetRepository(apiService, pref)
+        return PetRepository(apiService)
     }
 
     @Singleton
@@ -96,10 +96,10 @@ object AppModule {
             .addInterceptor(loggingInterceptor)
             .build()
 
-        val authURL = BuildConfig.APP_URL
+        val appURL = BuildConfig.HTTP_APP_URL
 
         val retrofit = Retrofit.Builder()
-            .baseUrl(authURL)
+            .baseUrl(appURL)
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()

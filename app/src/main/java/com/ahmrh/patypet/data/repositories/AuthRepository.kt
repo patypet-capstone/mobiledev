@@ -26,13 +26,6 @@ class AuthRepository(
     init{
         println("AuthRepository created")
     }
-    private var authResponse = MutableStateFlow(
-        RemoteResponse(
-            success = false,
-            message = "Not Initialized"
-        )
-    )
-
     fun isLogin(): Flow<Boolean> = pref.isLogin()
     fun getToken(): String? = pref.getToken()
 

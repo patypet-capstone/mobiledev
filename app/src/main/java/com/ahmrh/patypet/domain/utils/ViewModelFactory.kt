@@ -19,9 +19,6 @@ class ViewModelFactory(private val context: Context) :
         else if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
             return MainViewModel(Injection.provideAuthRepository(context), Injection.providePetRepository(context)) as T
         }
-        else if (modelClass.isAssignableFrom(PetViewModel::class.java)) {
-            return PetViewModel(Injection.providePetRepository(context)) as T
-        }
         throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
     }
 

@@ -38,7 +38,7 @@ object Injection {
     fun providePetRepository(context: Context): PetRepository {
         val pref = AppPreferences.getInstance(
             requireApplication.dataStore)
-        return PetRepository(ApiConfig(pref).getPetApiService(), pref)
+        return PetRepository(ApiConfig(pref).getPetApiService())
     }
 
 }
