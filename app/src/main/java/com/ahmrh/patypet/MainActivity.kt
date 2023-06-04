@@ -69,7 +69,7 @@ class MainActivity : ComponentActivity() {
                     val currentRoute = navBackStackEntry?.destination?.route
                     Scaffold(
                         bottomBar = {
-                            if (!isAuthRoute(currentRoute)){
+                            if (isVisibleBarRoute(currentRoute)){
                                 BottomBar(
                                     navController = navController
                                 )
@@ -151,7 +151,8 @@ class MainActivity : ComponentActivity() {
                                             viewModel,
                                             navigateUp = {
                                                 navController.navigateUp()
-                                            }
+                                            },
+                                            getFile,
                                         )
 
                                     }
@@ -161,18 +162,16 @@ class MainActivity : ComponentActivity() {
                         }
                     }
 
-
                 }
             }
         }
     }
 
-    private fun isAuthRoute(route: String?): Boolean{
+    private fun isVisibleBarRoute(route: String?): Boolean{
         val authRoute = listOf(
-            Screen.Auth.SignIn.route,
-            Screen.Auth.SignUp.route,
-            Screen.Auth.Landing.route,
-            Screen.Auth.route
+
+            Screen.Patypet.Home.route,
+            Screen.Patypet.Profile.route
         )
         return route in authRoute
     }

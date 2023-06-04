@@ -2,39 +2,74 @@ package com.ahmrh.patypet.ui.screen.patypet.pet
 
 import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.media.Image
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
+import coil.compose.rememberImagePainter
 import com.ahmrh.patypet.CameraActivity
 import com.ahmrh.patypet.di.Injection.findActivity
 import com.ahmrh.patypet.openAppSettings
 import com.ahmrh.patypet.ui.components.dialog.CameraPermissionTextProvider
 import com.ahmrh.patypet.ui.components.dialog.PermissionDialog
+import java.io.File
 
 @Composable
 fun PetScreen(
     launcherIntentCameraX: ActivityResultLauncher<Intent>,
     viewModel: PetViewModel,
+    navigateUp: () -> Unit,
+    file: File?
+) {
+    CameraLayer(
+        launcherIntentCameraX = launcherIntentCameraX,
+        viewModel = viewModel,
+        navigateUp = navigateUp
+    )
+    if(file != null){
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ){
+            Log.d("Pet Image", "${file.absolutePath} asdasd")
+
+            var imgBitmap: Bitmap? = null
+            imgBitmap = BitmapFactory.decodeFile(file.absolutePath)
+            Image(
+                painter = rememberImagePainter(data = imgBitmap),
+                contentDescription = "Image",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .padding(10.dp)
+            )
+        }
+    }
+
+}
+
+@Composable
+fun CameraLayer(
+    launcherIntentCameraX: ActivityResultLauncher<Intent>,
+    viewModel: PetViewModel,
     navigateUp: () -> Unit
 ) {
-    val context = LocalContext.current
-    val cameraPermissionResultLauncher =
-        rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.RequestPermission(),
-            onResult = { isGranted ->
-                viewModel.onPermissionResult(
-                    permission = Manifest.permission.CAMERA,
-                    isGranted = isGranted
-                )
 
-            }
-        )
+    val context = LocalContext.current
 
     val multiplePermissionResultLauncher =
         rememberLauncherForActivityResult(
@@ -91,7 +126,7 @@ fun PetScreen(
             )
         )
 
-        if(Manifest.permission.CAMERA in viewModel.permission){
+        if (Manifest.permission.CAMERA in viewModel.permission) {
             launcherIntentCameraX.launch(
                 Intent(
                     context,
@@ -99,6 +134,5 @@ fun PetScreen(
                 )
             )
         }
-
     }
 }
