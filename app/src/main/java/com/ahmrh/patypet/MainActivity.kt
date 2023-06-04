@@ -7,7 +7,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -18,6 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -27,6 +27,7 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.ahmrh.patypet.ui.navigation.Screen
@@ -35,10 +36,12 @@ import com.ahmrh.patypet.ui.screen.auth.login.SignInScreen
 import com.ahmrh.patypet.ui.screen.auth.register.SignUpScreen
 import com.ahmrh.patypet.ui.theme.PatypetTheme
 import com.ahmrh.patypet.domain.utils.rotateFile
+import com.ahmrh.patypet.ui.components.BottomBar
 import com.ahmrh.patypet.ui.screen.auth.register.SignInViewModel
 import com.ahmrh.patypet.ui.screen.auth.register.SignUpViewModel
 import com.ahmrh.patypet.ui.screen.patypet.home.HomeScreen
 import com.ahmrh.patypet.ui.screen.patypet.pet.PetScreen
+import com.ahmrh.patypet.ui.screen.patypet.pet.PetViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 
@@ -62,75 +65,99 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val navController = rememberNavController()
-                    NavHost(
-                        navController = navController,
-                        startDestination = Screen.Auth.route,
-                    ){
-                        composable(Screen.Launch.route){
-
-                        }
-                        navigation(
-                            startDestination = Screen.Auth.Landing.route,
-                            route = Screen.Auth.route
-                        ){
-                            composable(Screen.Auth.Landing.route){
-                                LandingScreen(
-                                    navigateToSignIn = {
-                                        navController.navigate(Screen.Auth.SignIn.route)
-                                    },
-                                    navigateToSignUp = {
-                                        navController.navigate(Screen.Auth.SignUp.route)
-                                    },
-                                )
-                            }
-                            composable(Screen.Auth.SignIn.route){
-                                val viewModel = it.sharedViewModel<SignInViewModel>(
+                    val navBackStackEntry by navController.currentBackStackEntryAsState()
+                    val currentRoute = navBackStackEntry?.destination?.route
+                    Scaffold(
+                        bottomBar = {
+                            if (!isAuthRoute(currentRoute)){
+                                BottomBar(
                                     navController = navController
-                                )
-                                SignInScreen(
-                                    viewModel.uiState,
-                                    viewModel::signIn,
-                                    authenticate = {
-                                        navController.navigate(Screen.Patypet.route){
-                                            popUpTo(Screen.Auth.route){
-                                                inclusive = true
-                                            }
-                                        }
-                                    }
-                                )
-
-                            }
-                            composable(Screen.Auth.SignUp.route){
-                                val viewModel = it.sharedViewModel<SignUpViewModel>(
-                                    navController = navController
-                                )
-                                SignUpScreen(
-                                    viewModel.uiState,
-                                    viewModel::signUp,
                                 )
                             }
                         }
+                    ) {
+                        Box(modifier = Modifier.padding(it)){
+                            NavHost(
+                                navController = navController,
+                                startDestination = Screen.Auth.route,
+                            ){
+                                composable(Screen.Launch.route){
 
-                        navigation(
-                            startDestination = Screen.Patypet.Home.route,
-                            route = Screen.Patypet.route
-                        ){
-                            composable(Screen.Patypet.Home.route){
-                                HomeScreen(
-                                    deauthenticate = {
-                                        navController.navigate(Screen.Auth.route){
-                                            popUpTo(Screen.Patypet.route){
-                                                inclusive=true
-                                            }
-                                        }
+                                }
+                                navigation(
+                                    startDestination = Screen.Auth.Landing.route,
+                                    route = Screen.Auth.route
+                                ){
+                                    composable(Screen.Auth.Landing.route){
+                                        LandingScreen(
+                                            navigateToSignIn = {
+                                                navController.navigate(Screen.Auth.SignIn.route)
+                                            },
+                                            navigateToSignUp = {
+                                                navController.navigate(Screen.Auth.SignUp.route)
+                                            },
+                                        )
                                     }
-                                )
-                            }
+                                    composable(Screen.Auth.SignIn.route){
+                                        val viewModel = it.sharedViewModel<SignInViewModel>(
+                                            navController = navController
+                                        )
+                                        SignInScreen(
+                                            viewModel.uiState,
+                                            viewModel::signIn,
+                                            authenticate = {
+                                                navController.navigate(Screen.Patypet.route){
+                                                    popUpTo(Screen.Auth.route){
+                                                        inclusive = true
+                                                    }
+                                                }
+                                            }
+                                        )
 
-                            composable(Screen.Patypet.Pet.route){
-                                PetScreen()
-                            }
+                                    }
+                                    composable(Screen.Auth.SignUp.route){
+                                        val viewModel = it.sharedViewModel<SignUpViewModel>(
+                                            navController = navController
+                                        )
+                                        SignUpScreen(
+                                            viewModel.uiState,
+                                            viewModel::signUp,
+                                        )
+                                    }
+                                }
 
+                                navigation(
+                                    startDestination = Screen.Patypet.Home.route,
+                                    route = Screen.Patypet.route
+                                ){
+                                    composable(Screen.Patypet.Home.route){
+                                        HomeScreen(
+                                            deauthenticate = {
+                                                navController.navigate(Screen.Auth.route){
+                                                    popUpTo(Screen.Patypet.route){
+                                                        inclusive=true
+                                                    }
+                                                }
+                                            }
+                                        )
+                                    }
+
+                                    composable(Screen.Patypet.Pet.route){
+                                        val viewModel = it.sharedViewModel<PetViewModel>(
+                                            navController = navController
+                                        )
+                                        PetScreen(
+                                            launcherIntentCameraX,
+                                            viewModel,
+                                            navigateUp = {
+                                                navController.navigateUp()
+                                            }
+                                        )
+
+                                    }
+
+                                }
+                            }
                         }
                     }
 
@@ -138,6 +165,16 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    private fun isAuthRoute(route: String?): Boolean{
+        val authRoute = listOf(
+            Screen.Auth.SignIn.route,
+            Screen.Auth.SignUp.route,
+            Screen.Auth.Landing.route,
+            Screen.Auth.route
+        )
+        return route in authRoute
     }
 
     private val launcherIntentCameraX = registerForActivityResult(

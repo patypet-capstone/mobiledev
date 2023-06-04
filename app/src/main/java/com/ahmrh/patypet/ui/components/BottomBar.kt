@@ -1,4 +1,4 @@
-package com.ahmrh.patypet.ui.components.dialog
+package com.ahmrh.patypet.ui.components
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -24,7 +24,7 @@ import com.ahmrh.patypet.ui.navigation.Screen
 
 
 @Composable
-private fun BottomBar(
+fun BottomBar(
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
