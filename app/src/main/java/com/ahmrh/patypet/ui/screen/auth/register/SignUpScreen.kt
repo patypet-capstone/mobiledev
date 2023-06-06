@@ -54,6 +54,7 @@ fun SignUpScreen(
         is UiState.Loading -> {
             LoadingBar()
             Text("Loading")
+            AuthDialog(title = "User Registered", body = "aye")
         }
         is UiState.Success -> {
             val message = (uiState.value as UiState.Success<String>).data

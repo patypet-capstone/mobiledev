@@ -143,15 +143,11 @@ fun PredictionSheet(
                         .fillMaxWidth(),
                 ) {
                     Spacer(Modifier.height(16.dp))
-                    Text("We classify this entity as ${prediction.predictedLabel} with ${String.format("%.${2}f", prediction.confidence)}% Accuracy")
-                    Spacer(Modifier.height(20.dp))
-//                    Button(
-//                        onClick = {
-//                            scope.launch { scaffoldState.bottomSheetState.partialExpand() }
-//                        }
-//                    ) {
-//                        Text("Click to collapse sheet")
-//                    }
+                    Text("We classify this entity as ${prediction.predictedLabel} with ${String.format("%.${2}f", prediction.confidence)}% Accuracy \n")
+                    Spacer(Modifier.height(36.dp))
+
+                    Text(prediction.breedData?.description ?: "Unidentified Breed", style=MaterialTheme.typography.bodyMedium)
+//                    Text(prediction.breedData?.description ?: "Unidentified Breed")
                 }
             }
         }) { innerPadding ->
