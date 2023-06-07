@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ahmrh.patypet.R
+import com.ahmrh.patypet.ui.theme.PatypetTheme
 
 @Preview(showBackground = true)
 @Composable
@@ -36,7 +37,7 @@ fun PetCard(
             .width(168.dp)
             .height(210.dp)
             .clip(RoundedCornerShape(16.dp))
-            .clickable{
+            .clickable {
                 onClick()
             }
     ) {
@@ -51,7 +52,10 @@ fun PetCard(
             verticalArrangement = Arrangement.spacedBy(6.dp),
             modifier = Modifier
                 .align(Alignment.BottomStart)
-                .padding(horizontal = 16.dp, vertical = 16.dp),
+                .padding(
+                    horizontal = 16.dp,
+                    vertical = 16.dp
+                ),
         ) {
             Text(
                 text = "Dijjah Yellow",
@@ -77,11 +81,8 @@ fun PetCardText(
     subtitle: String,
     alignment: Alignment
 ) {
-    Column(
-    ) {
-        Text("Dijjah Yellow")
-        Text("Golden Retreiver")
-
+    PatypetTheme{
+        PetCard()
     }
 
 }

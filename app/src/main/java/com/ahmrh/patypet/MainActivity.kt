@@ -47,6 +47,7 @@ import com.ahmrh.patypet.ui.screen.patypet.home.HomeScreen
 import com.ahmrh.patypet.ui.screen.patypet.pet.PetPredictionScreen
 import com.ahmrh.patypet.ui.screen.patypet.pet.PetCameraScreen
 import com.ahmrh.patypet.ui.screen.patypet.pet.PetViewModel
+import com.ahmrh.patypet.ui.screen.patypet.profile.ProfileScreen
 import com.ahmrh.patypet.ui.theme.PatypetTheme
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
@@ -186,6 +187,19 @@ class MainActivity : ComponentActivity() {
                                         }
 
                                     }
+                                    composable(Screen.Patypet.Profile.route){
+                                        ProfileScreen(
+                                            deauthenticate = {
+                                                navController.navigate(Screen.Auth.route){
+                                                    popUpTo(Screen.Patypet.route){
+                                                        inclusive=true
+                                                    }
+                                                }
+                                            }
+                                        )
+                                    }
+
+
 
                                 }
                             }
