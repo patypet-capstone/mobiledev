@@ -44,8 +44,7 @@ class AuthRepository(
         email: String,
         password: String,
         scope: CoroutineScope,
-    ): Flow<Nothing> = flow {
-        var token = ""
+    ): Flow<Nothing> = callbackFlow {
 
         val rawJsonObject = JsonObject()
         rawJsonObject.addProperty("email", email)
@@ -59,14 +58,16 @@ class AuthRepository(
                 response: Response<LoginResponse>
             ) {
                 if (response.isSuccessful) {
-                    token =
+                    val token =
                         response.body()?.token.toString()
                     scope.launch {
                         pref.saveLogin(token)
                     }
                 } else {
                     Log.e(TAG, "onFailureResponse : ${response.message()}")
-                    throw Exception(response.message())
+                    close(
+                        Exception(response.message())
+                    )
                 }
 
             }
@@ -79,18 +80,21 @@ class AuthRepository(
                     TAG,
                     "onFailureThrowable: ${t.message}"
                 )
-                throw Exception(t.message)
+                close(
+                    Exception(t.message)
+                )
 
             }
         })
 
+         awaitClose { client.cancel() }
     }
 
      fun register(
         name: String,
         email: String,
         password: String
-    ) : Flow<Nothing> = flow {
+    ) : Flow<Nothing> = callbackFlow {
          Log.d(TAG, "register user")
 
          val rawJsonObject = JsonObject()
@@ -111,7 +115,9 @@ class AuthRepository(
                 )
                 if (!response.isSuccessful) {
                     Log.e(TAG, "onFailureResponse : ${response.message()}")
-                    throw Exception(response.message())
+                    close(
+                        Exception(response.message())
+                    )
                 }
             }
 
@@ -120,10 +126,13 @@ class AuthRepository(
                 t: Throwable
             ) {
                 Log.e(TAG, "onFailure : ${t.message}")
-                throw Exception(t.message)
+                close(
+                    Exception(t.message)
+                )
             }
         })
 
+         awaitClose { client.cancel() }
     }
 
 

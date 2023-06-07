@@ -4,6 +4,7 @@ import android.util.Log
 import com.ahmrh.patypet.common.Resource
 import com.ahmrh.patypet.data.repositories.AuthRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
 import java.io.IOException
@@ -22,6 +23,9 @@ class SignUpUseCase @Inject constructor(
         try {
             emit(Resource.Loading())
             repository.register(name, email, password)
+                .catch{
+                    throw(it)
+                }
                 .collect{
                     emit(Resource.Success("User registered"))
                 }

@@ -1,11 +1,8 @@
-package com.ahmrh.patypet.ui.components
+package com.ahmrh.patypet.ui.components.button
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -26,7 +23,8 @@ fun CustomButton(
     text: String,
     onClick: () -> Unit = {},
     color: Color = MaterialTheme.colorScheme.primary,
-    textColor: Color = MaterialTheme.colorScheme.onPrimary
+    textColor: Color = MaterialTheme.colorScheme.onPrimary,
+    isError: Boolean = false
 ) {
     Button(
         onClick = onClick,
@@ -36,7 +34,8 @@ fun CustomButton(
         colors = ButtonDefaults.buttonColors(
             containerColor = color,
             contentColor = textColor
-        )
+        ),
+        enabled = !isError
 
     ) {
         Text(
@@ -47,24 +46,6 @@ fun CustomButton(
 
 }
 
-@Composable
-fun LongButton(
-    modifier: Modifier = Modifier,
-    text: String,
-    onClick: () -> Unit = {},
-    color: Color = MaterialTheme.colorScheme.primary,
-    textColor: Color = MaterialTheme.colorScheme.onPrimary
-) {
-    CustomButton(
-        text = text,
-        color = color,
-        onClick = onClick,
-        textColor = textColor,
-        modifier = modifier
-            .width(312.dp)
-            .height(56.dp)
-    )
-}
 
 @Preview(showBackground = true)
 @Composable

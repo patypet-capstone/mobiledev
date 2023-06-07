@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -21,11 +22,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ahmrh.patypet.ui.components.LoadingBar
-import com.ahmrh.patypet.ui.components.LongButton
+import com.ahmrh.patypet.ui.components.button.LongButton
 import com.ahmrh.patypet.ui.components.LongInputField
 import com.ahmrh.patypet.ui.components.StaticHeader
 import com.ahmrh.patypet.ui.theme.PatypetTheme
 import com.ahmrh.patypet.domain.state.UiState
+import com.ahmrh.patypet.domain.utils.isValidEmail
+import com.ahmrh.patypet.domain.utils.isValidPassword
+import com.ahmrh.patypet.ui.components.CustomInputField
 import com.ahmrh.patypet.ui.components.dialog.AuthDialog
 
 @Composable
@@ -110,20 +114,34 @@ fun SignInForm(
 
             var email by remember { mutableStateOf("") }
             var password by remember { mutableStateOf("") }
-            LongInputField(
+
+            var emailError by remember { mutableStateOf(false)}
+            var passwordError by remember { mutableStateOf(false)}
+
+            CustomInputField(
                 label = "Email",
                 inputText = email,
-                onTextChange = { email = it }
+                isError = emailError,
+                modifier = Modifier.width(312.dp),
+                onTextChange = {
+                    email = it
+                    emailError = !isValidEmail(email)
+                }
             )
             Column(
                 horizontalAlignment = Alignment.End,
             ) {
 
-                LongInputField(
+                CustomInputField(
                     label = "Password",
                     inputText = password,
                     isPassword = true,
-                    onTextChange = { password = it }
+                    isError = passwordError,
+                    onTextChange = {
+                        password = it
+                        passwordError = !isValidPassword(password)
+                    },
+                    modifier = Modifier.width(312.dp)
                 )
                 TextButton(
                     onClick = {},
@@ -140,6 +158,7 @@ fun SignInForm(
             LongButton(
                 text = "Sign In",
                 modifier = Modifier.padding(vertical = 8.dp),
+                isError = passwordError || emailError,
                 color = MaterialTheme.colorScheme.secondary,
                 textColor = MaterialTheme.colorScheme.onSecondary,
                 onClick = {
@@ -151,6 +170,7 @@ fun SignInForm(
     }
 
 }
+
 
 @Preview(showBackground = true)
 @Composable

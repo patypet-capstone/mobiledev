@@ -1,6 +1,8 @@
 package com.ahmrh.patypet.ui.screen.auth
 
 import android.util.Log
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ahmrh.patypet.data.remote.responses.RemoteResponse
@@ -18,34 +20,28 @@ import javax.inject.Inject
 class AuthViewModel @Inject constructor(
     private val repository: AuthRepository
 ) : ViewModel() {
-//    private val _uiState: MutableStateFlow<UiState<RemoteResponse>> =
-//        MutableStateFlow(
-//            UiState.Idle
-//        )
-//    val uiState: StateFlow<UiState<RemoteResponse>>
-//        get() = _uiState
-//
 //    private val _authState: MutableStateFlow<AuthState> =
 //        MutableStateFlow(AuthState.Unknown)
 //    val authState: StateFlow<AuthState>
 //        get() = _authState
 //
-//    fun getAuthState() {
-//        viewModelScope.launch {
-//            repository.isLogin()
-//                .collect {
-//                    Log.d(TAG, it.toString())
-//                    if (it) _authState.value =
-//                        AuthState.Authenticated(
-//                            repository.getToken() ?: ""
-//                        )
-//                    else _authState.value =
-//                        AuthState.Unknown
-//                }
-//
-//        }
-//
-//    }
+
+    private val _authState = mutableStateOf<AuthState>(AuthState.Unknown)
+    val authState: State<AuthState> = _authState
+    fun getAuthState() {
+        viewModelScope.launch {
+            repository.isLogin()
+                .collect {
+                    Log.d(TAG, it.toString())
+                    if (it) _authState.value =
+                        AuthState.Authenticated(
+                            repository.getToken() ?: ""
+                        )
+                    else _authState.value =
+                        AuthState.Unknown
+                }
+        }
+    }
 //
 //    fun logout() {
 //        viewModelScope.launch {

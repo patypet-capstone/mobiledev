@@ -32,6 +32,7 @@ fun CustomInputField(
     inputText: String = "",
     label: String = "Label",
     isPassword: Boolean = false,
+    isError: Boolean = false,
     onTextChange: (String) -> Unit = {},
 ) {
 
@@ -44,6 +45,7 @@ fun CustomInputField(
             onValueChange = { onTextChange(it) },
             label = { Text(label) },
             visualTransformation = if (visible) VisualTransformation.None else PasswordVisualTransformation(),
+            isError = isError,
             trailingIcon = {
                 IconButton(onClick = {
                     visible = !visible
@@ -76,6 +78,7 @@ fun CustomInputField(
             value = inputText,
             onValueChange = { onTextChange(it) },
             label = { Text(label) },
+            isError = isError,
 
             shape = RoundedCornerShape(16.dp),
             colors = OutlinedTextFieldDefaults.colors(

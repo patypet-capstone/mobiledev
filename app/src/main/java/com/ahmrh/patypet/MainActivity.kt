@@ -38,6 +38,7 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.ahmrh.patypet.ui.components.BottomBar
 import com.ahmrh.patypet.ui.navigation.Screen
+import com.ahmrh.patypet.ui.screen.auth.AuthViewModel
 import com.ahmrh.patypet.ui.screen.auth.LandingScreen
 import com.ahmrh.patypet.ui.screen.auth.login.SignInScreen
 import com.ahmrh.patypet.ui.screen.auth.register.SignInViewModel
@@ -109,7 +110,22 @@ class MainActivity : ComponentActivity() {
                                     route = Screen.Auth.route
                                 ){
                                     composable(Screen.Auth.Landing.route){
+                                        val viewModel = it.sharedViewModel<AuthViewModel>(
+
+                                            navController = navController
+                                        )
+                                        viewModel.getAuthState()
+
+
                                         LandingScreen(
+                                            authState = viewModel.authState,
+                                            authenticate = {
+                                                navController.navigate(Screen.Patypet.route){
+                                                    popUpTo(Screen.Auth.route){
+                                                        inclusive = true
+                                                    }
+                                                }
+                                            },
                                             navigateToSignIn = {
                                                 navController.navigate(Screen.Auth.SignIn.route)
                                             },

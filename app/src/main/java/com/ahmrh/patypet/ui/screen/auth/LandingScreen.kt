@@ -9,20 +9,29 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.ahmrh.patypet.domain.state.AuthState
 import com.ahmrh.patypet.ui.components.Logo
-import com.ahmrh.patypet.ui.components.LongButton
+import com.ahmrh.patypet.ui.components.button.LongButton
 import com.ahmrh.patypet.ui.theme.PatypetTheme
 
 @Composable
 fun LandingScreen(
     navigateToSignIn: () -> Unit = {},
     navigateToSignUp: () -> Unit = {},
-    authenticate: () -> Unit = {}
+    authenticate: () -> Unit = {},
+    authState: State<AuthState>? = null
 ) {
+    LaunchedEffect(key1 = true ){
+        if(authState?.value is AuthState.Authenticated) {
+            authenticate()
+        }
+    }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
