@@ -55,13 +55,12 @@ import java.util.concurrent.Executors
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private var getFile: File? = null
 
     private var shouldShowCamera: MutableState<Boolean> = mutableStateOf(false)
-    private lateinit var photoUri: Uri
     private var shouldShowPhoto: MutableState<Boolean> = mutableStateOf(false)
+
+    private lateinit var photoUri: Uri
     private lateinit var cameraExecutor: ExecutorService
-    private lateinit var outputDirectory: File
 
     companion object {
         const val CAMERA_X_RESULT = 200

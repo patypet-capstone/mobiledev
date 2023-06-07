@@ -1,6 +1,8 @@
 package com.ahmrh.patypet.ui.components
 
+import android.graphics.drawable.shapes.Shape
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
@@ -13,8 +15,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextOverflow.Companion.Clip
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -39,7 +44,7 @@ fun BottomBar(
         ),
         NavigationItem(
             title = "Pet",
-            icon = ImageVector.vectorResource(id = R.drawable.patypet_logo),
+            icon = ImageVector.vectorResource(id = R.drawable.splash_logo_patypet),
             screen = Screen.Patypet.Pet
         ),
         NavigationItem(
@@ -66,7 +71,8 @@ fun BottomBar(
         )
         FloatingActionButton(
             modifier = Modifier
-                .padding(12.dp),
+                .padding(12.dp)
+                .clip(CircleShape),
             containerColor = MaterialTheme.colorScheme.secondary,
             onClick = {
                 navController.navigate(Screen.Patypet.Pet.route)

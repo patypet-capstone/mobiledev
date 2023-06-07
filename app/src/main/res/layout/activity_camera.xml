@@ -20,7 +20,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/patypet_logo" />
+        app:srcCompat="@drawable/splash_logo_patypet" />
 
     <ImageView
         android:id="@+id/switchCamera"
@@ -30,6 +30,6 @@
         android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="@+id/viewFinder"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/patypet_logo" />
+        app:srcCompat="@drawable/splash_logo_patypet" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
