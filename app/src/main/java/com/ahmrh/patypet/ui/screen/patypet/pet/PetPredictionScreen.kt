@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -15,10 +14,8 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetScaffold
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
@@ -39,9 +36,8 @@ import com.ahmrh.patypet.R
 import com.ahmrh.patypet.data.remote.responses.PredictionResponse
 import com.ahmrh.patypet.domain.state.UiState
 import com.ahmrh.patypet.ui.components.LoadingBar
-import com.ahmrh.patypet.ui.components.dialog.AuthDialog
+import com.ahmrh.patypet.ui.components.dialog.CustomDialog
 import com.ahmrh.patypet.ui.theme.PatypetTheme
-import kotlinx.coroutines.launch
 
 @Composable
 fun PetPredictionScreen(
@@ -49,9 +45,8 @@ fun PetPredictionScreen(
         UiState.Idle
     ),
     photoUri: Uri? = null,
-    onPredict: (
-        img: Any
-    ) -> Unit = {},
+    onPredict: (img: Any) -> Unit = {},
+    onRetakePhoto: () -> Unit = {},
 ) {
     Box(
         modifier = Modifier.fillMaxSize()
@@ -89,9 +84,10 @@ fun PetPredictionScreen(
             is UiState.Error -> {
                 val message =
                     (uiState.value as UiState.Error).errorMessage
-                AuthDialog(
+                CustomDialog(
                     title = "Error Occured",
-                    body = message
+                    body = message,
+                    onDismiss = onRetakePhoto
                 )
 
             }
@@ -114,7 +110,7 @@ fun PredictionSheet(
         sheetContent = {
             Column(
                 modifier = Modifier
-                    .padding(horizontal=12.dp)
+                    .padding(horizontal = 12.dp)
                     .heightIn(200.dp, max = 300.dp)
                     .fillMaxSize()
             ){
@@ -130,11 +126,14 @@ fun PredictionSheet(
                             .weight(1f)
                     )
                     Text(
-                        text = "${String.format("%.${2}f", prediction.confidence)}% Accuracy",
+                        text = "${String.format("%.${2}f", prediction.confidence)} Accuracy",
                         modifier = Modifier
                             .clip(RoundedCornerShape(8.dp))
                             .background(MaterialTheme.colorScheme.primary)
-                            .padding(horizontal = 8.dp, vertical=6.dp)
+                            .padding(
+                                horizontal = 8.dp,
+                                vertical = 6.dp
+                            )
 
                     )
                 }
@@ -143,7 +142,7 @@ fun PredictionSheet(
                         .fillMaxWidth(),
                 ) {
                     Spacer(Modifier.height(16.dp))
-                    Text("We classify this entity as ${prediction.predictedLabel} with ${String.format("%.${2}f", prediction.confidence)}% Accuracy \n")
+                    Text("We classify this entity as ${prediction.predictedLabel} with ${String.format("%.${2}f", prediction.confidence)} Accuracy \n")
                     Spacer(Modifier.height(36.dp))
 
                     Text(prediction.breedData?.description ?: "Unidentified Breed", style=MaterialTheme.typography.bodyMedium)
@@ -159,7 +158,9 @@ fun PredictionSheet(
 @Composable
 fun PetPredictionPreview() {
     PatypetTheme {
-        PetPredictionScreen()
+        PetPredictionScreen {
+
+        }
         PredictionSheet()
     }
 }

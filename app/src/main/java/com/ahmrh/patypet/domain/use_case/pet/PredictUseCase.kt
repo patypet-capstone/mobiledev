@@ -6,6 +6,7 @@ import com.ahmrh.patypet.common.Resource
 import com.ahmrh.patypet.data.remote.responses.PredictionResponse
 import com.ahmrh.patypet.data.repositories.PetRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
 import java.io.File
@@ -33,6 +34,9 @@ class PredictUseCase @Inject constructor(
 
             imgFile?.let {
                 repository.predict(it)
+                    .catch{ e ->
+                        throw(e)
+                    }
                     .collect{ prediction ->
                         emit(Resource.Success(prediction))
                     }
@@ -47,6 +51,13 @@ class PredictUseCase @Inject constructor(
             )
         } catch (e: IOException) {
             emit(Resource.Error(message = "Couldn't reach server"))
+        } catch (e: Exception) {
+            emit(
+                Resource.Error(
+                    message = e.message
+                        ?: "An unexpected error occurred"
+                )
+            )
         }
     }
 

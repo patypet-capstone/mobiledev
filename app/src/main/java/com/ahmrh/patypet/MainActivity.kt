@@ -111,7 +111,6 @@ class MainActivity : ComponentActivity() {
                                 ){
                                     composable(Screen.Auth.Landing.route){
                                         val viewModel = it.sharedViewModel<AuthViewModel>(
-
                                             navController = navController
                                         )
                                         viewModel.getAuthState()
@@ -198,19 +197,26 @@ class MainActivity : ComponentActivity() {
                                             PetPredictionScreen(
                                                 uiState = viewModel.uiState,
                                                 photoUri = photoUri,
-                                                onPredict = viewModel::predict
+                                                onPredict = viewModel::predict,
+                                                onRetakePhoto = ::handleImageRetake
                                             )
                                         }
 
                                     }
                                     composable(Screen.Patypet.Profile.route){
+                                        val viewModel = it.sharedViewModel<AuthViewModel>(
+                                            navController = navController
+                                        )
                                         ProfileScreen(
                                             deauthenticate = {
+                                                viewModel.logout()
+
                                                 navController.navigate(Screen.Auth.route){
                                                     popUpTo(Screen.Patypet.route){
                                                         inclusive=true
                                                     }
                                                 }
+
                                             }
                                         )
                                     }
@@ -243,6 +249,11 @@ class MainActivity : ComponentActivity() {
         shouldShowPhoto.value = true
     }
 
+    private fun handleImageRetake(){
+        shouldShowCamera.value = false
+        shouldShowPhoto.value = true
+    }
+
     private fun getOutputDirectory(): File {
         val mediaDir = externalMediaDirs.firstOrNull()?.let {
             File(it, resources.getString(R.string.app_name)).apply { mkdirs() }
@@ -253,7 +264,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        cameraExecutor.shutdown()
+//        cameraExecutor.shutdown()
     }
     private fun requestCameraPermission() {
         when {

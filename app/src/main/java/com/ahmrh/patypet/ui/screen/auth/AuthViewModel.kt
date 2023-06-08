@@ -43,12 +43,12 @@ class AuthViewModel @Inject constructor(
         }
     }
 //
-//    fun logout() {
-//        viewModelScope.launch {
-//            Log.d(TAG, "logout")
-//            repository.endSession()
-//        }
-//    }
+    fun logout() {
+        viewModelScope.launch {
+            Log.d(TAG, "logout")
+            repository.endSession()
+        }
+    }
 //
 //
 //    fun login(email: String, password: String) {

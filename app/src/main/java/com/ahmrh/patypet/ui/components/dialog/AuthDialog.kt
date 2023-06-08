@@ -11,9 +11,10 @@ import androidx.compose.runtime.setValue
 
 
 @Composable
-fun AuthDialog(
+fun CustomDialog(
     title: String,
     body: String,
+    onDismiss: () -> Unit = {}
 ) {
     var isOpenState by remember { mutableStateOf(true) }
 
@@ -32,6 +33,7 @@ fun AuthDialog(
                 TextButton(
                     onClick = {
                         isOpenState = false
+                        onDismiss()
                     }
                 ) {
                     Text("Okay")

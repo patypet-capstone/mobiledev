@@ -1,5 +1,6 @@
 package com.ahmrh.patypet.ui.screen.patypet.home
 
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -75,9 +76,9 @@ fun HomeFeatureSection(){
             .fillMaxWidth()
     ){
         FeatureButton(featureType = Feature.Shop)
-        FeatureButton(featureType = Feature.Shop)
-        FeatureButton(featureType = Feature.Shop)
-        FeatureButton(featureType = Feature.Shop)
+        FeatureButton(featureType = Feature.Caretake)
+        FeatureButton(featureType = Feature.Vet)
+        FeatureButton(featureType = Feature.Adopt)
     }
 }
 
@@ -92,7 +93,10 @@ fun HomeMyPetSection(){
 
     Row(
         horizontalArrangement = Arrangement
-            .spacedBy(10.dp)
+            .spacedBy(10.dp),
+        modifier = Modifier
+            .horizontalScroll(rememberScrollState())
+
     ){
         PetCard()
         PetCard()
@@ -112,7 +116,10 @@ fun HomeArticleSection(){
     )
     Row(
         horizontalArrangement = Arrangement
-            .spacedBy(10.dp)
+            .spacedBy(10.dp),
+
+        modifier = Modifier
+            .horizontalScroll(rememberScrollState())
     ){
         ArticleCard()
         ArticleCard()

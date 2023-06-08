@@ -21,14 +21,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ahmrh.patypet.ui.components.LoadingBar
 import com.ahmrh.patypet.ui.components.button.LongButton
-import com.ahmrh.patypet.ui.components.LongInputField
 import com.ahmrh.patypet.ui.components.StaticHeader
 import com.ahmrh.patypet.ui.theme.PatypetTheme
 import com.ahmrh.patypet.domain.state.UiState
 import com.ahmrh.patypet.domain.utils.isValidEmail
 import com.ahmrh.patypet.domain.utils.isValidPassword
 import com.ahmrh.patypet.ui.components.CustomInputField
-import com.ahmrh.patypet.ui.components.dialog.AuthDialog
+import com.ahmrh.patypet.ui.components.dialog.CustomDialog
 
 @Composable
 fun SignUpScreen(
@@ -58,17 +57,17 @@ fun SignUpScreen(
         is UiState.Loading -> {
             LoadingBar()
             Text("Loading")
-            AuthDialog(title = "User Registered", body = "aye")
+            CustomDialog(title = "User Registered", body = "aye")
         }
         is UiState.Success -> {
             val message = (uiState.value as UiState.Success<String>).data
-            AuthDialog(title = "User Registered", body = message)
+            CustomDialog(title = "User Registered", body = message)
 
         }
 
         is UiState.Error -> {
             val message = (uiState.value as UiState.Error).errorMessage
-            AuthDialog(title = "Error Occured", body = message)
+            CustomDialog(title = "Error Occured", body = message)
 
         }
     }
