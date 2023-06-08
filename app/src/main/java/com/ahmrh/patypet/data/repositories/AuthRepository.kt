@@ -44,7 +44,7 @@ class AuthRepository(
         email: String,
         password: String,
         scope: CoroutineScope,
-    ): Flow<Nothing> = callbackFlow {
+    ): Flow<String> = callbackFlow {
 
         val rawJsonObject = JsonObject()
         rawJsonObject.addProperty("email", email)
@@ -63,6 +63,7 @@ class AuthRepository(
                     scope.launch {
                         pref.saveLogin(token)
                     }
+                    trySend(response.body()?.name!!)
                 } else {
                     Log.e(TAG, "onFailureResponse : ${response.message()}")
                     close(
@@ -94,7 +95,7 @@ class AuthRepository(
         name: String,
         email: String,
         password: String
-    ) : Flow<Nothing> = callbackFlow {
+    ) : Flow<String> = callbackFlow {
          Log.d(TAG, "register user")
 
          val rawJsonObject = JsonObject()
@@ -113,7 +114,10 @@ class AuthRepository(
                     TAG,
                     response.body().toString()
                 )
-                if (!response.isSuccessful) {
+                if (response.isSuccessful) {
+                    trySend(response.body()?.message!!)
+                } else{
+
                     Log.e(TAG, "onFailureResponse : ${response.message()}")
                     close(
                         Exception(response.message())

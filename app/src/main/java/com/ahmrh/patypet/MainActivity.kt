@@ -147,7 +147,15 @@ class MainActivity : ComponentActivity() {
                                                     }
                                                 }
                                             }
-                                        )
+                                        ) {
+                                            navController.navigate(
+                                                Screen.Auth.SignIn.route
+                                            ) {
+                                                popUpTo(
+                                                    Screen.Auth.route
+                                                )
+                                            }
+                                        }
 
                                     }
                                     composable(Screen.Auth.SignUp.route){
@@ -157,6 +165,9 @@ class MainActivity : ComponentActivity() {
                                         SignUpScreen(
                                             viewModel.uiState,
                                             viewModel::signUp,
+                                            navigateToSignIn = {
+                                                navController.navigate(Screen.Auth.SignIn.route)
+                                            },
                                         )
                                     }
                                 }
@@ -220,6 +231,7 @@ class MainActivity : ComponentActivity() {
                                             }
                                         )
                                     }
+
 
 
 

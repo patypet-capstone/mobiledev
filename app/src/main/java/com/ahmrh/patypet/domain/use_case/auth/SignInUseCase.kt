@@ -3,6 +3,7 @@ package com.ahmrh.patypet.domain.use_case.auth
 import android.util.Log
 import com.ahmrh.patypet.common.Resource
 import com.ahmrh.patypet.data.repositories.AuthRepository
+import com.ahmrh.patypet.ui.screen.auth.register.SignInViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -29,6 +30,7 @@ class SignInUseCase @Inject constructor(
                 }
                 .collect{
                     emit(Resource.Success("Authorized User"))
+                    Log.d(TAG, "Authorized User")
                 }
 
         } catch (e: HttpException) {
@@ -48,6 +50,10 @@ class SignInUseCase @Inject constructor(
                 )
             )
         }
+    }
+
+    companion object{
+        const val TAG = "SignInUseCase"
     }
 
 }

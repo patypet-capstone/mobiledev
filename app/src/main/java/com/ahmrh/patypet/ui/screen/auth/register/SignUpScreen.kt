@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,6 +38,7 @@ fun SignUpScreen(
         email: String,
         password: String
     ) -> Unit,
+    navigateToSignIn: () -> Unit
 ) {
 
     Column(
@@ -56,18 +58,16 @@ fun SignUpScreen(
         }
         is UiState.Loading -> {
             LoadingBar()
-            Text("Loading")
-            CustomDialog(title = "User Registered", body = "aye")
         }
         is UiState.Success -> {
             val message = (uiState.value as UiState.Success<String>).data
-            CustomDialog(title = "User Registered", body = message)
+            CustomDialog(title = "User Registered", body = message, onDismiss = navigateToSignIn)
 
         }
 
         is UiState.Error -> {
             val message = (uiState.value as UiState.Error).errorMessage
-            CustomDialog(title = "Error Occured", body = message)
+            CustomDialog(title = "Error Occurred", body = message)
 
         }
     }

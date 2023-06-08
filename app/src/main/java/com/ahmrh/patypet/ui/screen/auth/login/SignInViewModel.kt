@@ -31,6 +31,7 @@ class SignInViewModel @Inject constructor(
                 when(result) {
                     is Resource.Success -> {
                         _uiState.value = UiState.Success("Authorized User")
+                        Log.d(TAG, "Authorized User")
                     }
                     is Resource.Error -> {
                         _uiState.value = UiState.Error(result.message ?: "Unexpected Error Occurred")
@@ -41,5 +42,9 @@ class SignInViewModel @Inject constructor(
                 }
             }.launchIn(viewModelScope)
 
+    }
+
+    companion object {
+        const val TAG = "SignInViewModel  "
     }
 }

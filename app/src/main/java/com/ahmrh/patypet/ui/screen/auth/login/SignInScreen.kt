@@ -11,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,11 +35,9 @@ import com.ahmrh.patypet.ui.components.dialog.CustomDialog
 @Composable
 fun SignInScreen(
     uiState: State<UiState<String>>,
-    onSignIn: (
-        email: String,
-        password: String
-    ) -> Unit,
-    authenticate: () -> Unit
+    onSignIn: (email: String, password: String) -> Unit,
+    authenticate: () -> Unit,
+    navigateToSignIn: () -> Unit
 ) {
 
     Column(
@@ -68,17 +67,16 @@ fun SignInScreen(
         }
         is UiState.Loading -> {
             LoadingBar()
-            Text("Loading")
         }
         is UiState.Success -> {
-            val message = (uiState.value as UiState.Success<String>).data
-            CustomDialog(title = "Authorized User", body = message)
-            authenticate()
+            LaunchedEffect(key1 = true){
+                authenticate()
+            }
         }
 
         is UiState.Error -> {
             val message = (uiState.value as UiState.Error).errorMessage
-            CustomDialog(title = "Error Occured", body = message)
+            CustomDialog(title = "Error Occurred", body = message)
 
         }
     }
