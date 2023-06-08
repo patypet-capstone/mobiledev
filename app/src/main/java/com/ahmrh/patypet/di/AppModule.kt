@@ -85,7 +85,8 @@ object AppModule {
         val loggingInterceptor = if (BuildConfig.DEBUG) {
             HttpLoggingInterceptor().apply {
                 level =
-                    HttpLoggingInterceptor.Level.BODY; HttpLoggingInterceptor.Level.HEADERS
+//                    HttpLoggingInterceptor.Level.BODY; HttpLoggingInterceptor.Level.HEADERS
+                    HttpLoggingInterceptor.Level.NONE
             }
         } else {
             HttpLoggingInterceptor().setLevel(

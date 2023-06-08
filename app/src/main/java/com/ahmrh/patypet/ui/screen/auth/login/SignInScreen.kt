@@ -22,7 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.ahmrh.patypet.ui.components.LoadingBar
+import com.ahmrh.patypet.ui.components.loading.Loading
 import com.ahmrh.patypet.ui.components.button.LongButton
 import com.ahmrh.patypet.ui.components.StaticHeader
 import com.ahmrh.patypet.ui.theme.PatypetTheme
@@ -66,7 +66,7 @@ fun SignInScreen(
             // Nothing happened
         }
         is UiState.Loading -> {
-            LoadingBar()
+            Loading()
         }
         is UiState.Success -> {
             LaunchedEffect(key1 = true){

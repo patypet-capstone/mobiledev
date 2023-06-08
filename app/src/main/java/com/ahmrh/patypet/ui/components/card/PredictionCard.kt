@@ -25,6 +25,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
+import coil.compose.rememberImagePainter
 import com.ahmrh.patypet.R
 import com.ahmrh.patypet.ui.theme.PatypetTheme
 
@@ -32,8 +34,10 @@ import com.ahmrh.patypet.ui.theme.PatypetTheme
 fun PredictionCard(
     modifier: Modifier = Modifier,
     photoUri: Uri? = null,
-    onClick: () -> Unit = {},
-    isButtonThere: Boolean = true
+    onClick: () -> Unit,
+    cardTitle: String = "Card Title",
+    cardContent: String = "this should be a place for card content. but since there is no text, this should be suffice for a placeholder.",
+    isButtonThere: Boolean
 ) {
     Row(
         modifier = modifier
@@ -49,16 +53,17 @@ fun PredictionCard(
             verticalArrangement = Arrangement.spacedBy(9.dp)
         ) {
             Text(
-                "Card Title",
+                cardTitle,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.secondary
             )
             Text(
-                "this should be a place for card content. but since there is no text, this should be suffice for a placeholder.",
+                cardContent,
                 fontSize = 10.sp,
                 color = MaterialTheme.colorScheme.secondary,
-                lineHeight = 16.sp
+                lineHeight = 16.sp,
+                maxLines = 6
             )
 
             if (isButtonThere) {
@@ -87,14 +92,18 @@ fun PredictionCard(
 
         }
         Image(
-            painterResource(id = R.drawable.placeholder_prediction_image),
+
+            painter = if (photoUri != null)
+                rememberAsyncImagePainter(photoUri) else painterResource(
+                id = R.drawable.placeholder_prediction_image
+            ),
             contentDescription = null,
             Modifier
                 .width(112.dp)
                 .height(168.dp),
             contentScale = ContentScale.Crop,
 
-        )
+            )
 
     }
 
@@ -104,6 +113,9 @@ fun PredictionCard(
 @Composable
 fun PredictionCardPreview() {
     PatypetTheme {
-        PredictionCard()
+        PredictionCard(
+            isButtonThere = false,
+            onClick = {}
+        )
     }
 }

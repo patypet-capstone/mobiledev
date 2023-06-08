@@ -61,7 +61,7 @@ class MainActivity : ComponentActivity() {
     private var shouldShowCamera: MutableState<Boolean> = mutableStateOf(false)
     private var shouldShowPhoto: MutableState<Boolean> = mutableStateOf(false)
 
-    private lateinit var photoUri: Uri
+    private var photoUri: Uri = Uri.EMPTY
     private lateinit var cameraExecutor: ExecutorService
 
     companion object {
@@ -194,6 +194,7 @@ class MainActivity : ComponentActivity() {
                                         )
                                         LaunchedEffect(key1= true){
                                             shouldShowCamera.value = true
+                                            handleImageRetake()
                                         }
 
                                         if (shouldShowCamera.value) {
@@ -262,8 +263,9 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun handleImageRetake(){
-        shouldShowCamera.value = false
-        shouldShowPhoto.value = true
+        shouldShowCamera.value = true
+        photoUri = Uri.EMPTY
+        shouldShowPhoto.value = false
     }
 
     private fun getOutputDirectory(): File {

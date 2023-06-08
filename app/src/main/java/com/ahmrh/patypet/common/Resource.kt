@@ -10,3 +10,4 @@ sealed class Resource<T>(
         Resource<T>(data, message)
 
 }
+

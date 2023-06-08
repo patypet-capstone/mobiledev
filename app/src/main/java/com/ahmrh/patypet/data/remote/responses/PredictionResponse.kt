@@ -11,7 +11,7 @@ data class PredictionResponse(
 	val imageUrl: String? = null,
 
 	@field:SerializedName("confidence")
-	val confidence: Any? = null,
+	val confidence: Float? = null,
 
 	@field:SerializedName("name")
 	val name: String? = null,
