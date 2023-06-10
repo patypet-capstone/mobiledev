@@ -3,6 +3,7 @@ package com.ahmrh.patypet.ui.components.card
 import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -45,6 +46,9 @@ fun PredictionCard(
             .width(312.dp)
             .clip(shape = RoundedCornerShape(12.dp))
             .background(MaterialTheme.colorScheme.primary)
+            .clickable{
+                onClick()
+            }
     ) {
         Column(
             modifier = Modifier

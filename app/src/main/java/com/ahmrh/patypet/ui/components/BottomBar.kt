@@ -1,6 +1,5 @@
 package com.ahmrh.patypet.ui.components
 
-import android.graphics.drawable.shapes.Shape
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -16,10 +15,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.style.TextOverflow.Companion.Clip
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -31,7 +28,8 @@ import com.ahmrh.patypet.ui.navigation.Screen
 @Composable
 fun BottomBar(
     navController: NavHostController,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onImageRetake: () -> Unit
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
@@ -75,6 +73,7 @@ fun BottomBar(
                 .clip(CircleShape),
             containerColor = MaterialTheme.colorScheme.secondary,
             onClick = {
+                onImageRetake()
                 navController.navigate(Screen.Patypet.Pet.route)
             }
         ) {

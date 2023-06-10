@@ -5,13 +5,11 @@ import android.util.Log
 import com.ahmrh.patypet.data.local.AppPreferences
 import com.ahmrh.patypet.data.remote.responses.LoginResponse
 import com.ahmrh.patypet.data.remote.responses.RegisterResponse
-import com.ahmrh.patypet.data.remote.responses.RemoteResponse
 import com.ahmrh.patypet.data.remote.retrofit.AuthApiService
 import com.google.gson.JsonObject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch

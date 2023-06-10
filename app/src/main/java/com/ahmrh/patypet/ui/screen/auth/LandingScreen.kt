@@ -1,5 +1,6 @@
 package com.ahmrh.patypet.ui.screen.auth
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -30,6 +31,7 @@ fun LandingScreen(
     LaunchedEffect(key1 = true ){
         if(authState?.value is AuthState.Authenticated) {
             authenticate()
+            Log.d("Testing", "it is authenticated at landingscreen" )
         }
     }
     Column(

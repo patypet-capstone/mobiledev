@@ -4,5 +4,5 @@ import javax.inject.Inject
 
 data class AuthUseCases @Inject constructor(
     val signUp: SignUpUseCase,
-    val signIn: SignInUseCase
+    val signIn: SignInUseCase,
 )

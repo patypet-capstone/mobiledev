@@ -24,7 +24,10 @@ sealed class Screen(val route: String) {
     object Patypet: Screen("patypet") {
 
         object Home: Screen("home")
+
         object Pet: Screen("pet")
+        object PredictionDetail: Screen("prediction_detail")
+
         object Profile: Screen("profile")
 
         object Detail : Screen("pet/{petId}"){

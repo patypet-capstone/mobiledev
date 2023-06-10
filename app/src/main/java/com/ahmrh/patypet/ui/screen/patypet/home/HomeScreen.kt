@@ -1,5 +1,6 @@
 package com.ahmrh.patypet.ui.screen.patypet.home
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,13 +36,13 @@ fun HomeScreen(
     deauthenticate: () -> Unit = {}
 ) {
     Surface(
-
     ){
 
         Column(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
-                .padding(24.dp),
+                .padding(24.dp)
+            ,
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Text(
@@ -52,11 +54,7 @@ fun HomeScreen(
 
             HomeFeatureSection()
 
-            Spacer(Modifier.size(8.dp))
-
             HomeMyPetSection()
-
-            Spacer(Modifier.size(8.dp))
 
             HomeArticleSection()
         }

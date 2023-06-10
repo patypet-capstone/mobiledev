@@ -14,6 +14,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.ahmrh.patypet.R
 import com.ahmrh.patypet.ui.theme.PatypetTheme
 
@@ -70,19 +71,19 @@ fun FeatureButton(
         }
         when (featureType) {
             is Feature.Shop -> {
-                Text("Shop",  color = MaterialTheme.colorScheme.onSurface)
+                Text("Shop",  color = MaterialTheme.colorScheme.onSurface, fontSize = 12.sp)
             }
 
             is Feature.Caretake -> {
-                Text("Caretake", color = MaterialTheme.colorScheme.onSurface)
+                Text("Caretake", color = MaterialTheme.colorScheme.onSurface, fontSize = 12.sp)
             }
 
             is Feature.Vet -> {
-                Text("Vet",  color = MaterialTheme.colorScheme.onSurface)
+                Text("Vet",  color = MaterialTheme.colorScheme.onSurface, fontSize = 12.sp)
             }
 
             is Feature.Adopt -> {
-                Text("Adopt", color = MaterialTheme.colorScheme.onSurface)
+                Text("Adopt", color = MaterialTheme.colorScheme.onSurface, fontSize = 12.sp)
             }
         }
 

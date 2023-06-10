@@ -35,7 +35,7 @@ class ApiConfig(private val pref: AppPreferences) {
 
     fun getPetApiService(): PetApiService{
 
-        val petUrl = BuildConfig.APP_URL
+        val petUrl = BuildConfig.HTTP_APP_URL
 
         val retrofit = Retrofit.Builder()
             .baseUrl(petUrl)

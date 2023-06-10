@@ -38,15 +38,13 @@ fun CustomChip(
             .border(
                 shape = RoundedCornerShape(8.dp),
                 border = BorderStroke(
-                    1.dp,
+                    2.dp,
                     MaterialTheme.colorScheme.primary
                 )
             )
-            .width(96.dp)
-            .height(40.dp)
             .padding(
                 horizontal = 4.dp,
-                vertical = 6.dp
+                vertical = 8.dp
             ),
         horizontalArrangement = Arrangement.spacedBy(4.dp)
 
@@ -94,7 +92,7 @@ fun CustomChip(
         Column() {
 
             when (chipType) {
-                is ChipType.Age -> { Text("Age", fontSize = 10.sp, fontWeight = FontWeight.Medium) }
+                is ChipType.Age -> { Text("Life Span", fontSize = 10.sp, fontWeight = FontWeight.Medium) }
 
                 is ChipType.Weight -> { Text("Weight", fontSize = 10.sp, fontWeight = FontWeight.Medium) }
 

@@ -40,6 +40,7 @@ class AuthViewModel @Inject constructor(
                     else _authState.value =
                         AuthState.Unknown
                 }
+            Log.d("Testing Auth", repository.getToken().toString())
         }
     }
 //
@@ -48,6 +49,7 @@ class AuthViewModel @Inject constructor(
             Log.d(TAG, "logout")
             repository.endSession()
         }
+        getAuthState()
     }
 //
 //

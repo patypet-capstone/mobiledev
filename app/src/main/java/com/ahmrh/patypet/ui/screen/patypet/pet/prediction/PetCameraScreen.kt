@@ -1,6 +1,7 @@
-package com.ahmrh.patypet.ui.screen.patypet.pet
+package com.ahmrh.patypet.ui.screen.patypet.pet.prediction
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.net.Uri
 import android.util.Log
 import androidx.camera.core.CameraSelector
@@ -25,13 +26,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StampedPathEffectStyle.Companion.Rotate
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
-import androidx.navigation.NavController
 import java.io.File
+import java.io.OutputStream
+import java.security.AccessController.getContext
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.concurrent.Executor
@@ -43,9 +46,10 @@ fun PetCameraScreen(
     outputDirectory: File,
     executor: Executor,
     onImageCaptured: (Uri) -> Unit,
-    onError: (ImageCaptureException) -> Unit
+    onError: (ImageCaptureException) -> Unit,
+    onPredict: (img: Any) -> Unit = {},
 ) {
-// 1
+    // 1
     val lensFacing = CameraSelector.LENS_FACING_BACK
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -56,6 +60,7 @@ fun PetCameraScreen(
     val cameraSelector = CameraSelector.Builder()
         .requireLensFacing(lensFacing)
         .build()
+
     // 2
     LaunchedEffect(lensFacing) {
         val cameraProvider = context.getCameraProvider()
@@ -84,7 +89,8 @@ fun PetCameraScreen(
                     outputDirectory = outputDirectory,
                     executor = executor,
                     onImageCaptured = onImageCaptured,
-                    onError = onError
+                    onError = onError,
+                    onPredict = onPredict,
                 )
             },
             content = {
@@ -108,7 +114,8 @@ private fun takePhoto(
     outputDirectory: File,
     executor: Executor,
     onImageCaptured: (Uri) -> Unit,
-    onError: (ImageCaptureException) -> Unit
+    onError: (ImageCaptureException) -> Unit,
+    onPredict: (img: Any) -> Unit = {},
 ){
     val photoFile = File(
         outputDirectory,
@@ -125,9 +132,15 @@ private fun takePhoto(
 
         override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
             val savedUri = Uri.fromFile(photoFile)
+
+            onPredict(savedUri)
             onImageCaptured(savedUri)
         }
     })
+}
+
+private fun rotateImage(){
+
 }
 
 private suspend fun Context.getCameraProvider(): ProcessCameraProvider =

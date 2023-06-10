@@ -45,9 +45,10 @@ import com.ahmrh.patypet.ui.screen.auth.register.SignInViewModel
 import com.ahmrh.patypet.ui.screen.auth.register.SignUpScreen
 import com.ahmrh.patypet.ui.screen.auth.register.SignUpViewModel
 import com.ahmrh.patypet.ui.screen.patypet.home.HomeScreen
-import com.ahmrh.patypet.ui.screen.patypet.pet.PetPredictionScreen
-import com.ahmrh.patypet.ui.screen.patypet.pet.PetCameraScreen
+import com.ahmrh.patypet.ui.screen.patypet.pet.prediction.PetPredictionScreen
+import com.ahmrh.patypet.ui.screen.patypet.pet.prediction.PetCameraScreen
 import com.ahmrh.patypet.ui.screen.patypet.pet.PetViewModel
+import com.ahmrh.patypet.ui.screen.patypet.pet.prediction_detail.PetPredictionDetailScreen
 import com.ahmrh.patypet.ui.screen.patypet.profile.ProfileScreen
 import com.ahmrh.patypet.ui.theme.PatypetTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -92,7 +93,10 @@ class MainActivity : ComponentActivity() {
                         bottomBar = {
                             if (isVisibleBarRoute(currentRoute)){
                                 BottomBar(
-                                    navController = navController
+                                    navController = navController,
+                                    onImageRetake = {
+                                        handleImageRetake()
+                                    }
                                 )
                             }
                         }
@@ -113,17 +117,17 @@ class MainActivity : ComponentActivity() {
                                         val viewModel = it.sharedViewModel<AuthViewModel>(
                                             navController = navController
                                         )
-                                        viewModel.getAuthState()
+                                        LaunchedEffect(
+                                            key1 = true,
+                                        ){
+                                            viewModel.getAuthState()
+                                        }
 
 
                                         LandingScreen(
                                             authState = viewModel.authState,
                                             authenticate = {
-                                                navController.navigate(Screen.Patypet.route){
-                                                    popUpTo(Screen.Auth.route){
-                                                        inclusive = true
-                                                    }
-                                                }
+                                                navController.navigate(Screen.Patypet.route)
                                             },
                                             navigateToSignIn = {
                                                 navController.navigate(Screen.Auth.SignIn.route)
@@ -192,17 +196,15 @@ class MainActivity : ComponentActivity() {
                                         val viewModel = it.sharedViewModel<PetViewModel>(
                                             navController = navController
                                         )
-                                        LaunchedEffect(key1= true){
-                                            shouldShowCamera.value = true
-                                            handleImageRetake()
-                                        }
 
                                         if (shouldShowCamera.value) {
                                             PetCameraScreen(
                                                 outputDirectory = outputDirectory,
                                                 executor = cameraExecutor,
                                                 onImageCaptured = ::handleImageCapture,
-                                                onError = { Log.e("kilo", "View error:", it) }
+                                                onError = { Log.e("kilo", "View error:", it) },
+
+                                                onPredict = viewModel::predict,
                                             )
                                         }
                                         if(shouldShowPhoto.value){
@@ -211,8 +213,20 @@ class MainActivity : ComponentActivity() {
                                                 photoUri = photoUri,
                                                 onPredict = viewModel::predict,
                                                 onRetakePhoto = ::handleImageRetake
-                                            )
+                                            ) {
+                                                navController.navigate(
+                                                    Screen.Patypet.PredictionDetail.route
+                                                )
+                                            }
                                         }
+
+                                    }
+                                    composable(Screen.Patypet.PredictionDetail.route){
+                                        PetPredictionDetailScreen(
+                                            onNavigateUp = {
+                                                navController.navigateUp()
+                                            }
+                                        )
 
                                     }
                                     composable(Screen.Patypet.Profile.route){
@@ -276,9 +290,14 @@ class MainActivity : ComponentActivity() {
         return if (mediaDir != null && mediaDir.exists()) mediaDir else filesDir
     }
 
+    override fun onResume() {
+        super.onResume()
+        cameraExecutor = Executors.newSingleThreadExecutor()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-//        cameraExecutor.shutdown()
+        cameraExecutor.shutdown()
     }
     private fun requestCameraPermission() {
         when {
