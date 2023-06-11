@@ -36,7 +36,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
-import com.ahmrh.patypet.ui.components.BottomBar
+import com.ahmrh.patypet.ui.components.bar.BottomBar
 import com.ahmrh.patypet.ui.navigation.Screen
 import com.ahmrh.patypet.ui.screen.auth.AuthViewModel
 import com.ahmrh.patypet.ui.screen.auth.LandingScreen
@@ -48,7 +48,7 @@ import com.ahmrh.patypet.ui.screen.patypet.home.HomeScreen
 import com.ahmrh.patypet.ui.screen.patypet.pet.prediction.PetPredictionScreen
 import com.ahmrh.patypet.ui.screen.patypet.pet.prediction.PetCameraScreen
 import com.ahmrh.patypet.ui.screen.patypet.pet.PetViewModel
-import com.ahmrh.patypet.ui.screen.patypet.pet.prediction_detail.PetPredictionDetailScreen
+import com.ahmrh.patypet.ui.screen.patypet.pet.prediction.PetPredictionDetailScreen
 import com.ahmrh.patypet.ui.screen.patypet.profile.ProfileScreen
 import com.ahmrh.patypet.ui.theme.PatypetTheme
 import dagger.hilt.android.AndroidEntryPoint

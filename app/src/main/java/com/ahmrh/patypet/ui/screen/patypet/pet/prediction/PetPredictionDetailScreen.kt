@@ -1,7 +1,6 @@
-package com.ahmrh.patypet.ui.screen.patypet.pet.prediction_detail
+package com.ahmrh.patypet.ui.screen.patypet.pet.prediction
 
 import android.net.Uri
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -14,8 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -27,7 +24,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SheetState
-import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -48,13 +44,8 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.ahmrh.patypet.R
 import com.ahmrh.patypet.data.remote.responses.PredictionResponse
-import com.ahmrh.patypet.ui.components.ChipType
-import com.ahmrh.patypet.ui.components.CustomChip
-import com.ahmrh.patypet.ui.components.button.CustomButton
 import com.ahmrh.patypet.ui.components.card.PredictionCard
 import com.ahmrh.patypet.ui.theme.PatypetTheme
-import com.google.accompanist.pager.HorizontalPagerIndicator
-import kotlinx.coroutines.launch
 
 @Composable
 fun PetPredictionDetailScreen(

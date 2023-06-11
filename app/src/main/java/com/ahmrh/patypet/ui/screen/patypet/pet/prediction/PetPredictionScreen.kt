@@ -5,6 +5,8 @@ import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,24 +19,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
@@ -43,8 +39,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.capitalize
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -55,8 +52,11 @@ import com.ahmrh.patypet.data.remote.responses.PredictionResponse
 import com.ahmrh.patypet.domain.state.UiState
 import com.ahmrh.patypet.ui.components.ChipType
 import com.ahmrh.patypet.ui.components.CustomChip
+import com.ahmrh.patypet.ui.components.bar.PredictionTopBar
 import com.ahmrh.patypet.ui.components.button.CustomButton
+import com.ahmrh.patypet.ui.components.card.PetCard
 import com.ahmrh.patypet.ui.components.card.PredictionCard
+import com.ahmrh.patypet.ui.components.card.ProductCard
 import com.ahmrh.patypet.ui.components.dialog.CustomDialog
 import com.ahmrh.patypet.ui.components.loading.PredictionLoading
 import com.ahmrh.patypet.ui.theme.PatypetTheme
@@ -74,7 +74,7 @@ fun PetPredictionScreen(
     onRetakePhoto: () -> Unit = {},
     onNavigateToDetail: () -> Unit = {},
 
-) {
+    ) {
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -103,7 +103,11 @@ fun PetPredictionScreen(
             is UiState.Success -> {
                 val prediction =
                     (uiState.value as UiState.Success<PredictionResponse>).data
-                PredictionSheet(prediction, photoUri, onNavigateToDetail )
+                PredictionSheet(
+                    prediction,
+                    photoUri,
+                    onNavigateToDetail
+                )
             }
 
             is UiState.Error -> {
@@ -126,7 +130,7 @@ fun PetPredictionScreen(
 fun PredictionSheet(
     prediction: PredictionResponse = PredictionResponse(),
     photoUri: Uri? = null,
-    onNavigateToDetail: () -> Unit = {  },
+    onNavigateToDetail: () -> Unit = { },
 ) {
     val scope = rememberCoroutineScope()
     val scaffoldState = rememberBottomSheetScaffoldState()
@@ -135,40 +139,12 @@ fun PredictionSheet(
     if (sheetState.currentValue == SheetValue.Expanded && sheetState.targetValue == SheetValue.Expanded) {
         Scaffold(
             topBar = {
-                TopAppBar(
-                    title = {
-                        Text(
-                            "Prediction",
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    },
-                    navigationIcon = {
-                        IconButton(onClick = {
-                            scope.launch {
-                                sheetState.partialExpand()
-                            }
-                        }) {
-                            Icon(
-                                imageVector = Icons.Filled.ArrowBack,
-                                contentDescription = "Localized description"
-                            )
+                PredictionTopBar(
+                    onBack = {
+                        scope.launch {
+                            sheetState.partialExpand()
                         }
-                    },
-                    actions = {
-                        IconButton(onClick = { /* doSomething() */ }) {
-                            Icon(
-                                imageVector = Icons.Filled.Favorite,
-                                contentDescription = "Localized description"
-                            )
-                        }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        actionIconContentColor = MaterialTheme.colorScheme.secondary,
-                        titleContentColor = MaterialTheme.colorScheme.secondary,
-                        navigationIconContentColor = MaterialTheme.colorScheme.secondary,
-                    )
+                    }
                 )
             },
             containerColor = MaterialTheme.colorScheme.primary
@@ -178,8 +154,9 @@ fun PredictionSheet(
 
     BottomSheetScaffold(
         scaffoldState = scaffoldState,
-        sheetPeekHeight = 360.dp,
+        sheetPeekHeight = 320.dp,
         sheetDragHandle = {},
+        sheetSwipeEnabled = false,
         sheetContent = {
             BottomSheetContent(
                 prediction,
@@ -193,9 +170,7 @@ fun PredictionSheet(
                 onNavigateToDetail = onNavigateToDetail
             )
         },
-    ) {
-
-    }
+    ) { }
 }
 
 @OptIn(
@@ -212,172 +187,209 @@ fun BottomSheetContent(
 ) {
     Column(
         modifier = Modifier
-            .padding(vertical = 23.dp)
             .fillMaxWidth()
-            .fillMaxHeight(0.9f)
+            .fillMaxHeight(0.93f)
+            .padding(25.dp)
     ) {
-
-        Column(
-            modifier = Modifier
-                .padding(25.dp)
-                .fillMaxSize()
+        //   Prediction Header
+        Row(
+            verticalAlignment = Alignment.Top
         ) {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = prediction.predictedLabel?.replaceFirstChar {
+                    text = prediction.breedData?.breed?.replaceFirstChar {
                         if (it.isLowerCase()) it.titlecase(
                             Locale.getDefault()
                         ) else it.toString()
                     }
-                        ?: "British Short  Hair",
+                        ?: "Unknown Entity",
                     fontWeight = FontWeight.Bold,
                     fontSize = 24.sp,
-                    modifier = Modifier
-                        .weight(1f)
                 )
                 Text(
-                    text = "${
-                        String.format(
-                            "%.${2}f",
-                            prediction.confidence
-                        )
-                    } Accuracy",
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(MaterialTheme.colorScheme.primary)
-                        .padding(
-                            horizontal = 8.dp,
-                            vertical = 6.dp
-                        ),
-                    fontWeight = FontWeight.Medium,
-                    fontSize = 12.sp,
+                    text = prediction.breedData?.personality
+                        ?: "label1, label2, label3",
+                    fontWeight = FontWeight.Light,
+                    fontSize = 12.sp
+                )
 
-                    )
             }
-            Column(
-                Modifier
-                    .fillMaxWidth(),
-            ) {
-                Spacer(Modifier.height(16.dp))
+            Text(
+                text = "${
+                    String.format(
+                        "%.${2}f",
+                        prediction.confidence
+                    )
+                } Accuracy",
+                modifier = Modifier
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(MaterialTheme.colorScheme.primary)
+                    .padding(
+                        horizontal = 8.dp,
+                        vertical = 6.dp
+                    ),
+                fontWeight = FontWeight.Medium,
+                fontSize = 12.sp,
+
+                )
+        }
+
+        Spacer(Modifier.height(16.dp))
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(
+                8.dp
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            CustomChip(
+                chipType = ChipType.Age,
+                content = "${prediction.breedData?.lifespan}",
+                modifier = Modifier.weight(1f)
+            )
+            CustomChip(
+                chipType = ChipType.Weight,
+                content = "${prediction.breedData?.weight}",
+                modifier = Modifier.weight(1f)
+            )
+            CustomChip(
+                chipType = ChipType.Color,
+                content = "${prediction.breedData?.colours}",
+                modifier = Modifier.weight(1f),
+                colours = listOf(
+                    prediction.breedData?.colours?.color1 ?: "",
+                    prediction.breedData?.colours?.color2 ?: "",
+                    prediction.breedData?.colours?.color3 ?: "",
+                )
+            )
+        }
+
+        Spacer(Modifier.height(16.dp))
+
+        Column(
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
+        ){
+
+            // see material3 bottomsheetscaffold documentation for more
+            if (sheetState.targetValue != SheetValue.Expanded) {
 
                 Text(
                     prediction.breedData?.description
-                        ?: "this should be a place for card content. but since there is no text, this should be suffice for a placeholder.",
-                    style = MaterialTheme.typography.bodyMedium
+                        ?: stringResource(id = R.string.lorem),
+                    style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 4,
+                    overflow = TextOverflow.Ellipsis,
+                    textAlign = TextAlign.Justify,
+                    modifier = Modifier.padding(horizontal = 4.dp)
+
                 )
-//                    Text(prediction.breedData?.description ?: "Unidentified Breed")
 
-                Spacer(Modifier.height(9.dp))
+                Spacer(Modifier.height(16.dp))
 
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(
-                        8.dp
-                    ),
+                CustomButton(
+                    text = "Read More",
                     modifier = Modifier
                         .fillMaxWidth()
+                        .height(55.dp),
+                    color = MaterialTheme.colorScheme.secondary,
+                    textColor = MaterialTheme.colorScheme.onSecondary,
+                    onClick = onExpand
+                )
+            }
+            else {
+                Text(
+                    prediction.breedData?.description
+                        ?: stringResource(id = R.string.lorem),
+                    style = MaterialTheme.typography.bodyMedium,
+                    overflow = TextOverflow.Ellipsis,
+                    textAlign = TextAlign.Justify,
+                    modifier = Modifier.padding(horizontal = 4.dp)
+
+                )
+
+                Spacer(Modifier.height(16.dp))
+
+                val pagerState = rememberPagerState()
+                Log.d(
+                    "Prediction Content",
+                    " asdasd ${prediction.toString()}"
+                )
+
+                val cardTitle = listOf(
+                    "Body Features",
+                    "Grooming"
+                )
+
+                val cardContent = listOf(
+                    prediction.breedData?.bodyFeatures?.description
+                        ?: "",
+                    prediction.breedData?.grooming
+                        ?: "",
+                )
+
+
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    CustomChip(
-                        chipType = ChipType.Age,
-                        content = "${prediction.breedData?.lifespan}",
-                        modifier = Modifier.weight(1f)
+                    HorizontalPager(
+                        pageCount = 2,
+                        state = pagerState
+                    ) {
+                        PredictionCard(
+                            onClick = onNavigateToDetail,
+                            isButtonThere = false,
+                            cardTitle = cardTitle[it],
+                            cardContent = cardContent[it],
+                            photoUri = photoUri,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                    Spacer(
+                        modifier = Modifier
+                            .height(16.dp)
                     )
-                    CustomChip(
-                        chipType = ChipType.Weight,
-                        content = "${prediction.breedData?.lifespan}",
-                        modifier = Modifier.weight(1f)
-                    )
-                    CustomChip(
-                        chipType = ChipType.Color,
-                        content = "${prediction.breedData?.lifespan}",
-                        modifier = Modifier.weight(1f)
+                    HorizontalPagerIndicator(
+                        modifier = Modifier
+                            .padding(bottom = 10.dp),
+                        pageCount = 2,
+                        pagerState = pagerState,
+                        activeColor = MaterialTheme.colorScheme.primary,
+                        inactiveColor = MaterialTheme.colorScheme.primaryContainer
                     )
                 }
 
-                Spacer(Modifier.height(25.dp))
 
-                // see material3 bottomsheetscaffold documentation for more
-                if (sheetState.targetValue != SheetValue.Expanded) {
-                    CustomButton(
-                        text = "Read More",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(55.dp),
-                        color = MaterialTheme.colorScheme.secondary,
-                        textColor = MaterialTheme.colorScheme.onSecondary,
-                        onClick = onExpand
-                    )
-                } else {
+                Text(
+                    text = "My Pet",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-                    val pagerState = rememberPagerState()
-                    Log.d(
-                        "Prediction Content",
-                        " asdasd ${prediction.toString()}"
-                    )
-
-                    val cardTitle = listOf(
-                        "Body Features",
-                        "Grooming"
-                    )
-
-                    val cardContent = listOf(
-                        prediction.breedData?.bodyFeatures?.description
-                            ?: "",
-                        prediction.breedData?.grooming
-                            ?: "",
-                    )
-
-
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        HorizontalPager(
-                            pageCount = 2,
-                            state = pagerState
-                        ) {
-                            PredictionCard(
-                                onClick = onNavigateToDetail,
-                                isButtonThere = false,
-                                cardTitle = cardTitle[it],
-                                cardContent = cardContent[it],
-                                photoUri = photoUri,
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        }
-                        Spacer(
-                            modifier = Modifier
-                                .height(16.dp)
+                Row(
+                    horizontalArrangement = Arrangement
+                        .spacedBy(10.dp),
+                    modifier = Modifier
+                        .horizontalScroll(
+                            rememberScrollState()
                         )
-                        HorizontalPagerIndicator(
-                            modifier = Modifier
-                                .padding(bottom = 10.dp),
-                            pageCount = 2,
-                            pagerState = pagerState,
-                            activeColor = MaterialTheme.colorScheme.primary,
-                            inactiveColor = MaterialTheme.colorScheme.primaryContainer
-                        )
-                    }
+
+                ){
+                    ProductCard()
+
                 }
             }
 
         }
+
+
     }
 
-}
-
-
-@Composable
-fun DefaultContent() {
-
-}
-
-sealed class PredictionSheetContent {
-    object Default : PredictionSheetContent()
-    object BodyFeatures : PredictionSheetContent()
-    object Health : PredictionSheetContent()
-    object Grooming : PredictionSheetContent()
 }
 
 

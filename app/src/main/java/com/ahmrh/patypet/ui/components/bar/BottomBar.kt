@@ -1,4 +1,4 @@
-package com.ahmrh.patypet.ui.components
+package com.ahmrh.patypet.ui.components.bar
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape

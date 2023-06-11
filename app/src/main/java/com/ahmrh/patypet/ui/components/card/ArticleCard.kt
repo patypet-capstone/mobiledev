@@ -37,6 +37,9 @@ fun ArticleCard(
         Modifier.size(width = 240.dp, height = 216.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer
+        ),
+        elevation =  CardDefaults.cardElevation(
+            defaultElevation = 2.dp
         )
     ) {
         Column{

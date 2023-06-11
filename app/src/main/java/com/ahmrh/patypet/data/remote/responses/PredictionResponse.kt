@@ -29,6 +29,33 @@ data class PredictionResponse(
 	val status: String? = null
 )
 
+data class BreedData(
+
+	@field:SerializedName("Breed")
+	val breed: String? = null,
+
+	@field:SerializedName("Description")
+	val description: String? = null,
+
+	@field:SerializedName("Grooming")
+	val grooming: String? = null,
+
+	@field:SerializedName("Colours")
+	val colours: Colours? = null,
+
+	@field:SerializedName("Personality")
+	val personality: String? = null,
+
+	@field:SerializedName("Body_Features")
+	val bodyFeatures: BodyFeatures? = null,
+
+	@field:SerializedName("Lifespan")
+	val lifespan: String? = null,
+
+	@field:SerializedName("Weight")
+	val weight: String? = null
+)
+
 data class BodyFeatures(
 
 	@field:SerializedName("ears")
@@ -44,28 +71,31 @@ data class BodyFeatures(
 	val body: String? = null
 )
 
-data class BreedData(
+data class GroomDataItem(
 
-	@field:SerializedName("Breed")
-	val breed: String? = null,
+	@field:SerializedName("product_url")
+	val productUrl: String? = null,
 
-	@field:SerializedName("Description")
-	val description: String? = null,
+	@field:SerializedName("product_price")
+	val productPrice: Any? = null,
 
-	@field:SerializedName("Grooming")
-	val grooming: String? = null,
+	@field:SerializedName("product_name")
+	val productName: String? = null,
 
-	@field:SerializedName("Colours")
-	val colours: String? = null,
+	@field:SerializedName("product_img")
+	val productImg: String? = null
+)
 
-	@field:SerializedName("Body_Features")
-	val bodyFeatures: BodyFeatures? = null,
+data class Colours(
 
-	@field:SerializedName("Lifespan")
-	val lifespan: String? = null,
+	@field:SerializedName("color1")
+	val color1: String? = null,
 
-	@field:SerializedName("Weight")
-	val weight: String? = null
+	@field:SerializedName("color2")
+	val color2: String? = null,
+
+	@field:SerializedName("color3")
+	val color3: String? = null
 )
 
 data class FoodDataItem(
@@ -77,19 +107,10 @@ data class FoodDataItem(
 	val productPrice: Any? = null,
 
 	@field:SerializedName("product_name")
-	val productName: String? = null
-)
+	val productName: String? = null,
 
-data class GroomDataItem(
-
-	@field:SerializedName("product_url")
-	val productUrl: String? = null,
-
-	@field:SerializedName("product_price")
-	val productPrice: Any? = null,
-
-	@field:SerializedName("product_name")
-	val productName: String? = null
+	@field:SerializedName("product_img")
+	val productImg: String? = null
 )
 
 data class ShopDataItem(
