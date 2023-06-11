@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -24,6 +25,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.ahmrh.patypet.R
 import com.ahmrh.patypet.ui.theme.PatypetTheme
@@ -33,34 +35,42 @@ import java.util.Locale
 @Composable
 fun ProductCard(
     photoUri: Uri? = null,
+    photoUrl: String? = null,
     name: String = "Concept For Life",
-    price: Float = 86000.00f,
-    onClick: () -> Unit = {}
+    price: Double = 86000.00,
+    onCardClicked: () -> Unit = {}
 ) {
     Card(
         Modifier
-            .size(width = 120.dp, height = 161.dp)
-            .clickable { onClick() },
+            .width(120.dp)
+            .height(161.dp)
+            .clickable { onCardClicked() },
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 2.dp
-        ),
-
-        ) {
+        elevation = CardDefaults.elevatedCardElevation(),
+    ) {
         Column {
-            Image(
-                painter = if (photoUri != null)
-                    rememberAsyncImagePainter(photoUri) else painterResource(
-                    id = R.drawable.placeholder_prediction_image
-                ),
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                contentScale = ContentScale.Crop
-            )
+            if(photoUrl != null){
+                AsyncImage(
+                    model = photoUrl,
+                    contentDescription = null
+                )
+            }
+            else {
+                Image(
+                    painter = if (photoUri != null)
+                        rememberAsyncImagePainter(photoUri) else painterResource(
+                        id = R.drawable.placeholder_prediction_image
+                    ),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    contentScale = ContentScale.Crop
+                )
+
+            }
             Column(
                 modifier = Modifier
                     .height(48.dp)

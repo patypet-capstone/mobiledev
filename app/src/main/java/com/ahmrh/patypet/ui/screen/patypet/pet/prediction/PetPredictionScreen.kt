@@ -5,8 +5,6 @@ import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.scrollable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +15,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -38,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -54,7 +56,6 @@ import com.ahmrh.patypet.ui.components.ChipType
 import com.ahmrh.patypet.ui.components.CustomChip
 import com.ahmrh.patypet.ui.components.bar.PredictionTopBar
 import com.ahmrh.patypet.ui.components.button.CustomButton
-import com.ahmrh.patypet.ui.components.card.PetCard
 import com.ahmrh.patypet.ui.components.card.PredictionCard
 import com.ahmrh.patypet.ui.components.card.ProductCard
 import com.ahmrh.patypet.ui.components.dialog.CustomDialog
@@ -170,6 +171,7 @@ fun PredictionSheet(
                 onNavigateToDetail = onNavigateToDetail
             )
         },
+
     ) { }
 }
 
@@ -188,8 +190,12 @@ fun BottomSheetContent(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight(0.93f)
-            .padding(25.dp)
+            .fillMaxHeight(0.92f)
+            .padding(
+                top = 25.dp,
+                start = 25.dp,
+                end = 25.dp
+            )
     ) {
         //   Prediction Header
         Row(
@@ -364,25 +370,38 @@ fun BottomSheetContent(
                 }
 
 
+
+                val uriHandler = LocalUriHandler.current
+
                 Text(
-                    text = "My Pet",
+                    text = "Shop",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,
                     modifier = Modifier.fillMaxWidth()
                 )
+                Spacer(Modifier.size(8.dp))
 
-                Row(
+                val listFood = prediction.shopData?.get(0)?.foodData ?: listOf()
+                LazyRow(
                     horizontalArrangement = Arrangement
                         .spacedBy(10.dp),
-                    modifier = Modifier
-                        .horizontalScroll(
-                            rememberScrollState()
-                        )
-
                 ){
-                    ProductCard()
-
+                    items(listFood){ foodProduct ->
+                        ProductCard(
+                            photoUrl = foodProduct?.productImg,
+                            price = foodProduct?.productPrice as Double,
+                            name = foodProduct.productName ?: "Unnamed Product",
+                            onCardClicked = {
+                                uriHandler.openUri(foodProduct.productUrl ?: "")
+                            }
+                        )
+                    }
                 }
+
+
+                val listGrooming = prediction.shopData?.get(0)?.groomData ?: listOf()
+
+                Spacer(Modifier.size(24.dp))
             }
 
         }

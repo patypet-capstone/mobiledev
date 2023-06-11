@@ -60,12 +60,12 @@ fun PredictionCard(
                 cardTitle,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.secondary
+                color = MaterialTheme.colorScheme.onPrimary
             )
             Text(
                 cardContent,
                 fontSize = 10.sp,
-                color = MaterialTheme.colorScheme.secondary,
+                color = MaterialTheme.colorScheme.onPrimary,
                 lineHeight = 16.sp,
                 maxLines = 6
             )

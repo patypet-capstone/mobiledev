@@ -67,9 +67,9 @@ fun PredictionTopBar(
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primary,
-            actionIconContentColor = MaterialTheme.colorScheme.secondary,
-            titleContentColor = MaterialTheme.colorScheme.secondary,
-            navigationIconContentColor = MaterialTheme.colorScheme.secondary,
+            actionIconContentColor = MaterialTheme.colorScheme.onPrimary,
+            titleContentColor = MaterialTheme.colorScheme.onPrimary,
+            navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
         )
     )
 }
@@ -77,7 +77,7 @@ fun PredictionTopBar(
 @Preview(showBackground = true)
 @Composable
 fun PredictionTopBarPreview(){
-    PatypetTheme{
+    PatypetTheme(darkTheme = true){
         PredictionTopBar()
     }
 
