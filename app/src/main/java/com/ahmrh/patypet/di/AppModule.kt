@@ -41,8 +41,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providePetRepository(apiService: PetApiService, pref: AppPreferences): PetRepository{
-        return PetRepository(apiService)
+    fun providePetRepository(petApiService: PetApiService, authApiService: AuthApiService, pref: AppPreferences): PetRepository{
+        return PetRepository(petApiService, authApiService)
     }
 
     @Singleton

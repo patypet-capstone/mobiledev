@@ -1,5 +1,6 @@
 package com.ahmrh.patypet.data.remote.retrofit
 
+import com.ahmrh.patypet.data.remote.responses.ArticleResponse
 import com.ahmrh.patypet.data.remote.responses.LoginResponse
 import com.ahmrh.patypet.data.remote.responses.PredictionResponse
 import com.ahmrh.patypet.data.remote.responses.RegisterResponse
@@ -9,9 +10,11 @@ import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
+import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
 import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface AuthApiService {
     @Headers("Content-Type: application/json")
@@ -32,5 +35,10 @@ interface AuthApiService {
     fun getUser(
         @Header("Authorization") token: String,
     ): Call<UserResponse>
+
+    @GET("articles?jenis={jenis}")
+    fun fetchArticle(
+        @Path("jenis") jenis: String = "",
+    ) : Call<ArticleResponse>
 
 }

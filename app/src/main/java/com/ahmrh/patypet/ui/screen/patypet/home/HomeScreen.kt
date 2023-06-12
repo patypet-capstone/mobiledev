@@ -18,6 +18,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -25,6 +27,10 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.ahmrh.patypet.data.remote.responses.ArticleResponse
+import com.ahmrh.patypet.data.remote.responses.PetResponse
+import com.ahmrh.patypet.data.remote.responses.PredictionResponse
+import com.ahmrh.patypet.domain.state.UiState
 import com.ahmrh.patypet.ui.components.Feature
 import com.ahmrh.patypet.ui.components.FeatureButton
 import com.ahmrh.patypet.ui.components.card.ArticleCard
@@ -33,7 +39,14 @@ import com.ahmrh.patypet.ui.theme.PatypetTheme
 
 @Composable
 fun HomeScreen(
-    deauthenticate: () -> Unit = {}
+    deauthenticate: () -> Unit = {},
+    articleUiState: State<UiState<ArticleResponse>> = mutableStateOf(
+        UiState.Idle
+    ),
+    petUiState: State<UiState<PetResponse>> = mutableStateOf(
+        UiState.Idle
+    ),
+
 ) {
     Surface(
     ){

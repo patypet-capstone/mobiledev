@@ -47,6 +47,7 @@ import com.ahmrh.patypet.ui.screen.auth.register.SignInViewModel
 import com.ahmrh.patypet.ui.screen.auth.register.SignUpScreen
 import com.ahmrh.patypet.ui.screen.auth.register.SignUpViewModel
 import com.ahmrh.patypet.ui.screen.patypet.home.HomeScreen
+import com.ahmrh.patypet.ui.screen.patypet.home.HomeViewModel
 import com.ahmrh.patypet.ui.screen.patypet.pet.prediction.PetPredictionScreen
 import com.ahmrh.patypet.ui.screen.patypet.pet.prediction.PetCameraScreen
 import com.ahmrh.patypet.ui.screen.patypet.pet.PetViewModel
@@ -183,6 +184,9 @@ class MainActivity : ComponentActivity() {
                                     route = Screen.Patypet.route
                                 ){
                                     composable(Screen.Patypet.Home.route){
+                                        val viewModel = it.sharedViewModel<HomeViewModel>(
+                                            navController = navController
+                                        )
                                         HomeScreen(
                                             deauthenticate = {
                                                 navController.navigate(Screen.Auth.route){
@@ -190,7 +194,9 @@ class MainActivity : ComponentActivity() {
                                                         inclusive=true
                                                     }
                                                 }
-                                            }
+                                            },
+                                            articleUiState = viewModel.articleUiState,
+                                            petUiState = viewModel.petUiState,
                                         )
                                     }
 
