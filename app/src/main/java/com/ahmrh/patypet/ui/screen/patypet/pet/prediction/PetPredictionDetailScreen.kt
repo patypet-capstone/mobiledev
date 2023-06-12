@@ -14,22 +14,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,19 +32,25 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.ahmrh.patypet.R
 import com.ahmrh.patypet.data.remote.responses.PredictionResponse
+import com.ahmrh.patypet.domain.state.UiState
+import com.ahmrh.patypet.ui.components.bar.PredictionTopBar
 import com.ahmrh.patypet.ui.components.card.PredictionCard
+import com.ahmrh.patypet.ui.components.dialog.CustomDialog
+import com.ahmrh.patypet.ui.components.loading.PredictionLoading
 import com.ahmrh.patypet.ui.theme.PatypetTheme
+import kotlinx.coroutines.launch
 
 @Composable
 fun PetPredictionDetailScreen(
-
+    uiState: State<UiState<PredictionResponse>> = mutableStateOf(
+        UiState.Idle
+    ),
     prediction: PredictionResponse = PredictionResponse(),
     photoUri: Uri? = null,
     onNavigateUp: () -> Unit = {}
@@ -69,12 +70,39 @@ fun PetPredictionDetailScreen(
                 .fillMaxSize(),
             contentScale = ContentScale.Crop
         )
+        when (uiState.value) {
+            is UiState.Idle -> {
+                // do nothing
+            }
 
-        PredictionDetailSheet(prediction, photoUri, onNavigateUp)
+            is UiState.Loading -> {
+                PredictionLoading()
+            }
 
+            is UiState.Success -> {
+                val prediction =
+                    (uiState.value as UiState.Success<PredictionResponse>).data
+                PredictionDetailSheet(
+                    prediction,
+                    photoUri,
+                    onNavigateUp
+                )
+            }
+
+            is UiState.Error -> {
+                val message =
+                    (uiState.value as UiState.Error).errorMessage
+                CustomDialog(
+                    title = "Error Occurred",
+                    body = message,
+                )
+
+            }
+
+
+        }
 
     }
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -90,36 +118,9 @@ fun PredictionDetailSheet(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        "Simple TopAppBar",
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateUp) {
-                        Icon(
-                            imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = "Localized description"
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { /* doSomething() */ }) {
-                        Icon(
-                            imageVector = Icons.Filled.Favorite,
-                            contentDescription = "Localized description"
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    actionIconContentColor = MaterialTheme.colorScheme.secondary,
-                    titleContentColor = MaterialTheme.colorScheme.secondary,
-                    navigationIconContentColor = MaterialTheme.colorScheme.secondary,
-                )
+            PredictionTopBar(
+                onBack = onNavigateUp,
+                title = "Body Features"
             )
         },
         containerColor = MaterialTheme.colorScheme.primary
@@ -130,12 +131,15 @@ fun PredictionDetailSheet(
         }
 
     } // just there so it work
+
     LaunchedEffect(key1 = true){
         sheetState.expand()
     }
+
     BottomSheetScaffold(
         scaffoldState = scaffoldState,
         sheetDragHandle = {},
+        sheetPeekHeight = 360.dp,
         sheetContent = {
             DetailBottomSheetContent(
                 prediction,
@@ -162,62 +166,62 @@ fun DetailBottomSheetContent(
 ) {
     Column(
         modifier = Modifier
-            .padding(vertical = 23.dp)
             .fillMaxWidth()
-            .fillMaxHeight(0.9f)
+            .fillMaxHeight(0.92f)
+            .padding(
+                top = 25.dp,
+                start = 25.dp,
+                end = 25.dp
+            )
     ) {
-
-        Column(
-            modifier = Modifier
-                .padding(25.dp)
-                .fillMaxSize()
+        Row(
+            verticalAlignment = Alignment.CenterVertically
         ) {
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = prediction.predictedLabel
-                        ?: "British Short  Hair",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 24.sp,
-                    modifier = Modifier
-                        .weight(1f)
-                )
-                Text(
-                    text = "${
-                        String.format(
-                            "%.${2}f",
-                            prediction.confidence
-                        )
-                    } Accuracy",
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(MaterialTheme.colorScheme.primary)
-                        .padding(
-                            horizontal = 8.dp,
-                            vertical = 6.dp
-                        ),
-                    fontWeight = FontWeight.Medium,
-                    fontSize = 12.sp,
-
+            Text(
+                text = prediction.breedData?.breed
+                    ?: "British Short  Hair",
+                fontWeight = FontWeight.Bold,
+                fontSize = 24.sp,
+                modifier = Modifier
+                    .weight(1f)
+            )
+            Text(
+                text = "${
+                    String.format(
+                        "%.${2}f",
+                        prediction.confidence
                     )
-            }
-            Column(
-                Modifier
-                    .fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                Spacer(Modifier.height(16.dp))
+                } Accuracy",
+                modifier = Modifier
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(MaterialTheme.colorScheme.primary)
+                    .padding(
+                        horizontal = 8.dp,
+                        vertical = 6.dp
+                    ),
+                fontWeight = FontWeight.Medium,
+                fontSize = 12.sp,
 
-                PredictionCard(isButtonThere = false, onClick = {}, photoUri = photoUri, modifier = Modifier.fillMaxWidth())
+                )
+        }
+        Column(
+            Modifier
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Spacer(Modifier.height(16.dp))
 
-                PredictionCard(isButtonThere = false, onClick = {}, photoUri = photoUri, modifier = Modifier.fillMaxWidth())
+            val body = prediction.breedData?.bodyFeatures?.body ?: "Body data unavailable"
+            val ears = prediction.breedData?.bodyFeatures?.ears ?: "Ears data unavailable"
+            val headShape = prediction.breedData?.bodyFeatures?.headShape ?: "Head shape data unavailable"
 
-                PredictionCard(isButtonThere = false, onClick = {}, photoUri = photoUri, modifier = Modifier.fillMaxWidth())
+            PredictionCard(isButtonThere = false, onClick = {}, photoUri = photoUri, modifier = Modifier.fillMaxWidth(), cardContent = body, cardTitle = "Body")
 
-            }
+            PredictionCard(isButtonThere = false, onClick = {}, photoUri = photoUri, modifier = Modifier.fillMaxWidth(),  cardContent = ears, cardTitle = "Ears")
+
+            PredictionCard(isButtonThere = false, onClick = {}, photoUri = photoUri, modifier = Modifier.fillMaxWidth(),  cardContent = headShape, cardTitle = "Head Shape")
+
         }
     }
 

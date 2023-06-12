@@ -28,13 +28,14 @@ import com.ahmrh.patypet.ui.theme.PatypetTheme
 @Composable
 fun PredictionTopBar(
     onBack: () -> Unit = {},
-    onBookmark: () -> Unit = {}
+    onBookmark: () -> Unit = {},
+    title: String? = null
 ){
 
     TopAppBar(
         title = {
             Text(
-                "Prediction",
+                title ?: "Prediction",
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 textAlign = TextAlign.Center,

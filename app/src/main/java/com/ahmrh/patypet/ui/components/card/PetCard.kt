@@ -1,6 +1,7 @@
 package com.ahmrh.patypet.ui.components.card
 
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -8,13 +9,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,7 +26,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.DefaultAlpha
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -59,7 +60,9 @@ fun PetCard(
         )
         val colorStops = arrayOf(
             0.5f to Color(0x00D9D9D9),
-            0.6f to MaterialTheme.colorScheme.primaryContainer.copy(alpha=0.4f),
+            0.6f to MaterialTheme.colorScheme.primaryContainer.copy(
+                alpha = 0.4f
+            ),
             1f to MaterialTheme.colorScheme.primary,
         )
         Box(
@@ -104,7 +107,7 @@ fun PetCardText(
     subtitle: String,
     alignment: Alignment
 ) {
-    PatypetTheme{
+    PatypetTheme {
         PetCard()
     }
 
@@ -112,7 +115,65 @@ fun PetCardText(
 
 @Preview(showBackground = true)
 @Composable
-fun PetCardPreview(){
+fun CameraPreview() {
+
+    Box(
+        contentAlignment = Alignment.BottomCenter,
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Image(
+            painterResource(id = R.drawable.placeholder_prediction_image),
+            contentDescription = null,
+            Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
+        ) {
+            IconButton(
+                onClick = {
+                    Log.i("kilo", "ON GALLERY")
+                },
+                content = {
+
+                },
+                modifier = Modifier
+                    .size(72.dp)
+                    .align(
+                        Alignment.BottomStart
+                    )
+            )
+
+            IconButton(
+                onClick = {
+                    Log.i("kilo", "ON CAPTURE")
+                },
+                content = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.outline_circle_24),
+                        contentDescription = "Take picture",
+                        tint = Color.White,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                },
+                modifier = Modifier
+                    .size(72.dp)
+                    .align(
+                        Alignment.Center
+                    )
+            )
+        }
+
+    }
+}
+
+
+@Preview(showBackground = true)
+@Composable
+fun PetCardPreview() {
     PatypetTheme {
         PetCard()
     }

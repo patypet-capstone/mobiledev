@@ -240,7 +240,6 @@ fun BottomSheetContent(
                     ),
                 fontWeight = FontWeight.Medium,
                 fontSize = 12.sp,
-
                 )
         }
 
@@ -338,6 +337,8 @@ fun BottomSheetContent(
                         ?: "",
                 )
 
+                // Breed Detail
+
 
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -352,9 +353,10 @@ fun BottomSheetContent(
                             cardTitle = cardTitle[it],
                             cardContent = cardContent[it],
                             photoUri = photoUri,
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth().padding(end = 8.dp)
                         )
                     }
+
                     Spacer(
                         modifier = Modifier
                             .height(16.dp)
@@ -370,11 +372,12 @@ fun BottomSheetContent(
                 }
 
 
+                // Pet Product
 
                 val uriHandler = LocalUriHandler.current
 
                 Text(
-                    text = "Shop",
+                    text = "Food Product",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,
                     modifier = Modifier.fillMaxWidth()
@@ -386,21 +389,45 @@ fun BottomSheetContent(
                     horizontalArrangement = Arrangement
                         .spacedBy(10.dp),
                 ){
-                    items(listFood){ foodProduct ->
+                    items(listFood){ product ->
                         ProductCard(
-                            photoUrl = foodProduct?.productImg,
-                            price = foodProduct?.productPrice as Double,
-                            name = foodProduct.productName ?: "Unnamed Product",
+                            photoUrl = product?.productImg,
+                            price = product?.productPrice as Double,
+                            name = product.productName ?: "Unnamed Product",
                             onCardClicked = {
-                                uriHandler.openUri(foodProduct.productUrl ?: "")
+                                uriHandler.openUri(product.productUrl ?: "")
                             }
                         )
                     }
                 }
 
+                Spacer(Modifier.size(16.dp))
+
+                Text(
+                    text = "Grooming Product",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(Modifier.size(8.dp))
+
 
                 val listGrooming = prediction.shopData?.get(0)?.groomData ?: listOf()
-
+                LazyRow(
+                    horizontalArrangement = Arrangement
+                        .spacedBy(10.dp),
+                ){
+                    items(listGrooming){ product ->
+                        ProductCard(
+                            photoUrl = product?.productImg,
+                            price = product?.productPrice as Double,
+                            name = product.productName ?: "Unnamed Product",
+                            onCardClicked = {
+                                uriHandler.openUri(product.productUrl ?: "")
+                            }
+                        )
+                    }
+                }
                 Spacer(Modifier.size(24.dp))
             }
 

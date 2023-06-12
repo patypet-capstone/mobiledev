@@ -54,7 +54,12 @@ fun ProductCard(
             if(photoUrl != null){
                 AsyncImage(
                     model = photoUrl,
-                    contentDescription = null
+                    contentDescription = null,
+
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    contentScale = ContentScale.Crop
                 )
             }
             else {
