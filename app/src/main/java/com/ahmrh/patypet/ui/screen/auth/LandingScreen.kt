@@ -62,6 +62,7 @@ fun LandingScreen(
                         RoundedCornerShape(16.dp)
                     ),
                 color = MaterialTheme.colorScheme.surface,
+                textColor = MaterialTheme.colorScheme.secondary,
                 onClick = navigateToSignUp
             )
         }

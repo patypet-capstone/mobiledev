@@ -187,6 +187,8 @@ class MainActivity : ComponentActivity() {
                                         val viewModel = it.sharedViewModel<HomeViewModel>(
                                             navController = navController
                                         )
+                                        viewModel.fetchArticle()
+
                                         HomeScreen(
                                             deauthenticate = {
                                                 navController.navigate(Screen.Auth.route){

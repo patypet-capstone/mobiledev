@@ -4,6 +4,7 @@ import android.net.Uri
 import android.util.Log
 import com.ahmrh.patypet.common.Resource
 import com.ahmrh.patypet.data.remote.responses.ArticleResponse
+import com.ahmrh.patypet.data.remote.responses.ArticleResponseItem
 import com.ahmrh.patypet.data.remote.responses.PredictionResponse
 import com.ahmrh.patypet.data.repositories.PetRepository
 import kotlinx.coroutines.flow.Flow
@@ -20,7 +21,7 @@ class FetchArticleUseCase @Inject constructor(
 
     operator fun invoke(
         jenis: String?
-    ): Flow<Resource<ArticleResponse>> = flow {
+    ): Flow<Resource<List<ArticleResponseItem>>> = flow {
         Log.d("PredictUseCase", "PredictInvoked")
 
         try {
@@ -34,15 +35,17 @@ class FetchArticleUseCase @Inject constructor(
 
 
         } catch (e: HttpException) {
+            Log.e("UseCase", e.message())
             emit(
                 Resource.Error(
                     message = e.localizedMessage
-                        ?: "An unexpected error occurred"
+                        ?: "Couldn't reach server"
                 )
             )
         } catch (e: IOException) {
             emit(Resource.Error(message = "Couldn't reach server"))
         } catch (e: Exception) {
+            Log.e("UseCase", e.message.toString())
             emit(
                 Resource.Error(
                     message = e.message

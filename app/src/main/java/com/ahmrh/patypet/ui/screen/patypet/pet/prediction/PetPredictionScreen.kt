@@ -240,6 +240,7 @@ fun BottomSheetContent(
                     ),
                 fontWeight = FontWeight.Medium,
                 fontSize = 12.sp,
+                color = MaterialTheme.colorScheme.onPrimary
                 )
         }
 

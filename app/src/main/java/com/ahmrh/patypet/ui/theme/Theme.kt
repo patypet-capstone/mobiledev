@@ -14,7 +14,8 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-
+import com.google.android.material.color.utilities.MaterialDynamicColors.outline
+import com.google.android.material.color.utilities.MaterialDynamicColors.surfaceVariant
 
 
 /* light but generated */
@@ -69,6 +70,9 @@ private val LightColorScheme = lightColorScheme(
 
     surface = custom_surface,
     onSurface = custom_onSurface,
+
+    surfaceVariant = md_theme_light_surfaceVariant,
+    onSurfaceVariant = md_theme_dark_onSurfaceVariant,
 
     outline = Orange5,
 

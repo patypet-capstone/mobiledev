@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ahmrh.patypet.common.Resource
 import com.ahmrh.patypet.data.remote.responses.ArticleResponse
+import com.ahmrh.patypet.data.remote.responses.ArticleResponseItem
 import com.ahmrh.patypet.data.remote.responses.PetResponse
 import com.ahmrh.patypet.data.remote.responses.PredictionResponse
 import com.ahmrh.patypet.domain.state.UiState
@@ -23,9 +24,9 @@ class HomeViewModel@Inject constructor(
 ): ViewModel()  {
 
 
-    private val _articleUiState = mutableStateOf<UiState<ArticleResponse>>(
+    private val _articleUiState = mutableStateOf<UiState<List<ArticleResponseItem>>>(
         UiState.Idle)
-    val articleUiState: State<UiState<ArticleResponse>> = _articleUiState
+    val articleUiState: State<UiState<List<ArticleResponseItem>>> = _articleUiState
 
     private val _petUiState = mutableStateOf<UiState<PetResponse>>(
         UiState.Idle)
@@ -47,6 +48,7 @@ class HomeViewModel@Inject constructor(
                     }
                     is Resource.Error -> {
                         _articleUiState.value = UiState.Error(result.message ?: "Unexpected Error Occured")
+                        fetchArticle()
                     }
                     is Resource.Loading -> {
                         _articleUiState.value = UiState.Loading

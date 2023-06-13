@@ -2,6 +2,7 @@ package com.ahmrh.patypet.data.repositories
 
 import android.util.Log
 import com.ahmrh.patypet.data.remote.responses.ArticleResponse
+import com.ahmrh.patypet.data.remote.responses.ArticleResponseItem
 import com.ahmrh.patypet.data.remote.responses.PetResponse
 import com.ahmrh.patypet.data.remote.responses.PredictionResponse
 import com.ahmrh.patypet.data.remote.retrofit.AuthApiService
@@ -83,13 +84,13 @@ class PetRepository(
         awaitClose { uploadImageRequest.cancel() }
     }
 
-    fun fetchArticle(jenis: String?) : Flow<ArticleResponse> = callbackFlow {
+    fun fetchArticle(jenis: String?) : Flow<List<ArticleResponseItem>> = callbackFlow {
 
         val client = authApiService.fetchArticle(jenis ?: "")
-        client.enqueue(object : Callback<ArticleResponse> {
+        client.enqueue(object : Callback<List<ArticleResponseItem>> {
             override fun onResponse(
-                call: Call<ArticleResponse>,
-                response: Response<ArticleResponse>,
+                call: Call<List<ArticleResponseItem>>,
+                response: Response<List<ArticleResponseItem>>,
             ) {
                 if (response.isSuccessful) {
                     val articleResponse = response.body()!!
@@ -111,7 +112,7 @@ class PetRepository(
             }
 
             override fun onFailure(
-                call: Call<ArticleResponse>,
+                call: Call<List<ArticleResponseItem>>,
                 t: Throwable
             ) {
                 Log.e(
