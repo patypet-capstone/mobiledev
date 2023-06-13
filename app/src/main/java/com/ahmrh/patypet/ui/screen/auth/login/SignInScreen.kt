@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -26,7 +25,7 @@ import com.ahmrh.patypet.ui.components.loading.Loading
 import com.ahmrh.patypet.ui.components.button.LongButton
 import com.ahmrh.patypet.ui.components.StaticHeader
 import com.ahmrh.patypet.ui.theme.PatypetTheme
-import com.ahmrh.patypet.domain.state.UiState
+import com.ahmrh.patypet.common.UiState
 import com.ahmrh.patypet.domain.utils.isValidEmail
 import com.ahmrh.patypet.domain.utils.isValidPassword
 import com.ahmrh.patypet.ui.components.CustomInputField
@@ -47,11 +46,6 @@ fun SignInScreen(
         verticalArrangement = Arrangement.spacedBy(8.dp),
 
         ) {
-        Button(
-            onClick = authenticate
-        ){
-            Text("Debug")
-        }
         StaticHeader(
             modifier = Modifier,
             type = "Dog"

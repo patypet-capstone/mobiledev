@@ -1,6 +1,5 @@
 package com.ahmrh.patypet.ui.components.card
 
-import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -8,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -32,12 +32,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
 import com.ahmrh.patypet.R
 import com.ahmrh.patypet.ui.theme.PatypetTheme
 
 @Composable
 fun PetCard(
-    photoUri: Uri? = null,
+    photoUrl: String? = null,
+    breed: String? = null,
+    name: String? = null,
     onClick: () -> Unit = {}
 ) {
     Box(
@@ -52,12 +56,29 @@ fun PetCard(
 
 
         ) {
-        Image(
-            painterResource(id = R.drawable.placeholder_prediction_image),
-            contentDescription = null,
-            Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop,
-        )
+
+        if (photoUrl != null) {
+            AsyncImage(
+                model = photoUrl,
+                contentDescription = null,
+
+                modifier = Modifier
+                    .fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+        } else {
+            Image(
+                painter = if (photoUrl != null)
+                    rememberAsyncImagePainter(photoUrl) else painterResource(
+                    id = R.drawable.placeholder_prediction_image
+                ),
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+        }
+
         val colorStops = arrayOf(
             0.5f to Color(0x00D9D9D9),
             0.6f to MaterialTheme.colorScheme.primaryContainer.copy(
@@ -84,13 +105,13 @@ fun PetCard(
                 ),
         ) {
             Text(
-                text = "Dijjah Yellow",
+                text = name ?: "Unnamed",
                 color = MaterialTheme.colorScheme.onSecondary,
                 fontWeight = FontWeight.Medium,
                 fontSize = 16.sp
             )
             Text(
-                "Golden Retreiver",
+                breed ?: "Unspecified",
                 color = MaterialTheme.colorScheme.onSecondary,
                 fontSize = 11.sp
             )
@@ -102,15 +123,101 @@ fun PetCard(
 }
 
 @Composable
-fun PetCardText(
-    title: String,
-    subtitle: String,
-    alignment: Alignment
-) {
-    PatypetTheme {
-        PetCard()
-    }
+fun LoadingPetCard(){
 
+    val loadingColor = MaterialTheme.colorScheme.surfaceVariant
+    Box(
+        modifier = Modifier
+            .width(168.dp)
+            .height(210.dp)
+            .clip(RoundedCornerShape(16.dp))
+            .shadow(elevation = 30.dp),
+
+
+        ) {
+
+//        if (photoUrl != null) {
+//            AsyncImage(
+//                model = photoUrl,
+//                contentDescription = null,
+//
+//                modifier = Modifier
+//                    .fillMaxSize(),
+//                contentScale = ContentScale.Crop
+//            )
+//        } else {
+//            Image(
+//                painter = if (photoUrl != null)
+//                    rememberAsyncImagePainter(photoUrl) else painterResource(
+//                    id = R.drawable.placeholder_prediction_image
+//                ),
+//                contentDescription = null,
+//                modifier = Modifier
+//                    .fillMaxSize(),
+//                contentScale = ContentScale.Crop
+//            )
+//        }
+
+        Spacer(
+            modifier = Modifier
+                .background(loadingColor)
+                .fillMaxSize(),
+        )
+
+        val colorStops = arrayOf(
+            0.5f to Color(0x00D9D9D9),
+            0.6f to MaterialTheme.colorScheme.primaryContainer.copy(
+                alpha = 0.4f
+            ),
+            1f to MaterialTheme.colorScheme.primary,
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        colorStops = colorStops
+                    )
+                ),
+        )
+        Column(
+            verticalArrangement = Arrangement.spacedBy(6.dp),
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(
+                    horizontal = 16.dp,
+                    vertical = 16.dp
+                ),
+        ) {
+//            Text(
+//                text = name ?: "Unnamed",
+//                color = MaterialTheme.colorScheme.onSecondary,
+//                fontWeight = FontWeight.Medium,
+//                fontSize = 16.sp
+//            )
+            Spacer(
+                modifier = Modifier
+                    .background(loadingColor)
+                    .fillMaxWidth()
+                    .height(20.dp),
+            )
+//            Text(
+//                breed ?: "Unspecified",
+//                color = MaterialTheme.colorScheme.onSecondary,
+//                fontSize = 11.sp
+//            )
+
+            Spacer(
+                modifier = Modifier
+                    .background(loadingColor)
+                    .fillMaxWidth()
+                    .height(20.dp),
+            )
+
+        }
+
+
+    }
 }
 
 @Preview(showBackground = true)

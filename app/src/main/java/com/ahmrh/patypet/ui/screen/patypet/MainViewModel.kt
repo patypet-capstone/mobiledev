@@ -7,8 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.ahmrh.patypet.data.remote.responses.RemoteResponse
 import com.ahmrh.patypet.data.repositories.AuthRepository
 import com.ahmrh.patypet.data.repositories.PetRepository
-import com.ahmrh.patypet.domain.state.AuthState
-import com.ahmrh.patypet.domain.state.UiState
+import com.ahmrh.patypet.common.AuthState
+import com.ahmrh.patypet.common.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -62,7 +62,7 @@ class MainViewModel @Inject constructor(
         }
 
         return if (isLogin.value) AuthState.Unknown else AuthState.Authenticated(
-            authRepository.getToken()!!
+//            authRepository.getToken()!!
         )
     }
 }

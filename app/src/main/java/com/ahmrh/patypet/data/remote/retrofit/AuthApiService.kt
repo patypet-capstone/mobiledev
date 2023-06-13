@@ -32,8 +32,7 @@ interface AuthApiService {
     ): Call<LoginResponse>
 
 
-    @FormUrlEncoded
-    @POST("user")
+    @GET("user")
     fun getUser(
         @Header("Authorization") token: String,
     ): Call<UserResponse>

@@ -38,6 +38,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import com.ahmrh.patypet.common.AuthState
 import com.ahmrh.patypet.ui.components.bar.BottomBar
 import com.ahmrh.patypet.ui.navigation.Screen
 import com.ahmrh.patypet.ui.screen.auth.AuthViewModel
@@ -120,18 +121,24 @@ class MainActivity : ComponentActivity() {
                                         val viewModel = it.sharedViewModel<AuthViewModel>(
                                             navController = navController
                                         )
-                                        LaunchedEffect(
-                                            key1 = true,
-                                        ){
-                                            viewModel.getAuthState()
+
+                                        val authState = viewModel.authState
+
+                                        when(authState.value){
+                                            is AuthState.Unknown ->{
+
+                                                Log.d("MainActivity", "it's not authenticated")
+                                            }
+                                            is AuthState.Authenticated -> {
+                                                LaunchedEffect(key1 = true){
+                                                    navController.navigate(Screen.Patypet.route)
+                                                    Log.d("MainActivity", "it's authenticated")
+                                                }
+                                            }
                                         }
 
 
                                         LandingScreen(
-                                            authState = viewModel.authState,
-                                            authenticate = {
-                                                navController.navigate(Screen.Patypet.route)
-                                            },
                                             navigateToSignIn = {
                                                 navController.navigate(Screen.Auth.SignIn.route)
                                             },
@@ -187,7 +194,15 @@ class MainActivity : ComponentActivity() {
                                         val viewModel = it.sharedViewModel<HomeViewModel>(
                                             navController = navController
                                         )
-                                        viewModel.fetchArticle()
+
+                                        val authViewModel = it.sharedViewModel<AuthViewModel>(
+                                            navController = navController
+                                        )
+                                        val user = authViewModel.user.value
+
+                                        LaunchedEffect(key1 = true){
+                                            viewModel.getPet(user.email ?: "test@gmail.com")
+                                        }
 
                                         HomeScreen(
                                             deauthenticate = {
@@ -199,6 +214,7 @@ class MainActivity : ComponentActivity() {
                                             },
                                             articleUiState = viewModel.articleUiState,
                                             petUiState = viewModel.petUiState,
+                                            user = user
                                         )
                                     }
 

@@ -16,7 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.ahmrh.patypet.domain.state.AuthState
+import com.ahmrh.patypet.common.AuthState
 import com.ahmrh.patypet.ui.components.Logo
 import com.ahmrh.patypet.ui.components.button.LongButton
 import com.ahmrh.patypet.ui.theme.PatypetTheme
@@ -25,15 +25,7 @@ import com.ahmrh.patypet.ui.theme.PatypetTheme
 fun LandingScreen(
     navigateToSignIn: () -> Unit = {},
     navigateToSignUp: () -> Unit = {},
-    authenticate: () -> Unit = {},
-    authState: State<AuthState>? = null
 ) {
-    LaunchedEffect(key1 = true ){
-        if(authState?.value is AuthState.Authenticated) {
-            authenticate()
-            Log.d("Testing", "it is authenticated at landingscreen" )
-        }
-    }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,

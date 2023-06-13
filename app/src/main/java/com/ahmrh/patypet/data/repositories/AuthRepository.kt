@@ -5,13 +5,13 @@ import android.util.Log
 import com.ahmrh.patypet.data.local.AppPreferences
 import com.ahmrh.patypet.data.remote.responses.LoginResponse
 import com.ahmrh.patypet.data.remote.responses.RegisterResponse
+import com.ahmrh.patypet.data.remote.responses.UserResponse
 import com.ahmrh.patypet.data.remote.retrofit.AuthApiService
 import com.google.gson.JsonObject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -28,15 +28,6 @@ class AuthRepository(
     fun getToken(): String? = pref.getToken()
 
     suspend fun endSession() = pref.deleteLogin()
-
-    fun forceLogin(
-        scope: CoroutineScope
-    ){
-        scope.launch{
-            pref.saveLogin("temporary token")
-        }
-
-    }
 
      fun login(
         email: String,
@@ -135,6 +126,46 @@ class AuthRepository(
         })
 
          awaitClose { client.cancel() }
+    }
+
+    fun getUser(
+        token: String
+    ) : Flow<UserResponse> = callbackFlow {
+        Log.d(TAG, "get User")
+
+        val client = apiService.getUser(token)
+        client.enqueue(object : Callback<UserResponse> {
+            override fun onResponse(
+                call: Call<UserResponse>,
+                response: Response<UserResponse>
+            ) {
+                Log.d(
+                    TAG,
+                    response.body().toString()
+                )
+                if (response.isSuccessful) {
+                    trySend(response.body()!!)
+                } else{
+
+                    Log.e(TAG, "onFailureResponse : ${response.message()}")
+                    close(
+                        Exception(response.message())
+                    )
+                }
+            }
+
+            override fun onFailure(
+                call: Call<UserResponse>,
+                t: Throwable
+            ) {
+                Log.e(TAG, "onFailure : ${t.message}")
+                close(
+                    Exception(t.message)
+                )
+            }
+        })
+
+        awaitClose { client.cancel() }
     }
 
 

@@ -13,10 +13,11 @@ class ViewModelFactory(private val context: Context) :
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(AuthViewModel::class.java)) {
-            return AuthViewModel(Injection.provideAuthRepository(context)) as T
-        }
-        else if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
+//        if (modelClass.isAssignableFrom(AuthViewModel::class.java)) {
+//            return AuthViewModel(Injection.provideAuthRepository(context)) as T
+//        }
+//        else
+            if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
             return MainViewModel(Injection.provideAuthRepository(context), Injection.providePetRepository(context)) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)

@@ -16,6 +16,8 @@ class AppPreferences(private val dataStore: DataStore<Preferences>) {
     companion object {
         const val TAG = "AppPreferences"
         private val TOKEN_KEY = stringPreferencesKey("token")
+        private val NAME_KEY = stringPreferencesKey("name")
+        private val EMAIL_KEY = stringPreferencesKey("email")
 
         @Volatile
         private var INSTANCE: AppPreferences? = null
@@ -32,7 +34,7 @@ class AppPreferences(private val dataStore: DataStore<Preferences>) {
      suspend fun saveLogin(token: String){
          dataStore.edit {preferences ->
              preferences[TOKEN_KEY] = token
-             Log.d(TAG, "SaveLogin:  $token ")
+             Log.d(TAG, "SaveLogin:  $token")
          }
     }
 

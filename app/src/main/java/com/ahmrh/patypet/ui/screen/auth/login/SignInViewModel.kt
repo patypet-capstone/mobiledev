@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ahmrh.patypet.common.Resource
-import com.ahmrh.patypet.domain.state.UiState
+import com.ahmrh.patypet.common.UiState
 import com.ahmrh.patypet.domain.use_case.auth.AuthUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -18,7 +18,8 @@ class SignInViewModel @Inject constructor(
     private val authUseCases: AuthUseCases
 ) : ViewModel() {
 
-    private val _uiState = mutableStateOf<UiState<String>>(UiState.Idle)
+    private val _uiState = mutableStateOf<UiState<String>>(
+        UiState.Idle)
     val uiState: State<UiState<String>> = _uiState
 
     fun signIn(

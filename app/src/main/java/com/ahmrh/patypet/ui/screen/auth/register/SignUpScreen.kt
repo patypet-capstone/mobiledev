@@ -23,7 +23,7 @@ import com.ahmrh.patypet.ui.components.loading.Loading
 import com.ahmrh.patypet.ui.components.button.LongButton
 import com.ahmrh.patypet.ui.components.StaticHeader
 import com.ahmrh.patypet.ui.theme.PatypetTheme
-import com.ahmrh.patypet.domain.state.UiState
+import com.ahmrh.patypet.common.UiState
 import com.ahmrh.patypet.domain.utils.isValidEmail
 import com.ahmrh.patypet.domain.utils.isValidPassword
 import com.ahmrh.patypet.ui.components.CustomInputField

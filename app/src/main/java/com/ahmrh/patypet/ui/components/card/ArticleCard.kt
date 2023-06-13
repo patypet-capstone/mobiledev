@@ -77,8 +77,8 @@ fun ArticleCard(
                         .height(132.dp),
                     contentScale = ContentScale.Crop
                 )
-
             }
+
             Column(
                 modifier = Modifier
                     .height(96.dp)

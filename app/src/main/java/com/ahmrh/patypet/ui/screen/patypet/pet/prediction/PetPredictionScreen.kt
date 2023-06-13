@@ -51,7 +51,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.ahmrh.patypet.R
 import com.ahmrh.patypet.data.remote.responses.PredictionResponse
-import com.ahmrh.patypet.domain.state.UiState
+import com.ahmrh.patypet.common.UiState
 import com.ahmrh.patypet.ui.components.ChipType
 import com.ahmrh.patypet.ui.components.CustomChip
 import com.ahmrh.patypet.ui.components.bar.PredictionTopBar
@@ -245,41 +245,42 @@ fun BottomSheetContent(
         }
 
         Spacer(Modifier.height(16.dp))
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(
-                8.dp
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            CustomChip(
-                chipType = ChipType.Age,
-                content = "${prediction.breedData?.lifespan}",
-                modifier = Modifier.weight(1f)
-            )
-            CustomChip(
-                chipType = ChipType.Weight,
-                content = "${prediction.breedData?.weight}",
-                modifier = Modifier.weight(1f)
-            )
-            CustomChip(
-                chipType = ChipType.Color,
-                content = "${prediction.breedData?.colours}",
-                modifier = Modifier.weight(1f),
-                colours = listOf(
-                    prediction.breedData?.colours?.color1 ?: "",
-                    prediction.breedData?.colours?.color2 ?: "",
-                    prediction.breedData?.colours?.color3 ?: "",
-                )
-            )
-        }
-
-        Spacer(Modifier.height(16.dp))
 
         Column(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
         ){
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(
+                    8.dp
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                CustomChip(
+                    chipType = ChipType.Age,
+                    content = "${prediction.breedData?.lifespan}",
+                    modifier = Modifier.weight(1f)
+                )
+                CustomChip(
+                    chipType = ChipType.Weight,
+                    content = "${prediction.breedData?.weight}",
+                    modifier = Modifier.weight(1f)
+                )
+                CustomChip(
+                    chipType = ChipType.Color,
+                    content = "${prediction.breedData?.colours}",
+                    modifier = Modifier.weight(1f),
+                    colours = listOf(
+                        prediction.breedData?.colours?.color1 ?: "",
+                        prediction.breedData?.colours?.color2 ?: "",
+                        prediction.breedData?.colours?.color3 ?: "",
+                    )
+                )
+            }
+
+            Spacer(Modifier.height(16.dp))
 
             // see material3 bottomsheetscaffold documentation for more
             if (sheetState.targetValue != SheetValue.Expanded) {

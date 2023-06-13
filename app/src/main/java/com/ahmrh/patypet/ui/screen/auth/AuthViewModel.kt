@@ -5,29 +5,62 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ahmrh.patypet.data.remote.responses.RemoteResponse
+import com.ahmrh.patypet.common.AuthState
+import com.ahmrh.patypet.common.Resource
 import com.ahmrh.patypet.data.repositories.AuthRepository
-import com.ahmrh.patypet.domain.state.AuthState
-import com.ahmrh.patypet.domain.state.UiState
+import com.ahmrh.patypet.di.Injection.init
+import com.ahmrh.patypet.domain.model.User
+import com.ahmrh.patypet.domain.use_case.auth.AuthUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val repository: AuthRepository
+    private val repository: AuthRepository,
+    private val authUseCases: AuthUseCases
 ) : ViewModel() {
-//    private val _authState: MutableStateFlow<AuthState> =
-//        MutableStateFlow(AuthState.Unknown)
-//    val authState: StateFlow<AuthState>
-//        get() = _authState
-//
 
-    private val _authState = mutableStateOf<AuthState>(AuthState.Unknown)
+    private val _authState = mutableStateOf<AuthState>(
+        AuthState.Unknown
+    )
     val authState: State<AuthState> = _authState
+
+    private val _user = mutableStateOf(User())
+    val user = _user
+
+    init{
+        getUserLogin()
+        Log.d("AuthViewModel", "View Model initiated")
+    }
+
+    private fun getUserLogin() {
+        Log.d("SignUpViewModel", "Sign Up Clicked")
+        authUseCases.getUserLogin()
+            .onEach { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        _authState.value =
+                            AuthState.Authenticated(result.data!!)
+                        _user.value = result.data
+                    }
+
+                    is Resource.Error -> {
+                        if (result.message == "unauthorized") {
+                            _authState.value =
+                                AuthState.Unknown
+                        }
+                    }
+
+                    is Resource.Loading -> {
+
+                    }
+                }
+            }.launchIn(viewModelScope)
+    }
+
     fun getAuthState() {
         viewModelScope.launch {
             repository.isLogin()
@@ -35,15 +68,18 @@ class AuthViewModel @Inject constructor(
                     Log.d(TAG, it.toString())
                     if (it) _authState.value =
                         AuthState.Authenticated(
-                            repository.getToken() ?: ""
                         )
                     else _authState.value =
                         AuthState.Unknown
                 }
-            Log.d("Testing Auth", repository.getToken().toString())
+            Log.d(
+                "Testing Auth",
+                repository.getToken().toString()
+            )
         }
     }
-//
+
+    //
     fun logout() {
         viewModelScope.launch {
             Log.d(TAG, "logout")
@@ -101,9 +137,6 @@ class AuthViewModel @Inject constructor(
 //
 //    }
 
-    fun forceLogin() {
-        repository.forceLogin(viewModelScope)
-    }
 
     companion object {
         const val TAG = "AuthViewModel"

@@ -38,13 +38,12 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.ahmrh.patypet.R
 import com.ahmrh.patypet.data.remote.responses.PredictionResponse
-import com.ahmrh.patypet.domain.state.UiState
+import com.ahmrh.patypet.common.UiState
 import com.ahmrh.patypet.ui.components.bar.PredictionTopBar
 import com.ahmrh.patypet.ui.components.card.PredictionCard
 import com.ahmrh.patypet.ui.components.dialog.CustomDialog
 import com.ahmrh.patypet.ui.components.loading.PredictionLoading
 import com.ahmrh.patypet.ui.theme.PatypetTheme
-import kotlinx.coroutines.launch
 
 @Composable
 fun PetPredictionDetailScreen(

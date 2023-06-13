@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ahmrh.patypet.common.Resource
 import com.ahmrh.patypet.data.remote.responses.PredictionResponse
-import com.ahmrh.patypet.domain.state.UiState
+import com.ahmrh.patypet.common.UiState
 import com.ahmrh.patypet.domain.use_case.pet.PetUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -20,7 +20,8 @@ class PetViewModel @Inject constructor(
     private val petUseCases: PetUseCases
 ): ViewModel() {
 
-    private val _uiState = mutableStateOf<UiState<PredictionResponse>>(UiState.Idle)
+    private val _uiState = mutableStateOf<UiState<PredictionResponse>>(
+        UiState.Idle)
     val uiState: State<UiState<PredictionResponse>> = _uiState
 
     private val _visiblePermissionDialogQueue = mutableStateListOf<String>()

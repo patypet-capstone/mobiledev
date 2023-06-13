@@ -1,4 +1,4 @@
-package com.ahmrh.patypet.domain.state
+package com.ahmrh.patypet.common
 
 sealed class UiState<out T: Any?> {
     object Idle: UiState<Nothing>()

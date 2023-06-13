@@ -13,25 +13,25 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.ahmrh.patypet.common.UiState
 import com.ahmrh.patypet.data.remote.responses.ArticleResponseItem
 import com.ahmrh.patypet.data.remote.responses.PetResponse
-import com.ahmrh.patypet.domain.state.UiState
+import com.ahmrh.patypet.domain.model.User
 import com.ahmrh.patypet.ui.components.Feature
 import com.ahmrh.patypet.ui.components.FeatureButton
 import com.ahmrh.patypet.ui.components.card.ArticleCard
 import com.ahmrh.patypet.ui.components.card.LoadingArticle
+import com.ahmrh.patypet.ui.components.card.LoadingPetCard
 import com.ahmrh.patypet.ui.components.card.PetCard
 import com.ahmrh.patypet.ui.theme.PatypetTheme
 
@@ -39,11 +39,11 @@ import com.ahmrh.patypet.ui.theme.PatypetTheme
 fun HomeScreen(
     deauthenticate: () -> Unit = {},
     articleUiState: State<UiState<List<ArticleResponseItem>>>,
-    petUiState: State<UiState<PetResponse>> = mutableStateOf(
-        UiState.Idle
-    ),
+    petUiState: State<UiState<PetResponse>>,
+    user: User,
+    navigateToShop: ()-> Unit = {}
 
-    ) {
+) {
     Surface(
         modifier = Modifier
             .fillMaxHeight()
@@ -56,20 +56,17 @@ fun HomeScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Text(
-                text = "Hello, User",
+                text = "Hello, ${user.name}",
                 fontSize = 24.sp,
                 modifier = Modifier.fillMaxWidth()
 
             )
 
-            val spaceValue = 4.dp
 
             HomeFeatureSection()
 
-            Spacer(Modifier.height(spaceValue))
-            HomeMyPetSection()
+            HomeMyPetSection(petUiState)
 
-            Spacer(Modifier.height(spaceValue))
             HomeArticleSection(articleUiState)
         }
 
@@ -94,7 +91,11 @@ fun HomeFeatureSection() {
 }
 
 @Composable
-fun HomeMyPetSection() {
+fun HomeMyPetSection(
+    petUiState: State<UiState<PetResponse>>
+) {
+    Spacer(Modifier.height(4.dp))
+
     Text(
         text = "My Pet",
         fontSize = 16.sp,
@@ -102,18 +103,55 @@ fun HomeMyPetSection() {
         modifier = Modifier.fillMaxWidth()
     )
 
-    Row(
-        horizontalArrangement = Arrangement
-            .spacedBy(10.dp),
-        modifier = Modifier
-            .horizontalScroll(rememberScrollState())
+    when (petUiState.value) {
+        is UiState.Idle -> {
+            LoadingPetCard()
+        }
 
-    ) {
-        PetCard()
-        PetCard()
-        PetCard()
-        PetCard()
+        is UiState.Loading -> {
+            LoadingPetCard()
+        }
+
+        is UiState.Success -> {
+
+
+            val pets =
+                (petUiState.value as UiState.Success<PetResponse>).data.data ?: listOf()
+
+            LazyRow(
+                horizontalArrangement = Arrangement
+                    .spacedBy(10.dp),
+            ) {
+                items(pets) { pet ->
+
+
+                    PetCard(
+                        photoUrl = pet?.imageUrl,
+                        name = pet?.name.toString(),
+                        breed = pet?.predictedLabel
+                    )
+
+                }
+            }
+        }
+
+        is UiState.Error -> {
+            LoadingPetCard()
+        }
     }
+
+//    Row(
+//        horizontalArrangement = Arrangement
+//            .spacedBy(10.dp),
+//        modifier = Modifier
+//            .horizontalScroll(rememberScrollState())
+//
+//    ) {
+//        PetCard()
+//        PetCard()
+//        PetCard()
+//        PetCard()
+//    }
 
 }
 
@@ -121,6 +159,8 @@ fun HomeMyPetSection() {
 fun HomeArticleSection(
     articleUiState: State<UiState<List<ArticleResponseItem>>>,
 ) {
+    Spacer(Modifier.height(4.dp))
+
     Text(
         text = "Article",
         fontSize = 16.sp,
@@ -163,6 +203,7 @@ fun HomeArticleSection(
                         })
                 }
             }
+
         }
 
         is UiState.Error -> {

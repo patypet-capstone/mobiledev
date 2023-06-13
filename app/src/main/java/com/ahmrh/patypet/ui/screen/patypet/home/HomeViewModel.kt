@@ -1,17 +1,18 @@
 package com.ahmrh.patypet.ui.screen.patypet.home
 
-import android.provider.ContactsContract.CommonDataKinds.Email
 import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ahmrh.patypet.common.AuthState
 import com.ahmrh.patypet.common.Resource
-import com.ahmrh.patypet.data.remote.responses.ArticleResponse
 import com.ahmrh.patypet.data.remote.responses.ArticleResponseItem
 import com.ahmrh.patypet.data.remote.responses.PetResponse
-import com.ahmrh.patypet.data.remote.responses.PredictionResponse
-import com.ahmrh.patypet.domain.state.UiState
+import com.ahmrh.patypet.common.UiState
+import com.ahmrh.patypet.di.Injection.init
+import com.ahmrh.patypet.domain.model.User
+import com.ahmrh.patypet.domain.use_case.auth.AuthUseCases
 import com.ahmrh.patypet.domain.use_case.pet.PetUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -20,7 +21,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel@Inject constructor(
-    private val petUseCases: PetUseCases
+    private val petUseCases: PetUseCases,
+    private val authUseCases: AuthUseCases
 ): ViewModel()  {
 
 
@@ -32,12 +34,11 @@ class HomeViewModel@Inject constructor(
         UiState.Idle)
     val petUiState: State<UiState<PetResponse>> = _petUiState
 
+
     init{
         fetchArticle()
         getPet("test@gmail.com")
     }
-
-
     fun fetchArticle(jenis: String? = null) {
         Log.d("SignUpViewModel", "Sign Up Clicked" )
         petUseCases.fetchArticle(jenis)
@@ -68,6 +69,7 @@ class HomeViewModel@Inject constructor(
                     }
                     is Resource.Error -> {
                         _petUiState.value = UiState.Error(result.message ?: "Unexpected Error Occured")
+                        getPet("test@gmail.com")
                     }
                     is Resource.Loading -> {
                         _petUiState.value = UiState.Loading
