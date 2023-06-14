@@ -2,6 +2,7 @@ package com.ahmrh.patypet.ui.components.bar
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,6 +30,7 @@ import com.ahmrh.patypet.ui.theme.PatypetTheme
 fun PredictionTopBar(
     onBack: () -> Unit = {},
     onBookmark: () -> Unit = {},
+    isActionThere: Boolean = true,
     title: String? = null
 ){
 
@@ -55,16 +57,24 @@ fun PredictionTopBar(
             }
         },
         actions = {
-            IconButton(onClick = {
-                onBookmark
-            }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.bookmark),
-                    contentDescription = "Localized description",
-                    modifier = Modifier
-                        .size(24.dp)
-                )
-            }
+                  if(isActionThere){
+
+                      IconButton(onClick = {
+                          onBookmark
+                      }) {
+                          Icon(
+                              painter = painterResource(id = R.drawable.bookmark),
+                              contentDescription = "Localized description",
+                              modifier = Modifier
+                                  .size(24.dp)
+                          )
+                      }
+                  } else{
+
+                      IconButton(onClick = {
+                      }) {
+                      }
+                  }
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primary,

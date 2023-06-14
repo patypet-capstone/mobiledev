@@ -85,7 +85,7 @@ fun VetCard(
                     }
                     Button(
                         onClick = {}, modifier = Modifier.align(
-                            Alignment.BottomEnd
+                            Alignment.BottomStart
                         )
                     ) {
                         Text("Contact ")

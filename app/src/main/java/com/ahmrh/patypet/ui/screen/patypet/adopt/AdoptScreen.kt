@@ -23,6 +23,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,6 +38,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ahmrh.patypet.R
+import com.ahmrh.patypet.ui.components.bar.PredictionTopBar
 import com.ahmrh.patypet.ui.components.card.AdoptCard
 import com.ahmrh.patypet.ui.theme.PatypetTheme
 
@@ -53,6 +55,7 @@ fun AdoptScreen() {
     Surface(
     ) {
         Box {
+
 
             Column(
                 Modifier

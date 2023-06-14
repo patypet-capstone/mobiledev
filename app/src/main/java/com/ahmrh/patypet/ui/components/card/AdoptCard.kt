@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ahmrh.patypet.R
 import com.ahmrh.patypet.ui.components.CustomImage
+import com.ahmrh.patypet.ui.components.bar.PredictionTopBar
 import com.ahmrh.patypet.ui.theme.PatypetTheme
 
 @Composable
@@ -68,7 +69,7 @@ fun AdoptCard(
         }
 
 
-        Spacer(Modifier.size(8.dp))
+        Spacer(Modifier.size(16.dp))
         Box(
             modifier = Modifier.fillMaxWidth()
         ) {
