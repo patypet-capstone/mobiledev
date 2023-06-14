@@ -225,12 +225,13 @@ fun BottomSheetContent(
 
             }
             Text(
-                text = "${
-                    String.format(
-                        "%.${2}f",
-                        prediction.confidence
-                    )
-                } Accuracy",
+//                text = "${
+//                    String.format(
+//                        "%.${2}f",
+//                        prediction.confidence
+//                    )
+//                } Accuracy",
+                text = "${Math.round((prediction.confidence as Double) * 100)}% Accuracy",
                 modifier = Modifier
                     .clip(RoundedCornerShape(8.dp))
                     .background(MaterialTheme.colorScheme.primary)

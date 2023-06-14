@@ -44,6 +44,10 @@ import com.ahmrh.patypet.ui.screen.auth.login.SignInScreen
 import com.ahmrh.patypet.ui.screen.auth.register.SignInViewModel
 import com.ahmrh.patypet.ui.screen.auth.register.SignUpScreen
 import com.ahmrh.patypet.ui.screen.auth.register.SignUpViewModel
+import com.ahmrh.patypet.ui.screen.patypet.adopt.AdoptScreen
+import com.ahmrh.patypet.ui.screen.patypet.adopt.AdoptViewModel
+import com.ahmrh.patypet.ui.screen.patypet.caretake.CaretakeScreen
+import com.ahmrh.patypet.ui.screen.patypet.caretake.CaretakeViewModel
 import com.ahmrh.patypet.ui.screen.patypet.home.HomeScreen
 import com.ahmrh.patypet.ui.screen.patypet.home.HomeViewModel
 import com.ahmrh.patypet.ui.screen.patypet.pet.prediction.PetPredictionScreen
@@ -53,6 +57,8 @@ import com.ahmrh.patypet.ui.screen.patypet.pet.prediction.PetPredictionDetailScr
 import com.ahmrh.patypet.ui.screen.patypet.profile.ProfileScreen
 import com.ahmrh.patypet.ui.screen.patypet.shop.ShopScreen
 import com.ahmrh.patypet.ui.screen.patypet.shop.ShopViewModel
+import com.ahmrh.patypet.ui.screen.patypet.vet.VetScreen
+import com.ahmrh.patypet.ui.screen.patypet.vet.VetViewModel
 import com.ahmrh.patypet.ui.theme.PatypetTheme
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
@@ -213,12 +219,27 @@ class MainActivity : ComponentActivity() {
                                             },
                                             articleUiState = viewModel.articleUiState,
                                             petUiState = viewModel.petUiState,
+                                            user = user,
                                             navigateToShop = {
                                                 navController.navigate(
                                                     Screen.Patypet.Shop.route
                                                 )
                                             },
-                                            user = user
+                                            navigateToCaretake = {
+                                                navController.navigate(
+                                                    Screen.Patypet.Caretake.route
+                                                )
+                                            },
+                                            navigateToVet = {
+                                                navController.navigate(
+                                                    Screen.Patypet.Vet.route
+                                                )
+                                            },
+                                            navigateToAdopt = {
+                                                navController.navigate(
+                                                    Screen.Patypet.Adopt.route
+                                                )
+                                            },
                                         )
                                     }
 
@@ -296,7 +317,31 @@ class MainActivity : ComponentActivity() {
                                         )
                                     }
 
+                                    composable(Screen.Patypet.Adopt.route){
 
+                                        val viewModel = it.sharedViewModel<AdoptViewModel>(
+                                            navController = navController
+                                        )
+                                        AdoptScreen()
+
+                                    }
+
+                                    composable(Screen.Patypet.Caretake.route){
+
+                                        val viewModel = it.sharedViewModel<CaretakeViewModel>(
+                                            navController = navController
+                                        )
+                                        CaretakeScreen()
+
+                                    }
+                                    composable(Screen.Patypet.Vet.route){
+
+                                        val viewModel = it.sharedViewModel<VetViewModel>(
+                                            navController = navController
+                                        )
+                                        VetScreen()
+
+                                    }
 
 
                                 }

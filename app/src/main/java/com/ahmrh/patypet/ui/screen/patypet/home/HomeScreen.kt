@@ -40,7 +40,11 @@ fun HomeScreen(
     articleUiState: State<UiState<List<ArticleResponseItem>>>,
     petUiState: State<UiState<PetResponse>>,
     user: User,
-    navigateToShop: () -> Unit = {}
+    navigateToShop: () -> Unit = {},
+    navigateToCaretake: () -> Unit = {},
+    navigateToVet: () -> Unit = {},
+    navigateToAdopt: () -> Unit = {}
+
 
 ) {
     Surface(
@@ -72,9 +76,9 @@ fun HomeScreen(
 
             HomeFeatureSection(
                 navigateToShop = navigateToShop,
-                navigateToCaretake = {},
-                navigateToPet = {},
-                navigateToAdopt = {}
+                navigateToCaretake = navigateToCaretake,
+                navigateToVet = navigateToVet,
+                navigateToAdopt = navigateToAdopt
             )
 
             HomeMyPetSection(petUiState)
@@ -91,7 +95,7 @@ fun HomeScreen(
 fun HomeFeatureSection(
     navigateToShop: () -> Unit,
     navigateToCaretake: () -> Unit,
-    navigateToPet: () -> Unit,
+    navigateToVet: () -> Unit,
     navigateToAdopt: () -> Unit
 
 ) {
@@ -105,9 +109,18 @@ fun HomeFeatureSection(
             featureType = Feature.Shop,
             onClick = navigateToShop
         )
-        FeatureButton(featureType = Feature.Caretake)
-        FeatureButton(featureType = Feature.Vet)
-        FeatureButton(featureType = Feature.Adopt)
+        FeatureButton(
+            featureType = Feature.Caretake,
+            onClick = navigateToCaretake
+        )
+        FeatureButton(
+            featureType = Feature.Vet,
+            onClick = navigateToVet
+        )
+        FeatureButton(
+            featureType = Feature.Adopt,
+            onClick = navigateToAdopt
+        )
     }
 }
 

@@ -72,7 +72,7 @@ private val LightColorScheme = lightColorScheme(
     onSurface = custom_onSurface,
 
     surfaceVariant = md_theme_light_surfaceVariant,
-    onSurfaceVariant = md_theme_dark_onSurfaceVariant,
+    onSurfaceVariant = md_theme_light_onSurfaceVariant,
 
     outline = Orange5,
 
