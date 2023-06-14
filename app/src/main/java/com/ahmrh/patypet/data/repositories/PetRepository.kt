@@ -1,10 +1,10 @@
 package com.ahmrh.patypet.data.repositories
 
 import android.util.Log
-import com.ahmrh.patypet.data.remote.responses.ArticleResponse
 import com.ahmrh.patypet.data.remote.responses.ArticleResponseItem
 import com.ahmrh.patypet.data.remote.responses.PetResponse
 import com.ahmrh.patypet.data.remote.responses.PredictionResponse
+import com.ahmrh.patypet.data.remote.responses.ShopResponseItem
 import com.ahmrh.patypet.data.remote.retrofit.AuthApiService
 import com.ahmrh.patypet.data.remote.retrofit.PetApiService
 import com.ahmrh.patypet.domain.utils.reduceFileImage

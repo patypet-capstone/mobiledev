@@ -14,11 +14,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.TopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -28,7 +26,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavBackStackEntry
@@ -54,6 +51,8 @@ import com.ahmrh.patypet.ui.screen.patypet.pet.prediction.PetCameraScreen
 import com.ahmrh.patypet.ui.screen.patypet.pet.PetViewModel
 import com.ahmrh.patypet.ui.screen.patypet.pet.prediction.PetPredictionDetailScreen
 import com.ahmrh.patypet.ui.screen.patypet.profile.ProfileScreen
+import com.ahmrh.patypet.ui.screen.patypet.shop.ShopScreen
+import com.ahmrh.patypet.ui.screen.patypet.shop.ShopViewModel
 import com.ahmrh.patypet.ui.theme.PatypetTheme
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
@@ -214,6 +213,11 @@ class MainActivity : ComponentActivity() {
                                             },
                                             articleUiState = viewModel.articleUiState,
                                             petUiState = viewModel.petUiState,
+                                            navigateToShop = {
+                                                navController.navigate(
+                                                    Screen.Patypet.Shop.route
+                                                )
+                                            },
                                             user = user
                                         )
                                     }
@@ -275,6 +279,20 @@ class MainActivity : ComponentActivity() {
                                                 }
 
                                             }
+                                        )
+                                    }
+
+                                    composable(Screen.Patypet.Shop.route){
+
+                                        val viewModel = it.sharedViewModel<ShopViewModel>(
+                                            navController = navController
+                                        )
+                                        ShopScreen(
+                                            onSearch = viewModel::searchProduct,
+                                            onJenisChange = viewModel::setJenis,
+                                            onProductChange = viewModel::setProduct,
+                                            productUiState = viewModel.productUiState,
+                                            onGetProduct = viewModel::getShopProduct
                                         )
                                     }
 

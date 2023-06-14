@@ -15,6 +15,7 @@ import com.ahmrh.patypet.data.remote.retrofit.AuthApiService
 import com.ahmrh.patypet.data.remote.retrofit.PetApiService
 import com.ahmrh.patypet.data.repositories.AuthRepository
 import com.ahmrh.patypet.data.repositories.PetRepository
+import com.ahmrh.patypet.data.repositories.ShopRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -39,6 +40,11 @@ object AppModule {
         return AuthRepository(apiService, pref)
     }
 
+    @Provides
+    @Singleton
+    fun provideShopRepository(apiService: PetApiService): ShopRepository{
+        return ShopRepository(apiService)
+    }
     @Provides
     @Singleton
     fun providePetRepository(petApiService: PetApiService, authApiService: AuthApiService, pref: AppPreferences): PetRepository{

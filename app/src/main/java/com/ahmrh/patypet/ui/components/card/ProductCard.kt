@@ -52,7 +52,7 @@ fun ProductCard(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
-        elevation = CardDefaults.elevatedCardElevation(),
+        elevation = CardDefaults.cardElevation(5.dp)
 
         ) {
         Column {
@@ -112,6 +112,8 @@ fun ProductCard(
         }
     }
 }
+
+
 
 @Preview(showBackground = true)
 @Composable

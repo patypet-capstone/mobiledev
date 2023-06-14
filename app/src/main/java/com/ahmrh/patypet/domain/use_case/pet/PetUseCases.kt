@@ -6,5 +6,6 @@ data class PetUseCases @Inject constructor(
     val predict: PredictUseCase,
     val getPet : GetPetUseCase,
     val fetchArticle : FetchArticleUseCase,
+    val getShopProduct: GetShopProductUseCase
 
 )

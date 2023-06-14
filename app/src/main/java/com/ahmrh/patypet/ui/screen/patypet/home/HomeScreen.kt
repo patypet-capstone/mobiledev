@@ -1,6 +1,5 @@
 package com.ahmrh.patypet.ui.screen.patypet.home
 
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -41,7 +40,7 @@ fun HomeScreen(
     articleUiState: State<UiState<List<ArticleResponseItem>>>,
     petUiState: State<UiState<PetResponse>>,
     user: User,
-    navigateToShop: ()-> Unit = {}
+    navigateToShop: () -> Unit = {}
 
 ) {
     Surface(
@@ -55,15 +54,28 @@ fun HomeScreen(
                 .padding(24.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            Text(
-                text = "Hello, ${user.name}",
-                fontSize = 24.sp,
-                modifier = Modifier.fillMaxWidth()
 
+            Row {
+                Text(
+                    text = "Hello, ",
+                    fontSize = 24.sp,
+
+                    )
+
+                Text(
+                    text = "${user.name}",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+
+            HomeFeatureSection(
+                navigateToShop = navigateToShop,
+                navigateToCaretake = {},
+                navigateToPet = {},
+                navigateToAdopt = {}
             )
-
-
-            HomeFeatureSection()
 
             HomeMyPetSection(petUiState)
 
@@ -76,14 +88,23 @@ fun HomeScreen(
 }
 
 @Composable
-fun HomeFeatureSection() {
+fun HomeFeatureSection(
+    navigateToShop: () -> Unit,
+    navigateToCaretake: () -> Unit,
+    navigateToPet: () -> Unit,
+    navigateToAdopt: () -> Unit
+
+) {
 
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier
             .fillMaxWidth()
     ) {
-        FeatureButton(featureType = Feature.Shop)
+        FeatureButton(
+            featureType = Feature.Shop,
+            onClick = navigateToShop
+        )
         FeatureButton(featureType = Feature.Caretake)
         FeatureButton(featureType = Feature.Vet)
         FeatureButton(featureType = Feature.Adopt)
@@ -116,7 +137,8 @@ fun HomeMyPetSection(
 
 
             val pets =
-                (petUiState.value as UiState.Success<PetResponse>).data.data ?: listOf()
+                (petUiState.value as UiState.Success<PetResponse>).data.data
+                    ?: listOf()
 
             LazyRow(
                 horizontalArrangement = Arrangement
