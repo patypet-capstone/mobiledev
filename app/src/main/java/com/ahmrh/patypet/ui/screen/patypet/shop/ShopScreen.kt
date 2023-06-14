@@ -53,7 +53,9 @@ fun ShopScreen(
     productUiState: StateFlow<UiState<List<ShopResponseItem>>>,
     onGetProduct: () -> Unit = {},
 ) {
-    Surface {
+    Surface (
+        modifier = Modifier.fillMaxSize()
+            ){
         var active by rememberSaveable {
             mutableStateOf(
                 false
@@ -63,7 +65,7 @@ fun ShopScreen(
 
         Column(
             modifier = Modifier
-                .padding(24.dp)
+                .padding(horizontal = 24.dp, vertical = 12.dp)
         ) {
 
             SearchBar(
@@ -79,7 +81,7 @@ fun ShopScreen(
                 },
                 active = active,
                 onActiveChange = { active = false },
-                placeholder = { Text("Search product") },
+                placeholder = { Text("Search caretake") },
                 leadingIcon = {
                     Icon(
                         Icons.Default.Search,

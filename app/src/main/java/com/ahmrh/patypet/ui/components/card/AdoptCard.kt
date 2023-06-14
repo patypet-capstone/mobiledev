@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Button
 import androidx.compose.material3.ElevatedCard
@@ -34,86 +35,91 @@ import com.ahmrh.patypet.ui.components.CustomImage
 import com.ahmrh.patypet.ui.theme.PatypetTheme
 
 @Composable
-fun AdoptCard() {
+fun AdoptCard(
+    userPhotoUrl: String? = null,
+    userName: String,
+    petPhotoUrl: String? = null,
+    petName:String,
+    petBreed: String,
+    onAdopt: () -> Unit,
+) {
 
-    ElevatedCard(
+    Column(
+        modifier = Modifier.padding(24.dp)
     ) {
-        Column(
-            modifier = Modifier.padding(24.dp)
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            CustomImage(
+
+                modifier = Modifier
+                    .size(36.dp)
+                    .clip(CircleShape),
+                photoUrl = userPhotoUrl
+            )
+            Spacer(modifier = Modifier.size(12.dp))
+
+            Text(
+                userName,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Medium
+            )
+        }
+
+
+        Spacer(Modifier.size(8.dp))
+        Box(
+            modifier = Modifier.fillMaxWidth()
         ) {
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                CustomImage(
+            CustomImage(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(256.dp)
+                    .clip(RoundedCornerShape(8.dp)),
+                photoUrl = petPhotoUrl
+            )
+        }
+        Spacer(Modifier.size(16.dp))
 
-                    modifier = Modifier
-                        .size(36.dp)
-                        .clip(CircleShape),
-                )
-                Spacer(modifier = Modifier.size(12.dp))
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Top,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column {
 
                 Text(
-                    "Mark Kyle",
+                    petName,
                     fontSize = 20.sp,
-                    fontWeight = FontWeight.Medium
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(Modifier.size(8.dp))
+                Text(
+                    petBreed,
+                    fontSize = 16.sp,
                 )
             }
 
-
-            Spacer(Modifier.size(8.dp))
-            Box(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-
-                CustomImage(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(256.dp)
-                        .clip(RoundedCornerShape(8.dp)),
-                )
-            }
-            Spacer(Modifier.size(16.dp))
-
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Top,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Column {
-
-                    Text(
-                        "Dijjah Yellow",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Spacer(Modifier.size(8.dp))
-                    Text(
-                        "Golden Retriever",
-                        fontSize = 16.sp,
-                    )
-                }
-
-                Button(
-                    onClick = {},
+            Button(
+                onClick = {},
 //                    colors = IconButtonDefaults.iconButtonColors(
 //                        containerColor = MaterialTheme.colorScheme.primary,
 //                        contentColor = MaterialTheme.colorScheme.onPrimary
 //                    ),
-                ) {
-                    Text("Adopt")
-                    Spacer(Modifier.size(8.dp))
-                    Icon(
-                        painter= painterResource(id = R.drawable.splash_logo_patypet),
-                        contentDescription = null,
-                        modifier = Modifier.size(16.dp)
-                    )
-                }
+            ) {
+                Text("Adopt")
+                Spacer(Modifier.size(8.dp))
+                Icon(
+                    painter= painterResource(id = R.drawable.splash_logo_patypet),
+                    contentDescription = null,
+                    modifier = Modifier.size(16.dp)
+                )
             }
-
         }
-    }
 
+    }
 }
 
 @Preview(showBackground = true)
@@ -135,10 +141,10 @@ fun AdoptPostPreview() {
 
 
             ) {
-
-            AdoptCard()
-            AdoptCard()
-            AdoptCard()
+//
+//            AdoptCard()
+//            AdoptCard()
+//            AdoptCard()
         }
     }
 }
