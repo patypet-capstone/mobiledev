@@ -134,22 +134,22 @@ fun SignInForm(
                     },
                     modifier = Modifier.width(312.dp)
                 )
-                TextButton(
-                    onClick = {},
-                    modifier = Modifier
-                        .height(36.dp)
-                ) {
-                    Text(
-                        "Forgot password?",
-                        color = MaterialTheme.colorScheme.onSurface,
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                }
+//                TextButton(
+//                    onClick = {},
+//                    modifier = Modifier
+//                        .height(36.dp)
+//                ) {
+//                    Text(
+//                        "Forgot password?",
+//                        color = MaterialTheme.colorScheme.onSurface,
+//                        style = MaterialTheme.typography.titleMedium
+//                    )
+//                }
             }
             LongButton(
                 text = "Sign In",
                 modifier = Modifier.padding(vertical = 8.dp),
-                isError = passwordError || emailError,
+                isError = false,
                 color = MaterialTheme.colorScheme.secondary,
                 textColor = MaterialTheme.colorScheme.onSecondary,
                 onClick = {

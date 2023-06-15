@@ -162,8 +162,8 @@ fun HomeMyPetSection(
 
                     PetCard(
                         photoUrl = pet?.imageUrl,
-                        name = pet?.name.toString(),
-                        breed = pet?.predictedLabel
+                        name = "Unnamed Entity",
+                        breed = "Golden Retriever"
                     )
 
                 }

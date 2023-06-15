@@ -136,7 +136,7 @@ fun SignUpForm(
             LongButton(
                 text = "Sign Up",
                 modifier = Modifier.padding(vertical = 16.dp),
-                isError = passwordError || emailError,
+                isError = false,
                 color = MaterialTheme.colorScheme.secondary,
                 textColor = MaterialTheme.colorScheme.onSecondary,
                 onClick = {
