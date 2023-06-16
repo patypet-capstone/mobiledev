@@ -1,16 +1,12 @@
 # Patypet
 > Protect And Treat Your Pet
 
-A pet-related app that offers several features such as breed classification, obesity classification, animal feed purchase, pet daycare and nearby veterinarian, and adoption. Image processing is used to recommend animal feed purchase based on the type and weight of each animal. The adoption feature allows the public to upload animals for adoption, giving them an opportunity to help find adopters for abandoned animals. Adopters will be vetted by the team, ensuring a safe transfer of adoption rights.
-
+A pet related app with features such as breed classification, pet marketplace, nearby vet, pet daycare, and adoption. Written in kotlin with Jetpack Compose and implementing Use Case architecture to separate business logic. Any kind of feedback is appreciated.
 
 
 ## Tech Stack
 
-**Client:** Kotlin
-
-**Server:** Google Cloud Platform
-
+**Mobile Development:** Kotlin, Compose, Retrofit, Android Jetpack libraries, Preference Datastore.
 
 ## Patypet Team | C23-PR484
 | Name | Role | Email | GitHub | 
