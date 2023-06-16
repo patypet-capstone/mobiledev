@@ -22,6 +22,10 @@ class SignUpViewModel @Inject constructor(
         UiState.Idle)
     val uiState: State<UiState<String>> = _uiState
 
+    fun resetState(){
+        _uiState.value = UiState.Idle
+    }
+
      fun signUp(
         name: String,
         email: String,

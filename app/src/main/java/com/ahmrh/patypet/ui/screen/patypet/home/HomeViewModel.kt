@@ -15,8 +15,10 @@ import com.ahmrh.patypet.domain.model.User
 import com.ahmrh.patypet.domain.use_case.auth.AuthUseCases
 import com.ahmrh.patypet.domain.use_case.pet.PetUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -36,8 +38,18 @@ class HomeViewModel@Inject constructor(
 
 
     init{
-        fetchArticle()
-        getPet("test@gmail.com")
+        fetchData()
+    }
+
+    fun fetchData(){
+        viewModelScope.launch{
+
+            _petUiState.value = UiState.Loading
+            _articleUiState.value = UiState.Loading
+
+            fetchArticle()
+            fetchPet()
+        }
     }
     fun fetchArticle(jenis: String? = null) {
         Log.d("SignUpViewModel", "Sign Up Clicked" )
@@ -58,24 +70,40 @@ class HomeViewModel@Inject constructor(
             }.launchIn(viewModelScope)
 
     }
+    fun getPet(){
+        viewModelScope.launch {
+            fetchPet()
+        }
 
-    fun getPet(email: String){
-
-        petUseCases.getPet(email)
-            .onEach{ result ->
-                when(result) {
-                    is Resource.Success -> {
-                        _petUiState.value = UiState.Success(result.data!!)
-                    }
-                    is Resource.Error -> {
-                        _petUiState.value = UiState.Error(result.message ?: "Unexpected Error Occured")
-                        getPet("test@gmail.com")
-                    }
-                    is Resource.Loading -> {
-                        _petUiState.value = UiState.Loading
-                    }
-                }
-            }.launchIn(viewModelScope)
     }
+
+    suspend fun fetchPet(){
+
+        authUseCases.getUserLogin()
+            .collect { user ->
+                if(user is Resource.Success){
+                    val email = user.data?.email!!
+
+                    petUseCases.getPet(email)
+                        .onEach{ result ->
+                            when(result) {
+                                is Resource.Success -> {
+                                    _petUiState.value = UiState.Success(result.data!!)
+                                    Log.d("HomeViewModel", result.data.toString())
+                                }
+                                is Resource.Error -> {
+                                    _petUiState.value = UiState.Error(result.message ?: "Unexpected Error Occured")
+                                }
+                                is Resource.Loading -> {
+                                    _petUiState.value = UiState.Loading
+                                }
+                            }
+                        }.launchIn(viewModelScope)
+                }
+
+            }
+
+    }
+
 
 }

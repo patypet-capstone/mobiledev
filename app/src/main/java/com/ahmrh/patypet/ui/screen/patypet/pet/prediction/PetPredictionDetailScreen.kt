@@ -24,8 +24,11 @@ import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,6 +45,7 @@ import com.ahmrh.patypet.common.UiState
 import com.ahmrh.patypet.ui.components.bar.PredictionTopBar
 import com.ahmrh.patypet.ui.components.card.PredictionCard
 import com.ahmrh.patypet.ui.components.dialog.CustomDialog
+import com.ahmrh.patypet.ui.components.dialog.SavePetDialog
 import com.ahmrh.patypet.ui.components.loading.PredictionLoading
 import com.ahmrh.patypet.ui.theme.PatypetTheme
 
@@ -115,17 +119,32 @@ fun PredictionDetailSheet(
     val scaffoldState = rememberBottomSheetScaffoldState()
     val sheetState = scaffoldState.bottomSheetState
 
+    var isBookmarked by remember { mutableStateOf(false) }
+
+    var savePetDialogOpen by remember {
+        mutableStateOf(false)
+    }
+
+
     Scaffold(
         topBar = {
             PredictionTopBar(
                 onBack = onNavigateUp,
-                title = "Body Features"
+                title = "Body Features",
+                onBookmark = {
+                    isBookmarked = false
+                             },
+                isBookmarked = isBookmarked
             )
         },
         containerColor = MaterialTheme.colorScheme.primary
 
     ) {
         Box(Modifier.padding(it)){
+
+            if(savePetDialogOpen){
+//                SavePetDialog()
+            }
 
         }
 
@@ -216,12 +235,13 @@ fun DetailBottomSheetContent(
             val body = prediction.breedData?.bodyFeatures?.body ?: "Body data unavailable"
             val ears = prediction.breedData?.bodyFeatures?.ears ?: "Ears data unavailable"
             val headShape = prediction.breedData?.bodyFeatures?.headShape ?: "Head shape data unavailable"
+            val photoUrl = prediction.imageUrl
 
-            PredictionCard(isButtonThere = false, onClick = {}, photoUri = photoUri, modifier = Modifier.fillMaxWidth(), cardContent = body, cardTitle = "Body")
+            PredictionCard(isButtonThere = false, onClick = {}, photoUrl = photoUrl, modifier = Modifier.fillMaxWidth(), cardContent = body, cardTitle = "Body")
 
-            PredictionCard(isButtonThere = false, onClick = {}, photoUri = photoUri, modifier = Modifier.fillMaxWidth(),  cardContent = ears, cardTitle = "Ears")
+            PredictionCard(isButtonThere = false, onClick = {}, photoUrl = photoUrl, modifier = Modifier.fillMaxWidth(), cardContent = ears, cardTitle = "Ears")
 
-            PredictionCard(isButtonThere = false, onClick = {}, photoUri = photoUri, modifier = Modifier.fillMaxWidth(),  cardContent = headShape, cardTitle = "Head Shape")
+            PredictionCard(isButtonThere = false, onClick = {}, photoUrl = photoUrl, modifier = Modifier.fillMaxWidth(), cardContent = headShape, cardTitle = "Head Shape")
 
         }
     }

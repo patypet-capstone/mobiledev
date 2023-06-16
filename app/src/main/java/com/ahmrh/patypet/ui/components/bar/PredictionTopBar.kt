@@ -13,6 +13,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
@@ -30,7 +34,7 @@ import com.ahmrh.patypet.ui.theme.PatypetTheme
 fun PredictionTopBar(
     onBack: () -> Unit = {},
     onBookmark: () -> Unit = {},
-    isActionThere: Boolean = true,
+    isBookmarked: Boolean,
     title: String? = null
 ){
 
@@ -57,24 +61,25 @@ fun PredictionTopBar(
             }
         },
         actions = {
-                  if(isActionThere){
+            IconButton(onClick = onBookmark) {
+                if(isBookmarked){
 
-                      IconButton(onClick = {
-                          onBookmark
-                      }) {
-                          Icon(
-                              painter = painterResource(id = R.drawable.bookmark),
-                              contentDescription = "Localized description",
-                              modifier = Modifier
-                                  .size(24.dp)
-                          )
-                      }
-                  } else{
+                    Icon(
+                        painter = painterResource(id = R.drawable.bookmark_filled),
+                        contentDescription = "Localized description",
+                        modifier = Modifier
+                            .size(24.dp),
+                    )
+                } else{
 
-                      IconButton(onClick = {
-                      }) {
-                      }
-                  }
+                    Icon(
+                        painter = painterResource(id = R.drawable.bookmark),
+                        contentDescription = "Localized description",
+                        modifier = Modifier
+                            .size(24.dp)
+                    )
+                }
+            }
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primary,
@@ -89,7 +94,7 @@ fun PredictionTopBar(
 @Composable
 fun PredictionTopBarPreview(){
     PatypetTheme(darkTheme = true){
-        PredictionTopBar()
+        PredictionTopBar(isBookmarked = false)
     }
 
 }

@@ -29,12 +29,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.SheetValue
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -50,8 +56,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.ahmrh.patypet.R
-import com.ahmrh.patypet.data.remote.responses.PredictionResponse
 import com.ahmrh.patypet.common.UiState
+import com.ahmrh.patypet.data.remote.responses.PredictionResponse
+import com.ahmrh.patypet.data.remote.responses.SaveResponse
 import com.ahmrh.patypet.ui.components.ChipType
 import com.ahmrh.patypet.ui.components.CustomChip
 import com.ahmrh.patypet.ui.components.bar.PredictionTopBar
@@ -59,6 +66,7 @@ import com.ahmrh.patypet.ui.components.button.CustomButton
 import com.ahmrh.patypet.ui.components.card.PredictionCard
 import com.ahmrh.patypet.ui.components.card.ProductCard
 import com.ahmrh.patypet.ui.components.dialog.CustomDialog
+import com.ahmrh.patypet.ui.components.dialog.SavePetDialog
 import com.ahmrh.patypet.ui.components.loading.PredictionLoading
 import com.ahmrh.patypet.ui.theme.PatypetTheme
 import com.google.accompanist.pager.HorizontalPagerIndicator
@@ -70,12 +78,14 @@ fun PetPredictionScreen(
     uiState: State<UiState<PredictionResponse>> = mutableStateOf(
         UiState.Idle
     ),
+    bookmarkState: State<UiState<SaveResponse>> = mutableStateOf(UiState.Idle),
     photoUri: Uri? = null,
     onPredict: (img: Any) -> Unit = {},
     onRetakePhoto: () -> Unit = {},
     onNavigateToDetail: () -> Unit = {},
+    onSavePet: (name: String) -> Unit = {}
 
-    ) {
+) {
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -107,7 +117,9 @@ fun PetPredictionScreen(
                 PredictionSheet(
                     prediction,
                     photoUri,
-                    onNavigateToDetail
+                    onNavigateToDetail,
+                    onSavePet,
+                    bookmarkState
                 )
             }
 
@@ -132,10 +144,22 @@ fun PredictionSheet(
     prediction: PredictionResponse = PredictionResponse(),
     photoUri: Uri? = null,
     onNavigateToDetail: () -> Unit = { },
+    onSavePet: (name: String) -> Unit,
+
+    bookmarkState: State<UiState<SaveResponse>> = mutableStateOf(UiState.Idle),
 ) {
     val scope = rememberCoroutineScope()
     val scaffoldState = rememberBottomSheetScaffoldState()
     val sheetState = scaffoldState.bottomSheetState
+
+    var isBookmarked by remember { mutableStateOf(false) }
+
+    var savePetDialogOpen by remember {
+        mutableStateOf(false)
+    }
+
+    val snackbarHostState = remember { SnackbarHostState() }
+
 
     if (sheetState.currentValue == SheetValue.Expanded && sheetState.targetValue == SheetValue.Expanded) {
         Scaffold(
@@ -145,12 +169,41 @@ fun PredictionSheet(
                         scope.launch {
                             sheetState.partialExpand()
                         }
-                    }
+                    },
+                    onBookmark = {
+                        if(!isBookmarked){
+                            isBookmarked = !isBookmarked
+                            savePetDialogOpen = !savePetDialogOpen
+                        } else{
+                            scope.launch {
+                                snackbarHostState.showSnackbar(
+                                    message = "Feature still under development",
+                                    duration = SnackbarDuration.Short
+                                )
+                            }
+
+                        }
+
+                    },
+                    isBookmarked = isBookmarked
                 )
             },
-            containerColor = MaterialTheme.colorScheme.primary
+            containerColor = MaterialTheme.colorScheme.primary,
 
-        ) { Box(Modifier.padding(it)) } // just there so it work
+            snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+
+        ) {
+            Box(Modifier.padding(it)) {
+
+                if (savePetDialogOpen) {
+                    SavePetDialog(onSavePet)
+                }
+
+                if(bookmarkState.value is UiState.Success){
+                    CustomDialog(title = "Saved", body ="Your pet prediction has been saved. " )
+                }
+            }
+        } // just there so it work
     }
 
     BottomSheetScaffold(
@@ -172,7 +225,8 @@ fun PredictionSheet(
             )
         },
 
-    ) { }
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+        ) { }
 }
 
 @OptIn(
@@ -242,7 +296,7 @@ fun BottomSheetContent(
                 fontWeight = FontWeight.Medium,
                 fontSize = 12.sp,
                 color = MaterialTheme.colorScheme.onPrimary
-                )
+            )
         }
 
         Spacer(Modifier.height(16.dp))
@@ -250,7 +304,7 @@ fun BottomSheetContent(
         Column(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
-        ){
+        ) {
 
             Row(
                 horizontalArrangement = Arrangement.spacedBy(
@@ -274,9 +328,12 @@ fun BottomSheetContent(
                     content = "${prediction.breedData?.colours}",
                     modifier = Modifier.weight(1f),
                     colours = listOf(
-                        prediction.breedData?.colours?.color1 ?: "",
-                        prediction.breedData?.colours?.color2 ?: "",
-                        prediction.breedData?.colours?.color3 ?: "",
+                        prediction.breedData?.colours?.color1
+                            ?: "",
+                        prediction.breedData?.colours?.color2
+                            ?: "",
+                        prediction.breedData?.colours?.color3
+                            ?: "",
                     )
                 )
             }
@@ -308,8 +365,7 @@ fun BottomSheetContent(
                     textColor = MaterialTheme.colorScheme.onSecondary,
                     onClick = onExpand
                 )
-            }
-            else {
+            } else {
                 Text(
                     prediction.breedData?.description
                         ?: stringResource(id = R.string.lorem),
@@ -351,12 +407,15 @@ fun BottomSheetContent(
                         state = pagerState
                     ) {
                         PredictionCard(
-                            onClick = onNavigateToDetail,
+//                            onClick = onNavigateToDetail,
+                            onClick = {},
                             isButtonThere = false,
                             cardTitle = cardTitle[it],
                             cardContent = cardContent[it],
-                            photoUri = photoUri,
-                            modifier = Modifier.fillMaxWidth().padding(end = 8.dp)
+                            photoUrl = prediction.imageUrl,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(end = 8.dp)
                         )
                     }
 
@@ -387,18 +446,23 @@ fun BottomSheetContent(
                 )
                 Spacer(Modifier.size(8.dp))
 
-                val listFood = prediction.shopData?.get(0)?.foodData ?: listOf()
+                val listFood =
+                    prediction.shopData?.get(0)?.foodData
+                        ?: listOf()
                 LazyRow(
                     horizontalArrangement = Arrangement
                         .spacedBy(10.dp),
-                ){
-                    items(listFood){ product ->
+                ) {
+                    items(listFood) { product ->
                         ProductCard(
                             photoUrl = product?.productImg,
                             price = product?.productPrice as Double,
-                            name = product.productName ?: "Unnamed Product",
+                            name = product.productName
+                                ?: "Unnamed Product",
                             onCardClicked = {
-                                uriHandler.openUri(product.productUrl ?: "")
+                                uriHandler.openUri(
+                                    product.productUrl ?: ""
+                                )
                             }
                         )
                     }
@@ -415,18 +479,23 @@ fun BottomSheetContent(
                 Spacer(Modifier.size(8.dp))
 
 
-                val listGrooming = prediction.shopData?.get(0)?.groomData ?: listOf()
+                val listGrooming =
+                    prediction.shopData?.get(0)?.groomData
+                        ?: listOf()
                 LazyRow(
                     horizontalArrangement = Arrangement
                         .spacedBy(10.dp),
-                ){
-                    items(listGrooming){ product ->
+                ) {
+                    items(listGrooming) { product ->
                         ProductCard(
                             photoUrl = product?.productImg,
                             price = product?.productPrice as Double,
-                            name = product.productName ?: "Unnamed Product",
+                            name = product.productName
+                                ?: "Unnamed Product",
                             onCardClicked = {
-                                uriHandler.openUri(product.productUrl ?: "")
+                                uriHandler.openUri(
+                                    product.productUrl ?: ""
+                                )
                             }
                         )
                     }
@@ -446,10 +515,10 @@ fun BottomSheetContent(
 @Composable
 fun PetPredictionPreview() {
     PatypetTheme {
-        PetPredictionScreen(onRetakePhoto = {
-
-        }) {
-        }
-        PredictionSheet()
+//        PetPredictionScreen(onRetakePhoto = {
+//
+//        }) {
+//        }
+//        PredictionSheet()
     }
 }

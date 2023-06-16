@@ -67,8 +67,7 @@ class AuthViewModel @Inject constructor(
                 .collect {
                     Log.d(TAG, it.toString())
                     if (it) _authState.value =
-                        AuthState.Authenticated(
-                        )
+                        AuthState.Authenticated()
                     else _authState.value =
                         AuthState.Unknown
                 }
@@ -80,11 +79,9 @@ class AuthViewModel @Inject constructor(
     }
 
     //
-    fun logout() {
-        viewModelScope.launch {
-            Log.d(TAG, "logout")
-            repository.endSession()
-        }
+    suspend fun logout() {
+        Log.d(TAG, "logout")
+        repository.endSession()
         getAuthState()
     }
 //

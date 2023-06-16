@@ -1,5 +1,6 @@
 package com.ahmrh.patypet.ui.screen.auth.login
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -36,12 +37,14 @@ fun SignInScreen(
     uiState: State<UiState<String>>,
     onSignIn: (email: String, password: String) -> Unit,
     authenticate: () -> Unit,
-    navigateToSignIn: () -> Unit
+    navigateToSignIn: () -> Unit,
+    resetState: () -> Unit
 ) {
 
     Column(
         modifier = Modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surface),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp),
 
@@ -70,7 +73,7 @@ fun SignInScreen(
 
         is UiState.Error -> {
             val message = (uiState.value as UiState.Error).errorMessage
-            CustomDialog(title = "Error Occurred", body = message)
+            CustomDialog(title = "Cannot Sign In", body = "Please check your input data.", onDismiss = resetState)
 
         }
     }

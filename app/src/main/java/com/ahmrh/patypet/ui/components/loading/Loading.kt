@@ -28,8 +28,6 @@ fun Loading(
                 .size(56.dp)
             ,
         )
-        Text("Loading ...", Modifier.
-        align(Alignment.Center))
     }
 }
 

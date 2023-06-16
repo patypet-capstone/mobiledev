@@ -1,6 +1,7 @@
 package com.ahmrh.patypet.ui.screen.auth.register
 
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,30 +20,32 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.ahmrh.patypet.ui.components.loading.Loading
-import com.ahmrh.patypet.ui.components.button.LongButton
-import com.ahmrh.patypet.ui.components.StaticHeader
-import com.ahmrh.patypet.ui.theme.PatypetTheme
 import com.ahmrh.patypet.common.UiState
 import com.ahmrh.patypet.domain.utils.isValidEmail
 import com.ahmrh.patypet.domain.utils.isValidPassword
 import com.ahmrh.patypet.ui.components.CustomInputField
+import com.ahmrh.patypet.ui.components.StaticHeader
+import com.ahmrh.patypet.ui.components.button.LongButton
 import com.ahmrh.patypet.ui.components.dialog.CustomDialog
+import com.ahmrh.patypet.ui.components.loading.Loading
+import com.ahmrh.patypet.ui.theme.PatypetTheme
 
 @Composable
 fun SignUpScreen(
     uiState: State<UiState<String>>,
-    onSignUp : (
+    onSignUp: (
         name: String,
         email: String,
         password: String
     ) -> Unit,
-    navigateToSignIn: () -> Unit
+    navigateToSignIn: () -> Unit,
+    resetState: () -> Unit
 ) {
 
     Column(
         modifier = Modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surface),
         horizontalAlignment = Alignment.CenterHorizontally,
 
         ) {
@@ -51,22 +54,34 @@ fun SignUpScreen(
             onSignUp
         )
     }
-    when(uiState.value){
+    when (uiState.value) {
         is UiState.Idle -> {
             // Nothing happened
         }
+
         is UiState.Loading -> {
             Loading()
         }
+
         is UiState.Success -> {
-            val message = (uiState.value as UiState.Success<String>).data
-            CustomDialog(title = "User Registered", body = message, onDismiss = navigateToSignIn)
+            val message =
+                (uiState.value as UiState.Success<String>).data
+            CustomDialog(
+                title = "User Registered",
+                body = "You have registered an account.",
+                onDismiss = navigateToSignIn
+            )
 
         }
 
         is UiState.Error -> {
-            val message = (uiState.value as UiState.Error).errorMessage
-            CustomDialog(title = "Error Occurred", body = message)
+            val message =
+                (uiState.value as UiState.Error).errorMessage
+            CustomDialog(
+                title = "Cannot Register User",
+                body = "Please check your input data.",
+                onDismiss = resetState
+            )
 
         }
     }
@@ -104,8 +119,16 @@ fun SignUpForm(
             var email by remember { mutableStateOf("") }
             var password by remember { mutableStateOf("") }
 
-            var emailError by remember { mutableStateOf(false)}
-            var passwordError by remember { mutableStateOf(false)}
+            var emailError by remember {
+                mutableStateOf(
+                    false
+                )
+            }
+            var passwordError by remember {
+                mutableStateOf(
+                    false
+                )
+            }
 
             CustomInputField(
                 label = "Name",
@@ -130,7 +153,8 @@ fun SignUpForm(
                 isPassword = true,
                 onTextChange = {
                     password = it
-                    passwordError = !isValidPassword(password)
+                    passwordError =
+                        !isValidPassword(password)
                 },
             )
             LongButton(
@@ -140,7 +164,7 @@ fun SignUpForm(
                 color = MaterialTheme.colorScheme.secondary,
                 textColor = MaterialTheme.colorScheme.onSecondary,
                 onClick = {
-                    Log.d("SignUpScreen", "Sign Up Clicked" )
+                    Log.d("SignUpScreen", "Sign Up Clicked")
                     onSignUp(name, email, password)
                 }
             )

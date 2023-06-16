@@ -1,7 +1,5 @@
 package com.ahmrh.patypet.ui.components.card
 
-import android.net.Uri
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,22 +17,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
-import com.ahmrh.patypet.R
+import com.ahmrh.patypet.ui.components.CustomImage
 import com.ahmrh.patypet.ui.theme.PatypetTheme
 
 @Composable
 fun PredictionCard(
     modifier: Modifier = Modifier,
-    photoUri: Uri? = null,
+    photoUrl: String? = null,
     onClick: () -> Unit,
     cardTitle: String = "Card Title",
     cardContent: String = "this should be a place for card content. but since there is no text, this should be suffice for a placeholder.",
@@ -46,7 +40,7 @@ fun PredictionCard(
             .width(312.dp)
             .clip(shape = RoundedCornerShape(12.dp))
             .background(MaterialTheme.colorScheme.primary)
-            .clickable{
+            .clickable {
                 onClick()
             }
     ) {
@@ -95,19 +89,14 @@ fun PredictionCard(
             }
 
         }
-        Image(
 
-            painter = if (photoUri != null)
-                rememberAsyncImagePainter(photoUri) else painterResource(
-                id = R.drawable.placeholder_prediction_image
-            ),
-            contentDescription = null,
-            Modifier
+        CustomImage(
+            photoUrl = photoUrl,
+            modifier = Modifier
                 .width(112.dp)
-                .height(168.dp),
-            contentScale = ContentScale.Crop,
+                .height(168.dp)
+        )
 
-            )
 
     }
 

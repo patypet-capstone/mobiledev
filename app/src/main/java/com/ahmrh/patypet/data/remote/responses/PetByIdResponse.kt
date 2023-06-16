@@ -2,16 +2,21 @@ package com.ahmrh.patypet.data.remote.responses
 
 import com.google.gson.annotations.SerializedName
 
-data class PetResponse(
+data class PetByIdResponse(
+
+	@field:SerializedName("breed_data")
+	val breedData: BreedData? = null,
 
 	@field:SerializedName("data")
-	val data: List<PetResponseItem?>? = null,
+	val data: Data? = null,
 
 	@field:SerializedName("status")
 	val status: String? = null
 )
 
-data class PetResponseItem(
+
+
+data class Data(
 
 	@field:SerializedName("image_url")
 	val imageUrl: String? = null,

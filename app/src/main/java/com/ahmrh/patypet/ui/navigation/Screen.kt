@@ -30,7 +30,7 @@ sealed class Screen(val route: String) {
 
         object Profile: Screen("profile")
 
-        object Detail : Screen("pet/{petId}"){
+        object PetById : Screen("pet/{petId}"){
             fun createRoute(petId: Int) = "pet/$petId"
         }
 
